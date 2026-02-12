@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/josh/poolio/internal/application/command"
 	"github.com/josh/poolio/internal/application/services"
 	"github.com/josh/poolio/internal/domain/entities"
@@ -86,7 +85,7 @@ func (h *ChemicalHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ChemicalHandler) EditForm(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	chem, err := h.svc.Get(r.Context(), id)
 	if err != nil || chem == nil {
 		http.Error(w, "not found", http.StatusNotFound)
@@ -107,7 +106,7 @@ func (h *ChemicalHandler) EditForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ChemicalHandler) Update(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	signals := &chemicalSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -135,7 +134,7 @@ func (h *ChemicalHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ChemicalHandler) AdjustStock(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	signals := &adjustSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -157,7 +156,7 @@ func (h *ChemicalHandler) AdjustStock(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ChemicalHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	if err := h.svc.Delete(r.Context(), id); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

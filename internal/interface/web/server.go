@@ -3,10 +3,9 @@ package web
 import (
 	"embed"
 	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/josh/poolio/internal/application/services"
 	"github.com/josh/poolio/internal/interface/web/handlers"
 )
@@ -15,7 +14,7 @@ import (
 var layoutHTML embed.FS
 
 type Server struct {
-	router    chi.Router
+	mux       *http.ServeMux
 	chemSvc   *services.ChemistryService
 	taskSvc   *services.TaskService
 	equipSvc  *services.EquipmentService
@@ -24,7 +23,7 @@ type Server struct {
 
 func NewServer(chemSvc *services.ChemistryService, taskSvc *services.TaskService, equipSvc *services.EquipmentService, chemicSvc *services.ChemicalService) *Server {
 	s := &Server{
-		router:    chi.NewRouter(),
+		mux:       http.NewServeMux(),
 		chemSvc:   chemSvc,
 		taskSvc:   taskSvc,
 		equipSvc:  equipSvc,
@@ -35,60 +34,57 @@ func NewServer(chemSvc *services.ChemistryService, taskSvc *services.TaskService
 }
 
 func (s *Server) setupRoutes() {
-	s.router.Use(middleware.Logger)
-	s.router.Use(middleware.Recoverer)
-
 	pageHandler := handlers.NewPageHandler(layoutHTML)
 	chemHandler := handlers.NewChemistryHandler(s.chemSvc)
 	taskHandler := handlers.NewTaskHandler(s.taskSvc)
 	equipHandler := handlers.NewEquipmentHandler(s.equipSvc)
 	chemicHandler := handlers.NewChemicalHandler(s.chemicSvc)
 
-	s.router.Get("/", pageHandler.Index)
+	s.mux.HandleFunc("GET /{$}", pageHandler.Index)
 
-	s.router.Route("/chemistry", func(r chi.Router) {
-		r.Get("/", chemHandler.List)
-		r.Get("/new", chemHandler.NewForm)
-		r.Post("/", chemHandler.Create)
-		r.Get("/{id}/edit", chemHandler.EditForm)
-		r.Put("/{id}", chemHandler.Update)
-		r.Delete("/{id}", chemHandler.Delete)
-	})
+	s.mux.HandleFunc("GET /chemistry", chemHandler.List)
+	s.mux.HandleFunc("GET /chemistry/new", chemHandler.NewForm)
+	s.mux.HandleFunc("POST /chemistry", chemHandler.Create)
+	s.mux.HandleFunc("GET /chemistry/{id}/edit", chemHandler.EditForm)
+	s.mux.HandleFunc("PUT /chemistry/{id}", chemHandler.Update)
+	s.mux.HandleFunc("DELETE /chemistry/{id}", chemHandler.Delete)
 
-	s.router.Route("/tasks", func(r chi.Router) {
-		r.Get("/", taskHandler.List)
-		r.Get("/new", taskHandler.NewForm)
-		r.Post("/", taskHandler.Create)
-		r.Get("/{id}/edit", taskHandler.EditForm)
-		r.Put("/{id}", taskHandler.Update)
-		r.Post("/{id}/complete", taskHandler.Complete)
-		r.Delete("/{id}", taskHandler.Delete)
-	})
+	s.mux.HandleFunc("GET /tasks", taskHandler.List)
+	s.mux.HandleFunc("GET /tasks/new", taskHandler.NewForm)
+	s.mux.HandleFunc("POST /tasks", taskHandler.Create)
+	s.mux.HandleFunc("GET /tasks/{id}/edit", taskHandler.EditForm)
+	s.mux.HandleFunc("PUT /tasks/{id}", taskHandler.Update)
+	s.mux.HandleFunc("POST /tasks/{id}/complete", taskHandler.Complete)
+	s.mux.HandleFunc("DELETE /tasks/{id}", taskHandler.Delete)
 
-	s.router.Route("/equipment", func(r chi.Router) {
-		r.Get("/", equipHandler.List)
-		r.Get("/new", equipHandler.NewForm)
-		r.Post("/", equipHandler.Create)
-		r.Get("/{id}/edit", equipHandler.EditForm)
-		r.Put("/{id}", equipHandler.Update)
-		r.Delete("/{id}", equipHandler.Delete)
-		r.Get("/{id}/service-records/new", equipHandler.NewServiceRecordForm)
-		r.Post("/{id}/service-records", equipHandler.CreateServiceRecord)
-		r.Delete("/{id}/service-records/{recordId}", equipHandler.DeleteServiceRecord)
-	})
+	s.mux.HandleFunc("GET /equipment", equipHandler.List)
+	s.mux.HandleFunc("GET /equipment/new", equipHandler.NewForm)
+	s.mux.HandleFunc("POST /equipment", equipHandler.Create)
+	s.mux.HandleFunc("GET /equipment/{id}/edit", equipHandler.EditForm)
+	s.mux.HandleFunc("PUT /equipment/{id}", equipHandler.Update)
+	s.mux.HandleFunc("DELETE /equipment/{id}", equipHandler.Delete)
+	s.mux.HandleFunc("GET /equipment/{id}/service-records/new", equipHandler.NewServiceRecordForm)
+	s.mux.HandleFunc("POST /equipment/{id}/service-records", equipHandler.CreateServiceRecord)
+	s.mux.HandleFunc("DELETE /equipment/{id}/service-records/{recordId}", equipHandler.DeleteServiceRecord)
 
-	s.router.Route("/chemicals", func(r chi.Router) {
-		r.Get("/", chemicHandler.List)
-		r.Get("/new", chemicHandler.NewForm)
-		r.Post("/", chemicHandler.Create)
-		r.Get("/{id}/edit", chemicHandler.EditForm)
-		r.Put("/{id}", chemicHandler.Update)
-		r.Post("/{id}/adjust", chemicHandler.AdjustStock)
-		r.Delete("/{id}", chemicHandler.Delete)
-	})
+	s.mux.HandleFunc("GET /chemicals", chemicHandler.List)
+	s.mux.HandleFunc("GET /chemicals/new", chemicHandler.NewForm)
+	s.mux.HandleFunc("POST /chemicals", chemicHandler.Create)
+	s.mux.HandleFunc("GET /chemicals/{id}/edit", chemicHandler.EditForm)
+	s.mux.HandleFunc("PUT /chemicals/{id}", chemicHandler.Update)
+	s.mux.HandleFunc("POST /chemicals/{id}/adjust", chemicHandler.AdjustStock)
+	s.mux.HandleFunc("DELETE /chemicals/{id}", chemicHandler.Delete)
 }
 
 func (s *Server) Start(addr string) error {
 	fmt.Printf("PoolVibes server starting on %s\n", addr)
-	return http.ListenAndServe(addr, s.router)
+	handler := logRequests(s.mux)
+	return http.ListenAndServe(addr, handler)
+}
+
+func logRequests(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %s", r.Method, r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
 }

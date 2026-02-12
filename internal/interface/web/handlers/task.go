@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/josh/poolio/internal/application/command"
 	"github.com/josh/poolio/internal/application/services"
 	"github.com/josh/poolio/internal/domain/entities"
@@ -86,7 +85,7 @@ func (h *TaskHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TaskHandler) EditForm(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	task, err := h.svc.Get(r.Context(), id)
 	if err != nil || task == nil {
 		http.Error(w, "not found", http.StatusNotFound)
@@ -108,7 +107,7 @@ func (h *TaskHandler) EditForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	signals := &taskSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -137,7 +136,7 @@ func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TaskHandler) Complete(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	_, err := h.svc.Complete(r.Context(), id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -150,7 +149,7 @@ func (h *TaskHandler) Complete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	if err := h.svc.Delete(r.Context(), id); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

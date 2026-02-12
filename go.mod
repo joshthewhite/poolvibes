@@ -3,7 +3,6 @@ module github.com/josh/poolio
 go 1.25.7
 
 require (
-	github.com/go-chi/chi/v5 v5.2.5
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.10.2

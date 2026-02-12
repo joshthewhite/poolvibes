@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/josh/poolio/internal/application/command"
 	"github.com/josh/poolio/internal/application/services"
 	"github.com/josh/poolio/internal/domain/entities"
@@ -96,7 +95,7 @@ func (h *EquipmentHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *EquipmentHandler) EditForm(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	eq, err := h.svc.Get(r.Context(), id)
 	if err != nil || eq == nil {
 		http.Error(w, "not found", http.StatusNotFound)
@@ -117,7 +116,7 @@ func (h *EquipmentHandler) EditForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *EquipmentHandler) Update(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	signals := &equipmentSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -149,7 +148,7 @@ func (h *EquipmentHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *EquipmentHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
+	id := r.PathValue("id")
 	if err := h.svc.Delete(r.Context(), id); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -161,7 +160,7 @@ func (h *EquipmentHandler) Delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *EquipmentHandler) NewServiceRecordForm(w http.ResponseWriter, r *http.Request) {
-	eqID := chi.URLParam(r, "id")
+	eqID := r.PathValue("id")
 	today := time.Now().Format("2006-01-02")
 
 	sse := datastar.NewSSE(w, r)
@@ -182,7 +181,7 @@ func (h *EquipmentHandler) NewServiceRecordForm(w http.ResponseWriter, r *http.R
 }
 
 func (h *EquipmentHandler) CreateServiceRecord(w http.ResponseWriter, r *http.Request) {
-	eqID := chi.URLParam(r, "id")
+	eqID := r.PathValue("id")
 	signals := &serviceRecordSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -210,7 +209,7 @@ func (h *EquipmentHandler) CreateServiceRecord(w http.ResponseWriter, r *http.Re
 }
 
 func (h *EquipmentHandler) DeleteServiceRecord(w http.ResponseWriter, r *http.Request) {
-	recordID := chi.URLParam(r, "recordId")
+	recordID := r.PathValue("recordId")
 	if err := h.svc.DeleteServiceRecord(r.Context(), recordID); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
