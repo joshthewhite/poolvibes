@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - poolio-data:/data
+
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile.docs
+    ports:
+      - "8000:8000"
+
+volumes:
+  poolio-data:

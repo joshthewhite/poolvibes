@@ -1,0 +1,68 @@
+[project]
+site_name = "PoolVibes"
+site_description = "Pool maintenance management app with DDD architecture and Datastar frontend"
+site_url = "https://josh.github.io/poolio/"
+
+repo_url = "https://github.com/josh/poolio"
+repo_name = "GitHub"
+edit_uri = "edit/main/docs"
+
+nav = [
+  { "Home" = "index.md" },
+  { "Getting Started" = "getting-started.md" },
+  { "Configuration" = "configuration.md" },
+  { "Features" = [
+    { "Overview" = "features/index.md" },
+    { "Water Chemistry" = "features/water-chemistry.md" },
+    { "Tasks" = "features/tasks.md" },
+    { "Equipment" = "features/equipment.md" },
+    { "Chemicals" = "features/chemicals.md" },
+  ] },
+  { "Architecture" = "architecture.md" },
+  { "Development" = "development.md" },
+]
+
+[project.theme]
+language = "en"
+
+features = [
+  "content.action.edit",
+  "content.action.view",
+  "content.code.copy",
+  "navigation.footer",
+  "navigation.indexes",
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.top",
+  "navigation.tracking",
+  "search.highlight",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "blue"
+accent = "cyan"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "blue"
+accent = "cyan"
+toggle.icon = "lucide/moon-star"
+toggle.name = "Switch to system preference"
+
+[project.theme.icon]
+repo = "lucide/github"
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+
+[project.markdown_extensions.pymdownx.superfences]

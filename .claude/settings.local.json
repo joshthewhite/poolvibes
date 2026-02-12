@@ -17,7 +17,8 @@
       "Bash(timeout 5 go run:*)",
       "Bash(gofmt:*)",
       "Bash(go run:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "WebFetch(domain:zensical.org)"
     ]
   }
 }
