@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poolio - Pool Maintenance</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js"></script>
+    <style>
+        [data-show] { display: none; }
+        .tabs li.is-active a { border-bottom-color: #3273dc; color: #3273dc; }
+    </style>
+</head>
+<body>
+    <div data-signals:tab="'chemistry'" data-signals:_loading="false">
+        <!-- Navbar -->
+        <nav class="navbar is-link" role="navigation">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a class="navbar-item" href="/">
+                        <strong class="is-size-4">Poolio</strong>
+                    </a>
+                </div>
+                <div class="navbar-end">
+                    <span class="navbar-item has-text-light">Pool Maintenance Manager</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Tab Navigation -->
+        <section class="section" style="padding-bottom: 0;">
+            <div class="container">
+                <div class="tabs is-boxed is-medium">
+                    <ul>
+                        <li data-class:is-active="$tab === 'chemistry'">
+                            <a data-on:click="$tab = 'chemistry'; @get('/chemistry')">Water Chemistry</a>
+                        </li>
+                        <li data-class:is-active="$tab === 'tasks'">
+                            <a data-on:click="$tab = 'tasks'; @get('/tasks')">Tasks</a>
+                        </li>
+                        <li data-class:is-active="$tab === 'equipment'">
+                            <a data-on:click="$tab = 'equipment'; @get('/equipment')">Equipment</a>
+                        </li>
+                        <li data-class:is-active="$tab === 'chemicals'">
+                            <a data-on:click="$tab = 'chemicals'; @get('/chemicals')">Chemicals</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <section class="section" style="padding-top: 1rem;">
+            <div class="container">
+                <div id="tab-content" data-init="@get('/chemistry')">
+                    <div class="has-text-centered py-6 has-text-grey-light">Loading...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal Container -->
+        <div id="modal"></div>
+    </div>
+</body>
+</html>
