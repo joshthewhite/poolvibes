@@ -12,8 +12,8 @@ Pool maintenance management app built with Go, following Domain-Driven Design pa
 ## Quick Start
 
 ```sh
-go build -o poolio .
-./poolio serve
+go build -o poolvibes .
+./poolvibes serve
 ```
 
 Open [http://localhost:8080](http://localhost:8080) to access the app.

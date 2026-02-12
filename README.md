@@ -20,8 +20,8 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 ## Getting Started
 
 ```sh
-go build -o poolio .
-./poolio serve
+go build -o poolvibes .
+./poolvibes serve
 ```
 
 Open http://localhost:8080
@@ -30,7 +30,7 @@ Open http://localhost:8080
 
 ```
 --addr string   server listen address (default ":8080")
---db string     SQLite database path (default "~/.poolio.db")
+--db string     SQLite database path (default "~/.poolvibes.db")
 ```
 
 Database migrations run automatically on startup.

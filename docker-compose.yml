@@ -4,7 +4,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - poolio-data:/data
+      - poolvibes-data:/data
 
   docs:
     build:
@@ -14,4 +14,4 @@ services:
       - "8000:8000"
 
 volumes:
-  poolio-data:
+  poolvibes-data:

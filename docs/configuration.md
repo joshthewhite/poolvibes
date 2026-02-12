@@ -9,7 +9,7 @@ PoolVibes can be configured through CLI flags, a config file, or environment var
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--addr` | `:8080` | Server listen address |
-| `--db` | `~/.poolio.db` | SQLite database file path |
+| `--db` | `~/.poolvibes.db` | SQLite database file path |
 
 ### Global Flags
 
@@ -27,7 +27,7 @@ PoolVibes uses [Viper](https://github.com/spf13/viper) for configuration. It sea
 You can also specify a config file explicitly:
 
 ```sh
-./poolio serve --config /path/to/config.yaml
+./poolvibes serve --config /path/to/config.yaml
 ```
 
 ### Example Config
@@ -44,7 +44,7 @@ All configuration options can be set via environment variables. Viper's `Automat
 ```sh
 export ADDR=":3000"
 export DB="/var/lib/poolvibes/pool.db"
-./poolio serve
+./poolvibes serve
 ```
 
 ## Database
