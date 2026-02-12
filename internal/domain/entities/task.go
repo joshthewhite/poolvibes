@@ -58,7 +58,7 @@ func (t *Task) Complete() *Task {
 	t.CompletedAt = &now
 	t.UpdatedAt = now
 
-	next := NewTask(t.Name, t.Description, t.Recurrence, t.Recurrence.NextDueDate(now))
+	next := NewTask(t.Name, t.Description, t.Recurrence, t.Recurrence.NextDueDate(t.DueDate))
 	return next
 }
 

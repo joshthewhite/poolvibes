@@ -89,6 +89,6 @@ func (s *Server) setupRoutes() {
 }
 
 func (s *Server) Start(addr string) error {
-	fmt.Printf("Poolio server starting on %s\n", addr)
+	fmt.Printf("PoolVibes server starting on %s\n", addr)
 	return http.ListenAndServe(addr, s.router)
 }

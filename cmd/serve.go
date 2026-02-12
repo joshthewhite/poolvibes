@@ -19,7 +19,7 @@ func SetMigrationsFS(f fs.FS) {
 
 var serveCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "Start the Poolio web server",
+	Short: "Start the PoolVibes web server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		addr, _ := cmd.Flags().GetString("addr")
 		dbPath, _ := cmd.Flags().GetString("db")
@@ -61,5 +61,5 @@ func defaultDBPath() string {
 	if err != nil {
 		return "poolio.db"
 	}
-	return home + "/.poolio.db"
+	return home + "/.poolvibes.db"
 }

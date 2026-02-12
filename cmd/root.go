@@ -11,8 +11,8 @@ import (
 var cfgFile string
 
 var rootCmd = &cobra.Command{
-	Use:   "poolio",
-	Short: "Poolio",
+	Use:   "poolvibes",
+	Short: "PoolVibes",
 }
 
 func Execute() {
@@ -37,7 +37,7 @@ func initConfig() {
 		viper.AddConfigPath(home)
 		viper.AddConfigPath(".")
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".poolio")
+		viper.SetConfigName(".poolvibes")
 	}
 
 	viper.AutomaticEnv()
