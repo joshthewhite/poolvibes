@@ -1,4 +1,4 @@
-module github.com/josh/poolio
+module github.com/joshthewhite/poolvibes
 
 go 1.25.7
 

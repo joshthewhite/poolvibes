@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/josh/poolio/internal/application/command"
-	"github.com/josh/poolio/internal/domain/entities"
-	"github.com/josh/poolio/internal/domain/repositories"
+	"github.com/joshthewhite/poolvibes/internal/application/command"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
+	"github.com/joshthewhite/poolvibes/internal/domain/repositories"
 )
 
 type EquipmentService struct {

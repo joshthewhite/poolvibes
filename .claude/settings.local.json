@@ -18,7 +18,8 @@
       "Bash(gofmt:*)",
       "Bash(go run:*)",
       "Bash(pkill:*)",
-      "WebFetch(domain:zensical.org)"
+      "WebFetch(domain:zensical.org)",
+      "Bash(xargs sed:*)"
     ]
   }
 }

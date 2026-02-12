@@ -5,9 +5,9 @@ import (
 	"io/fs"
 	"os"
 
-	"github.com/josh/poolio/internal/application/services"
-	"github.com/josh/poolio/internal/infrastructure/db/sqlite"
-	"github.com/josh/poolio/internal/interface/web"
+	"github.com/joshthewhite/poolvibes/internal/application/services"
+	"github.com/joshthewhite/poolvibes/internal/infrastructure/db/sqlite"
+	"github.com/joshthewhite/poolvibes/internal/interface/web"
 	"github.com/spf13/cobra"
 )
 

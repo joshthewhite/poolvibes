@@ -5,7 +5,7 @@
 Clone the repository and build:
 
 ```sh
-git clone https://github.com/josh/poolvibes.git
+git clone https://github.com/joshthewhite/poolvibes.git
 cd poolvibes
 go build -o poolvibes .
 ```

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Pool maintenance management app. Go CLI with DDD architecture and Datastar hypermedia frontend. Module path: `github.com/josh/poolio`.
+Pool maintenance management app. Go CLI with DDD architecture and Datastar hypermedia frontend. Module path: `github.com/joshthewhite/poolvibes`. GitHub repo: `https://github.com/joshthewhite/poolvibes`.
 
 ### Structure
 
@@ -45,6 +45,12 @@ Pool maintenance management app. Go CLI with DDD architecture and Datastar hyper
 - **Lint**: `go vet ./...`
 - **Format**: `gofmt -w .`
 - **Tidy deps**: `go mod tidy`
+
+## Documentation
+
+- **Docs site**: `docs/` directory, built with [Zensical](https://zensical.org), configured in `zensical.toml`
+- **README**: `README.md`
+- When making code changes, keep `docs/` and `README.md` up to date (CLI flags, features, architecture, dev commands)
 
 ## Code Style
 

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/josh/poolio/internal/domain/valueobjects"
+	"github.com/joshthewhite/poolvibes/internal/domain/valueobjects"
 )
 
 type ChemicalType string

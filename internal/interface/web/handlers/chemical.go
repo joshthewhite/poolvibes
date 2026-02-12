@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/josh/poolio/internal/application/command"
-	"github.com/josh/poolio/internal/application/services"
-	"github.com/josh/poolio/internal/domain/entities"
+	"github.com/joshthewhite/poolvibes/internal/application/command"
+	"github.com/joshthewhite/poolvibes/internal/application/services"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

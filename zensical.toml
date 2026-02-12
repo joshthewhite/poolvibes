@@ -1,9 +1,9 @@
 [project]
 site_name = "PoolVibes"
 site_description = "Pool maintenance management app with DDD architecture and Datastar frontend"
-site_url = "https://josh.github.io/poolvibes/"
+site_url = "https://joshthewhite.github.io/poolvibes/"
 
-repo_url = "https://github.com/josh/poolvibes"
+repo_url = "https://github.com/joshthewhite/poolvibes"
 repo_name = "GitHub"
 edit_uri = "edit/main/docs"
 

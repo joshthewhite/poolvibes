@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/josh/poolio/internal/application/services"
-	"github.com/josh/poolio/internal/interface/web/handlers"
+	"github.com/joshthewhite/poolvibes/internal/application/services"
+	"github.com/joshthewhite/poolvibes/internal/interface/web/handlers"
 )
 
 //go:embed templates/layout.html

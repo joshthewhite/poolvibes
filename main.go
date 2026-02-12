@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 
-	"github.com/josh/poolio/cmd"
+	"github.com/joshthewhite/poolvibes/cmd"
 )
 
 //go:embed migrations

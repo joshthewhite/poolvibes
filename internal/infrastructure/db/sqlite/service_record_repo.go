@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/josh/poolio/internal/domain/entities"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
 )
 
 type ServiceRecordRepo struct {

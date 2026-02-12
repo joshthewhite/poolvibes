@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/josh/poolio/internal/domain/entities"
-	"github.com/josh/poolio/internal/domain/valueobjects"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
+	"github.com/joshthewhite/poolvibes/internal/domain/valueobjects"
 )
 
 type TaskRepo struct {
