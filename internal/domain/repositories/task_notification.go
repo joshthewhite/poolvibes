@@ -2,13 +2,15 @@ package repositories
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/joshthewhite/poolvibes/internal/domain/entities"
 )
 
 type TaskNotificationRepository interface {
-	ExistsByTaskAndType(ctx context.Context, taskID uuid.UUID, notifType string, dueDate time.Time) (bool, error)
-	Create(ctx context.Context, notif *entities.TaskNotification) error
+	// Claim atomically inserts a notification record. Returns true if this
+	// caller claimed it, false if another instance already did (UNIQUE conflict).
+	Claim(ctx context.Context, notif *entities.TaskNotification) (bool, error)
+	// Delete removes a notification record (used to release a claim on send failure).
+	Delete(ctx context.Context, id uuid.UUID) error
 }
