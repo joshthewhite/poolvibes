@@ -64,6 +64,19 @@ twilio_from_number: "+15551234567"
 
 Or via environment variables (`RESEND_API_KEY`, `TWILIO_ACCOUNT_SID`, etc.). Notifications are only sent when the corresponding keys are configured. Users can toggle email/SMS preferences from the Settings tab.
 
+## Deployment (Railway)
+
+PoolVibes can be deployed to [Railway](https://railway.com) with PostgreSQL:
+
+1. Create a new project on Railway and add a **PostgreSQL** service
+2. Add a service connected to your GitHub repo — Railway auto-detects the `Dockerfile`
+3. Set these service variables:
+   - `DB_DRIVER` = `postgres`
+   - `DB` = `${{Postgres.DATABASE_URL}}`
+4. Enable **Wait for CI** in service settings so Railway waits for GitHub Actions to pass before deploying
+
+The app automatically uses Railway's `PORT` environment variable. Migrations run on startup.
+
 ## Project Structure
 
 ```
