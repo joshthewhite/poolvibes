@@ -3,8 +3,30 @@ services:
     build: .
     ports:
       - "8080:8080"
+    command:
+      - "--db-driver"
+      - "postgres"
+      - "--db"
+      - "postgres://poolvibes:poolvibes@db:5432/poolvibes?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: poolvibes
+      POSTGRES_PASSWORD: poolvibes
+      POSTGRES_DB: poolvibes
+    ports:
+      - "5432:5432"
     volumes:
-      - poolvibes-data:/data
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U poolvibes"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
 
   docs:
     build:
@@ -14,4 +36,4 @@ services:
       - "8000:8000"
 
 volumes:
-  poolvibes-data:
+  pgdata:
