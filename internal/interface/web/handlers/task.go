@@ -161,34 +161,60 @@ func (h *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TaskHandler) renderList(tasks []entities.Task) string {
+	var active, completed []entities.Task
+	for _, t := range tasks {
+		if t.Status == entities.TaskStatusCompleted {
+			completed = append(completed, t)
+		} else {
+			active = append(active, t)
+		}
+	}
+
 	var b strings.Builder
-	b.WriteString(`<div id="tab-content">`)
+	b.WriteString(`<div id="tab-content" data-signals__ifmissing-show-completed="false">`)
 	b.WriteString(`<div class="level"><div class="level-left"><div class="level-item"><h2 class="title is-4">Maintenance Tasks</h2></div></div>`)
 	b.WriteString(`<div class="level-right"><div class="level-item"><button data-on:click="@get('/tasks/new')" class="button is-link">+ Add Task</button></div></div></div>`)
 
-	if len(tasks) == 0 {
+	if len(active) == 0 && len(completed) == 0 {
 		b.WriteString(`<div class="has-text-centered py-6 has-text-grey-light"><p class="is-size-5">No tasks yet</p><p class="is-size-7 mt-1">Add your first maintenance task</p></div>`)
 	} else {
-		for _, t := range tasks {
-			b.WriteString(`<div class="box">`)
-			b.WriteString(`<div class="level is-mobile">`)
-			b.WriteString(`<div class="level-left">`)
-			b.WriteString(fmt.Sprintf(`<div class="level-item">%s</div>`, completeButton(t)))
-			b.WriteString(`<div class="level-item"><div>`)
-			b.WriteString(fmt.Sprintf(`<p class="has-text-weight-semibold">%s</p>`, html.EscapeString(t.Name)))
-			b.WriteString(fmt.Sprintf(`<p class="is-size-7 has-text-grey">Due: %s &middot; Every %d %s</p>`, t.DueDate.Format("Jan 2, 2006"), t.Recurrence.Interval, t.Recurrence.Frequency))
-			b.WriteString(`</div></div></div>`)
-			b.WriteString(`<div class="level-right"><div class="level-item">`)
-			b.WriteString(fmt.Sprintf(`<div class="tags">%s</div>`, taskStatusTag(t.Status)))
-			b.WriteString(`</div><div class="level-item"><div class="buttons are-small">`)
-			b.WriteString(fmt.Sprintf(`<button data-on:click="@get('/tasks/%s/edit')" class="button is-link is-outlined is-small">Edit</button>`, t.ID.String()))
-			b.WriteString(fmt.Sprintf(`<button data-on:click="@delete('/tasks/%s')" class="button is-danger is-outlined is-small">Delete</button>`, t.ID.String()))
-			b.WriteString(`</div></div></div>`)
-			b.WriteString(`</div></div>`)
+		for _, t := range active {
+			renderTaskCard(&b, t)
+		}
+
+		if len(completed) > 0 {
+			b.WriteString(`<button data-on:click="$showCompleted = !$showCompleted" class="button is-small is-fullwidth is-ghost has-text-grey mt-4 mb-4">`)
+			b.WriteString(fmt.Sprintf(`<span data-show="!$showCompleted">Show completed (%d)</span>`, len(completed)))
+			b.WriteString(fmt.Sprintf(`<span data-show="$showCompleted">Hide completed (%d)</span>`, len(completed)))
+			b.WriteString(`</button>`)
+
+			b.WriteString(`<div data-show="$showCompleted">`)
+			for _, t := range completed {
+				renderTaskCard(&b, t)
+			}
+			b.WriteString(`</div>`)
 		}
 	}
 	b.WriteString(`</div>`)
 	return b.String()
+}
+
+func renderTaskCard(b *strings.Builder, t entities.Task) {
+	b.WriteString(`<div class="box">`)
+	b.WriteString(`<div class="level is-mobile">`)
+	b.WriteString(`<div class="level-left">`)
+	b.WriteString(fmt.Sprintf(`<div class="level-item">%s</div>`, completeButton(t)))
+	b.WriteString(`<div class="level-item"><div>`)
+	b.WriteString(fmt.Sprintf(`<p class="has-text-weight-semibold">%s</p>`, html.EscapeString(t.Name)))
+	b.WriteString(fmt.Sprintf(`<p class="is-size-7 has-text-grey">Due: %s &middot; Every %d %s</p>`, t.DueDate.Format("Jan 2, 2006"), t.Recurrence.Interval, t.Recurrence.Frequency))
+	b.WriteString(`</div></div></div>`)
+	b.WriteString(`<div class="level-right"><div class="level-item">`)
+	b.WriteString(fmt.Sprintf(`<div class="tags">%s</div>`, taskStatusTag(t.Status)))
+	b.WriteString(`</div><div class="level-item"><div class="buttons are-small">`)
+	b.WriteString(fmt.Sprintf(`<button data-on:click="@get('/tasks/%s/edit')" class="button is-link is-outlined is-small">Edit</button>`, t.ID.String()))
+	b.WriteString(fmt.Sprintf(`<button data-on:click="@delete('/tasks/%s')" class="button is-danger is-outlined is-small">Delete</button>`, t.ID.String()))
+	b.WriteString(`</div></div></div>`)
+	b.WriteString(`</div></div>`)
 }
 
 func completeButton(t entities.Task) string {

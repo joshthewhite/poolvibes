@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <div data-signals:tab="'chemistry'" data-signals:_loading="false">
+    <div data-signals:tab="'chemistry'" data-signals:_loading="false" data-persist="tab">
         <!-- Navbar -->
         <nav class="navbar is-link" role="navigation">
             <div class="container">
@@ -55,7 +55,7 @@
         <!-- Main Content -->
         <section class="section" style="padding-top: 1rem;">
             <div class="container">
-                <div id="tab-content" data-init="@get('/chemistry')">
+                <div id="tab-content" data-init="@get('/' + $tab)">
                     <div class="has-text-centered py-6 has-text-grey-light">Loading...</div>
                 </div>
             </div>
