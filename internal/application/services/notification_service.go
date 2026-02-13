@@ -99,37 +99,39 @@ func (s *NotificationService) notifyForTask(ctx context.Context, user *entities.
 		body += fmt.Sprintf("\n\nDetails: %s", task.Description)
 	}
 
-	// Email notification
+	// Email notification — claim first, send only if we won the claim
 	if s.emailNotifier != nil && user.NotifyEmail && user.Email != "" {
-		exists, err := s.notifRepo.ExistsByTaskAndType(ctx, task.ID, "email", dueDate)
+		notif := entities.NewTaskNotification(task.ID, user.ID, "email", dueDate)
+		claimed, err := s.notifRepo.Claim(ctx, notif)
 		if err != nil {
-			log.Printf("Notification check error for task %s: %v", task.ID, err)
-		} else if !exists {
+			log.Printf("Email claim error for task %s: %v", task.ID, err)
+		} else if claimed {
 			if err := s.emailNotifier.Send(ctx, user.Email, subject, body); err != nil {
-				log.Printf("Email notification error for task %s to %s: %v", task.ID, user.Email, err)
-			} else {
-				notif := entities.NewTaskNotification(task.ID, user.ID, "email", dueDate)
-				if err := s.notifRepo.Create(ctx, notif); err != nil {
-					log.Printf("Error recording email notification: %v", err)
+				log.Printf("Email send error for task %s to %s: %v", task.ID, user.Email, err)
+				// Release claim so another tick can retry
+				if delErr := s.notifRepo.Delete(ctx, notif.ID); delErr != nil {
+					log.Printf("Error releasing email claim: %v", delErr)
 				}
+			} else {
 				log.Printf("Email notification sent for task %s to %s", task.Name, user.Email)
 			}
 		}
 	}
 
-	// SMS notification
+	// SMS notification — claim first, send only if we won the claim
 	if s.smsNotifier != nil && user.NotifySMS && user.Phone != "" {
-		exists, err := s.notifRepo.ExistsByTaskAndType(ctx, task.ID, "sms", dueDate)
+		notif := entities.NewTaskNotification(task.ID, user.ID, "sms", dueDate)
+		claimed, err := s.notifRepo.Claim(ctx, notif)
 		if err != nil {
-			log.Printf("Notification check error for task %s: %v", task.ID, err)
-		} else if !exists {
+			log.Printf("SMS claim error for task %s: %v", task.ID, err)
+		} else if claimed {
 			if err := s.smsNotifier.Send(ctx, user.Phone, subject, body); err != nil {
-				log.Printf("SMS notification error for task %s to %s: %v", task.ID, user.Phone, err)
-			} else {
-				notif := entities.NewTaskNotification(task.ID, user.ID, "sms", dueDate)
-				if err := s.notifRepo.Create(ctx, notif); err != nil {
-					log.Printf("Error recording SMS notification: %v", err)
+				log.Printf("SMS send error for task %s to %s: %v", task.ID, user.Phone, err)
+				// Release claim so another tick can retry
+				if delErr := s.notifRepo.Delete(ctx, notif.ID); delErr != nil {
+					log.Printf("Error releasing SMS claim: %v", delErr)
 				}
+			} else {
 				log.Printf("SMS notification sent for task %s to %s", task.Name, user.Phone)
 			}
 		}
