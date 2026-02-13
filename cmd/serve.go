@@ -31,12 +31,12 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start the PoolVibes web server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		addr, _ := cmd.Flags().GetString("addr")
+		addr := viper.GetString("addr")
 		if port := os.Getenv("PORT"); port != "" && !cmd.Flags().Changed("addr") {
 			addr = ":" + port
 		}
-		dbDSN, _ := cmd.Flags().GetString("db")
-		dbDriver, _ := cmd.Flags().GetString("db-driver")
+		dbDSN := viper.GetString("db")
+		dbDriver := viper.GetString("db-driver")
 
 		var (
 			db            *sql.DB
@@ -126,7 +126,7 @@ var serveCmd = &cobra.Command{
 		}
 
 		if emailNotifier != nil || smsNotifier != nil {
-			intervalStr, _ := cmd.Flags().GetString("notify-check-interval")
+			intervalStr := viper.GetString("notify-check-interval")
 			interval, err := time.ParseDuration(intervalStr)
 			if err != nil {
 				interval = 1 * time.Hour
@@ -151,6 +151,12 @@ func init() {
 	serveCmd.Flags().String("db", defaultDBPath(), "database connection string")
 	serveCmd.Flags().String("db-driver", "sqlite", "database driver (sqlite or postgres)")
 	serveCmd.Flags().String("notify-check-interval", "1h", "how often to check for due task notifications")
+
+	viper.BindPFlag("addr", serveCmd.Flags().Lookup("addr"))
+	viper.BindPFlag("db", serveCmd.Flags().Lookup("db"))
+	viper.BindPFlag("db-driver", serveCmd.Flags().Lookup("db-driver"))
+	viper.BindPFlag("notify-check-interval", serveCmd.Flags().Lookup("notify-check-interval"))
+
 	rootCmd.AddCommand(serveCmd)
 }
 
