@@ -11,6 +11,7 @@ PoolVibes can be configured through CLI flags, a config file, or environment var
 | `--addr` | `:8080` | Server listen address |
 | `--db` | `~/.poolvibes.db` | Database connection string |
 | `--db-driver` | `sqlite` | Database driver (`sqlite` or `postgres`) |
+| `--notify-check-interval` | `1h` | How often to check for due task notifications |
 
 ### Global Flags
 
@@ -55,6 +56,48 @@ export ADDR=":3000"
 export DB="/var/lib/poolvibes/pool.db"
 ./poolvibes serve
 ```
+
+## Notifications
+
+PoolVibes can send email and SMS notifications when tasks are due. Notifications are checked on a configurable interval (default: 1 hour) and sent at most once per task per day per channel.
+
+### Email (Resend)
+
+| Config Key | Env Var | Description |
+|------------|---------|-------------|
+| `resend_api_key` | `RESEND_API_KEY` | Resend API key |
+| `resend_from` | `RESEND_FROM` | Sender email address (default: `notifications@poolvibes.app`) |
+
+### SMS (Twilio)
+
+| Config Key | Env Var | Description |
+|------------|---------|-------------|
+| `twilio_account_sid` | `TWILIO_ACCOUNT_SID` | Twilio account SID |
+| `twilio_auth_token` | `TWILIO_AUTH_TOKEN` | Twilio auth token |
+| `twilio_from_number` | `TWILIO_FROM_NUMBER` | Twilio sender phone number |
+
+### Example Config
+
+```yaml
+resend_api_key: "re_..."
+resend_from: "notifications@yourdomain.com"
+twilio_account_sid: "AC..."
+twilio_auth_token: "..."
+twilio_from_number: "+15551234567"
+notify_check_interval: "1h"
+```
+
+Or via environment variables:
+
+```sh
+export RESEND_API_KEY="re_..."
+export RESEND_FROM="notifications@yourdomain.com"
+export TWILIO_ACCOUNT_SID="AC..."
+export TWILIO_AUTH_TOKEN="..."
+export TWILIO_FROM_NUMBER="+15551234567"
+```
+
+Notifications are only enabled when the corresponding API keys are configured. Users can toggle email/SMS preferences and set their phone number from the Settings tab in the app.
 
 ## Database
 

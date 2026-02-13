@@ -104,6 +104,33 @@ func (r *TaskRepo) Update(ctx context.Context, t *entities.Task) error {
 	return nil
 }
 
+func (r *TaskRepo) FindDueOnDate(ctx context.Context, date time.Time) ([]entities.Task, error) {
+	startOfDay := date.Format("2006-01-02") + "T00:00:00Z"
+	endOfDay := date.AddDate(0, 0, 1).Format("2006-01-02") + "T00:00:00Z"
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT id, user_id, name, description,
+			recurrence_frequency, recurrence_interval,
+			due_date, status, completed_at,
+			created_at, updated_at
+		FROM tasks
+		WHERE due_date >= ? AND due_date < ? AND status = 'pending'
+		ORDER BY due_date ASC`, startOfDay, endOfDay)
+	if err != nil {
+		return nil, fmt.Errorf("querying tasks due on date: %w", err)
+	}
+	defer rows.Close()
+
+	var tasks []entities.Task
+	for rows.Next() {
+		t, err := scanTask(rows)
+		if err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, *t)
+	}
+	return tasks, rows.Err()
+}
+
 func (r *TaskRepo) Delete(ctx context.Context, userID uuid.UUID, id uuid.UUID) error {
 	_, err := r.db.ExecContext(ctx, `DELETE FROM tasks WHERE id = ? AND user_id = ?`, id.String(), userID.String())
 	if err != nil {

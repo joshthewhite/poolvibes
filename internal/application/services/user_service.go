@@ -54,6 +54,27 @@ func (s *UserService) Update(ctx context.Context, cmd command.UpdateUser) (*enti
 	return user, nil
 }
 
+func (s *UserService) UpdatePreferences(ctx context.Context, cmd command.UpdateNotificationPreferences) (*entities.User, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	user, err := s.repo.FindByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, fmt.Errorf("user not found")
+	}
+	user.Phone = cmd.Phone
+	user.NotifyEmail = cmd.NotifyEmail
+	user.NotifySMS = cmd.NotifySMS
+	if err := s.repo.Update(ctx, user); err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
 func (s *UserService) Delete(ctx context.Context, id string) error {
 	uid, err := uuid.Parse(id)
 	if err != nil {

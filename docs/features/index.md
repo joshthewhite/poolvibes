@@ -21,3 +21,7 @@ Track your pool equipment with manufacturer details, warranty dates, and a full 
 ## [Chemicals](chemicals.md)
 
 Monitor your chemical inventory with stock levels, units, and low-stock alerts. Quick-adjust buttons let you update quantities without opening a form.
+
+## [Notifications](notifications.md)
+
+Get email and SMS alerts when maintenance tasks are due. Configure notification preferences per user from the Settings tab.

@@ -1,17 +1,24 @@
 package cmd
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"io/fs"
+	"log"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/joshthewhite/poolvibes/internal/application/services"
 	"github.com/joshthewhite/poolvibes/internal/domain/repositories"
 	"github.com/joshthewhite/poolvibes/internal/infrastructure/db/postgres"
 	"github.com/joshthewhite/poolvibes/internal/infrastructure/db/sqlite"
+	"github.com/joshthewhite/poolvibes/internal/infrastructure/notify"
 	"github.com/joshthewhite/poolvibes/internal/interface/web"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var migrationsFS fs.FS
@@ -29,15 +36,16 @@ var serveCmd = &cobra.Command{
 		dbDriver, _ := cmd.Flags().GetString("db-driver")
 
 		var (
-			db          *sql.DB
-			err         error
-			chemLogRepo repositories.ChemistryLogRepository
-			taskRepo    repositories.TaskRepository
-			equipRepo   repositories.EquipmentRepository
-			srRepo      repositories.ServiceRecordRepository
-			chemRepo    repositories.ChemicalRepository
-			userRepo    repositories.UserRepository
-			sessionRepo repositories.SessionRepository
+			db            *sql.DB
+			err           error
+			chemLogRepo   repositories.ChemistryLogRepository
+			taskRepo      repositories.TaskRepository
+			equipRepo     repositories.EquipmentRepository
+			srRepo        repositories.ServiceRecordRepository
+			chemRepo      repositories.ChemicalRepository
+			userRepo      repositories.UserRepository
+			sessionRepo   repositories.SessionRepository
+			taskNotifRepo repositories.TaskNotificationRepository
 		)
 
 		switch dbDriver {
@@ -59,6 +67,7 @@ var serveCmd = &cobra.Command{
 			chemRepo = sqlite.NewChemicalRepo(db)
 			userRepo = sqlite.NewUserRepo(db)
 			sessionRepo = sqlite.NewSessionRepo(db)
+			taskNotifRepo = sqlite.NewTaskNotificationRepo(db)
 
 		case "postgres":
 			db, err = postgres.Open(dbDSN)
@@ -78,6 +87,7 @@ var serveCmd = &cobra.Command{
 			chemRepo = postgres.NewChemicalRepo(db)
 			userRepo = postgres.NewUserRepo(db)
 			sessionRepo = postgres.NewSessionRepo(db)
+			taskNotifRepo = postgres.NewTaskNotificationRepo(db)
 
 		default:
 			return fmt.Errorf("unsupported database driver: %s (use 'sqlite' or 'postgres')", dbDriver)
@@ -90,6 +100,44 @@ var serveCmd = &cobra.Command{
 		equipSvc := services.NewEquipmentService(equipRepo, srRepo)
 		chemicSvc := services.NewChemicalService(chemRepo)
 
+		// Set up notification service
+		var emailNotifier services.Notifier
+		var smsNotifier services.Notifier
+
+		if apiKey := viper.GetString("resend_api_key"); apiKey != "" {
+			from := viper.GetString("resend_from")
+			if from == "" {
+				from = "notifications@poolvibes.app"
+			}
+			emailNotifier = notify.NewResendNotifier(apiKey, from)
+			log.Println("Email notifications enabled (Resend)")
+		}
+
+		if sid := viper.GetString("twilio_account_sid"); sid != "" {
+			token := viper.GetString("twilio_auth_token")
+			fromNum := viper.GetString("twilio_from_number")
+			if token != "" && fromNum != "" {
+				smsNotifier = notify.NewTwilioNotifier(sid, token, fromNum)
+				log.Println("SMS notifications enabled (Twilio)")
+			}
+		}
+
+		if emailNotifier != nil || smsNotifier != nil {
+			intervalStr, _ := cmd.Flags().GetString("notify-check-interval")
+			interval, err := time.ParseDuration(intervalStr)
+			if err != nil {
+				interval = 1 * time.Hour
+			}
+			notifSvc := services.NewNotificationService(taskRepo, userRepo, taskNotifRepo, emailNotifier, smsNotifier, interval)
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			go notifSvc.Start(ctx)
+		}
+
+		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+		defer stop()
+		_ = ctx // context available for graceful shutdown if needed
+
 		server := web.NewServer(authSvc, userSvc, chemSvc, taskSvc, equipSvc, chemicSvc)
 		return server.Start(addr)
 	},
@@ -99,6 +147,7 @@ func init() {
 	serveCmd.Flags().String("addr", ":8080", "server listen address")
 	serveCmd.Flags().String("db", defaultDBPath(), "database connection string")
 	serveCmd.Flags().String("db-driver", "sqlite", "database driver (sqlite or postgres)")
+	serveCmd.Flags().String("notify-check-interval", "1h", "how often to check for due task notifications")
 	rootCmd.AddCommand(serveCmd)
 }
 

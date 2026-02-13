@@ -17,6 +17,7 @@ nav = [
     { "Tasks" = "features/tasks.md" },
     { "Equipment" = "features/equipment.md" },
     { "Chemicals" = "features/chemicals.md" },
+    { "Notifications" = "features/notifications.md" },
   ] },
   { "Architecture" = "architecture.md" },
   { "Development" = "development.md" },
