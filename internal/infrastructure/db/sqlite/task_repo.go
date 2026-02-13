@@ -20,7 +20,14 @@ func NewTaskRepo(db *sql.DB) *TaskRepo {
 }
 
 func (r *TaskRepo) FindAll(ctx context.Context, userID uuid.UUID) ([]entities.Task, error) {
-	rows, err := r.db.QueryContext(ctx, `SELECT id, user_id, name, description, recurrence_frequency, recurrence_interval, due_date, status, completed_at, created_at, updated_at FROM tasks WHERE user_id = ? ORDER BY due_date ASC`, userID.String())
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT id, user_id, name, description,
+			recurrence_frequency, recurrence_interval,
+			due_date, status, completed_at,
+			created_at, updated_at
+		FROM tasks
+		WHERE user_id = ?
+		ORDER BY due_date ASC`, userID.String())
 	if err != nil {
 		return nil, fmt.Errorf("querying tasks: %w", err)
 	}
@@ -39,7 +46,13 @@ func (r *TaskRepo) FindAll(ctx context.Context, userID uuid.UUID) ([]entities.Ta
 }
 
 func (r *TaskRepo) FindByID(ctx context.Context, userID uuid.UUID, id uuid.UUID) (*entities.Task, error) {
-	row := r.db.QueryRowContext(ctx, `SELECT id, user_id, name, description, recurrence_frequency, recurrence_interval, due_date, status, completed_at, created_at, updated_at FROM tasks WHERE id = ? AND user_id = ?`, id.String(), userID.String())
+	row := r.db.QueryRowContext(ctx, `
+		SELECT id, user_id, name, description,
+			recurrence_frequency, recurrence_interval,
+			due_date, status, completed_at,
+			created_at, updated_at
+		FROM tasks
+		WHERE id = ? AND user_id = ?`, id.String(), userID.String())
 	t, err := scanTaskRow(row)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -57,7 +70,12 @@ func (r *TaskRepo) Create(ctx context.Context, t *entities.Task) error {
 		s := t.CompletedAt.Format(time.RFC3339)
 		completedAt = &s
 	}
-	_, err := r.db.ExecContext(ctx, `INSERT INTO tasks (id, user_id, name, description, recurrence_frequency, recurrence_interval, due_date, status, completed_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+	_, err := r.db.ExecContext(ctx, `
+		INSERT INTO tasks (id, user_id, name, description,
+			recurrence_frequency, recurrence_interval,
+			due_date, status, completed_at,
+			created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		t.ID.String(), t.UserID.String(), t.Name, t.Description, string(t.Recurrence.Frequency), t.Recurrence.Interval, t.DueDate.Format(time.RFC3339), string(t.Status), completedAt, t.CreatedAt.Format(time.RFC3339), t.UpdatedAt.Format(time.RFC3339))
 	if err != nil {
 		return fmt.Errorf("inserting task: %w", err)
@@ -72,7 +90,13 @@ func (r *TaskRepo) Update(ctx context.Context, t *entities.Task) error {
 		s := t.CompletedAt.Format(time.RFC3339)
 		completedAt = &s
 	}
-	_, err := r.db.ExecContext(ctx, `UPDATE tasks SET name = ?, description = ?, recurrence_frequency = ?, recurrence_interval = ?, due_date = ?, status = ?, completed_at = ?, updated_at = ? WHERE id = ? AND user_id = ?`,
+	_, err := r.db.ExecContext(ctx, `
+		UPDATE tasks
+		SET name = ?, description = ?,
+			recurrence_frequency = ?, recurrence_interval = ?,
+			due_date = ?, status = ?, completed_at = ?,
+			updated_at = ?
+		WHERE id = ? AND user_id = ?`,
 		t.Name, t.Description, string(t.Recurrence.Frequency), t.Recurrence.Interval, t.DueDate.Format(time.RFC3339), string(t.Status), completedAt, t.UpdatedAt.Format(time.RFC3339), t.ID.String(), t.UserID.String())
 	if err != nil {
 		return fmt.Errorf("updating task: %w", err)

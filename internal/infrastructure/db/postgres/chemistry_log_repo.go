@@ -19,7 +19,14 @@ func NewChemistryLogRepo(db *sql.DB) *ChemistryLogRepo {
 }
 
 func (r *ChemistryLogRepo) FindAll(ctx context.Context, userID uuid.UUID) ([]entities.ChemistryLog, error) {
-	rows, err := r.db.QueryContext(ctx, `SELECT id, user_id, ph, free_chlorine, combined_chlorine, total_alkalinity, cya, calcium_hardness, temperature, notes, tested_at, created_at, updated_at FROM chemistry_logs WHERE user_id = $1 ORDER BY tested_at DESC`, userID)
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT id, user_id, ph, free_chlorine, combined_chlorine,
+			total_alkalinity, cya, calcium_hardness,
+			temperature, notes, tested_at,
+			created_at, updated_at
+		FROM chemistry_logs
+		WHERE user_id = $1
+		ORDER BY tested_at DESC`, userID)
 	if err != nil {
 		return nil, fmt.Errorf("querying chemistry logs: %w", err)
 	}
@@ -38,7 +45,13 @@ func (r *ChemistryLogRepo) FindAll(ctx context.Context, userID uuid.UUID) ([]ent
 
 func (r *ChemistryLogRepo) FindByID(ctx context.Context, userID uuid.UUID, id uuid.UUID) (*entities.ChemistryLog, error) {
 	var l entities.ChemistryLog
-	err := r.db.QueryRowContext(ctx, `SELECT id, user_id, ph, free_chlorine, combined_chlorine, total_alkalinity, cya, calcium_hardness, temperature, notes, tested_at, created_at, updated_at FROM chemistry_logs WHERE id = $1 AND user_id = $2`, id, userID).
+	err := r.db.QueryRowContext(ctx, `
+		SELECT id, user_id, ph, free_chlorine, combined_chlorine,
+			total_alkalinity, cya, calcium_hardness,
+			temperature, notes, tested_at,
+			created_at, updated_at
+		FROM chemistry_logs
+		WHERE id = $1 AND user_id = $2`, id, userID).
 		Scan(&l.ID, &l.UserID, &l.PH, &l.FreeChlorine, &l.CombinedChlorine, &l.TotalAlkalinity, &l.CYA, &l.CalciumHardness, &l.Temperature, &l.Notes, &l.TestedAt, &l.CreatedAt, &l.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -50,7 +63,12 @@ func (r *ChemistryLogRepo) FindByID(ctx context.Context, userID uuid.UUID, id uu
 }
 
 func (r *ChemistryLogRepo) Create(ctx context.Context, l *entities.ChemistryLog) error {
-	_, err := r.db.ExecContext(ctx, `INSERT INTO chemistry_logs (id, user_id, ph, free_chlorine, combined_chlorine, total_alkalinity, cya, calcium_hardness, temperature, notes, tested_at, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+	_, err := r.db.ExecContext(ctx, `
+		INSERT INTO chemistry_logs (id, user_id, ph, free_chlorine,
+			combined_chlorine, total_alkalinity, cya, calcium_hardness,
+			temperature, notes, tested_at,
+			created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
 		l.ID, l.UserID, l.PH, l.FreeChlorine, l.CombinedChlorine, l.TotalAlkalinity, l.CYA, l.CalciumHardness, l.Temperature, l.Notes, l.TestedAt, l.CreatedAt, l.UpdatedAt)
 	if err != nil {
 		return fmt.Errorf("inserting chemistry log: %w", err)
@@ -60,7 +78,13 @@ func (r *ChemistryLogRepo) Create(ctx context.Context, l *entities.ChemistryLog)
 
 func (r *ChemistryLogRepo) Update(ctx context.Context, l *entities.ChemistryLog) error {
 	l.UpdatedAt = time.Now()
-	_, err := r.db.ExecContext(ctx, `UPDATE chemistry_logs SET ph = $1, free_chlorine = $2, combined_chlorine = $3, total_alkalinity = $4, cya = $5, calcium_hardness = $6, temperature = $7, notes = $8, tested_at = $9, updated_at = $10 WHERE id = $11 AND user_id = $12`,
+	_, err := r.db.ExecContext(ctx, `
+		UPDATE chemistry_logs
+		SET ph = $1, free_chlorine = $2, combined_chlorine = $3,
+			total_alkalinity = $4, cya = $5, calcium_hardness = $6,
+			temperature = $7, notes = $8, tested_at = $9,
+			updated_at = $10
+		WHERE id = $11 AND user_id = $12`,
 		l.PH, l.FreeChlorine, l.CombinedChlorine, l.TotalAlkalinity, l.CYA, l.CalciumHardness, l.Temperature, l.Notes, l.TestedAt, l.UpdatedAt, l.ID, l.UserID)
 	if err != nil {
 		return fmt.Errorf("updating chemistry log: %w", err)

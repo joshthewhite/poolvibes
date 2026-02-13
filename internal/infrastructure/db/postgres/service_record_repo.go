@@ -19,7 +19,13 @@ func NewServiceRecordRepo(db *sql.DB) *ServiceRecordRepo {
 }
 
 func (r *ServiceRecordRepo) FindByEquipmentID(ctx context.Context, userID uuid.UUID, equipmentID uuid.UUID) ([]entities.ServiceRecord, error) {
-	rows, err := r.db.QueryContext(ctx, `SELECT id, user_id, equipment_id, service_date, description, cost, technician, created_at, updated_at FROM service_records WHERE equipment_id = $1 AND user_id = $2 ORDER BY service_date DESC`, equipmentID, userID)
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT id, user_id, equipment_id, service_date,
+			description, cost, technician,
+			created_at, updated_at
+		FROM service_records
+		WHERE equipment_id = $1 AND user_id = $2
+		ORDER BY service_date DESC`, equipmentID, userID)
 	if err != nil {
 		return nil, fmt.Errorf("querying service records: %w", err)
 	}
@@ -37,7 +43,12 @@ func (r *ServiceRecordRepo) FindByEquipmentID(ctx context.Context, userID uuid.U
 }
 
 func (r *ServiceRecordRepo) FindByID(ctx context.Context, userID uuid.UUID, id uuid.UUID) (*entities.ServiceRecord, error) {
-	row := r.db.QueryRowContext(ctx, `SELECT id, user_id, equipment_id, service_date, description, cost, technician, created_at, updated_at FROM service_records WHERE id = $1 AND user_id = $2`, id, userID)
+	row := r.db.QueryRowContext(ctx, `
+		SELECT id, user_id, equipment_id, service_date,
+			description, cost, technician,
+			created_at, updated_at
+		FROM service_records
+		WHERE id = $1 AND user_id = $2`, id, userID)
 	sr, err := scanServiceRecordRow(row)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -49,7 +60,11 @@ func (r *ServiceRecordRepo) FindByID(ctx context.Context, userID uuid.UUID, id u
 }
 
 func (r *ServiceRecordRepo) Create(ctx context.Context, sr *entities.ServiceRecord) error {
-	_, err := r.db.ExecContext(ctx, `INSERT INTO service_records (id, user_id, equipment_id, service_date, description, cost, technician, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+	_, err := r.db.ExecContext(ctx, `
+		INSERT INTO service_records (id, user_id, equipment_id,
+			service_date, description, cost, technician,
+			created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 		sr.ID, sr.UserID, sr.EquipmentID, sr.ServiceDate, sr.Description, sr.Cost, sr.Technician, sr.CreatedAt, sr.UpdatedAt)
 	if err != nil {
 		return fmt.Errorf("inserting service record: %w", err)
@@ -59,7 +74,11 @@ func (r *ServiceRecordRepo) Create(ctx context.Context, sr *entities.ServiceReco
 
 func (r *ServiceRecordRepo) Update(ctx context.Context, sr *entities.ServiceRecord) error {
 	sr.UpdatedAt = time.Now()
-	_, err := r.db.ExecContext(ctx, `UPDATE service_records SET service_date = $1, description = $2, cost = $3, technician = $4, updated_at = $5 WHERE id = $6 AND user_id = $7`,
+	_, err := r.db.ExecContext(ctx, `
+		UPDATE service_records
+		SET service_date = $1, description = $2,
+			cost = $3, technician = $4, updated_at = $5
+		WHERE id = $6 AND user_id = $7`,
 		sr.ServiceDate, sr.Description, sr.Cost, sr.Technician, sr.UpdatedAt, sr.ID, sr.UserID)
 	if err != nil {
 		return fmt.Errorf("updating service record: %w", err)

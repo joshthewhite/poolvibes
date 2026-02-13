@@ -19,7 +19,11 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 }
 
 func (r *UserRepo) FindAll(ctx context.Context) ([]entities.User, error) {
-	rows, err := r.db.QueryContext(ctx, `SELECT id, email, password_hash, is_admin, is_disabled, created_at, updated_at FROM users ORDER BY created_at DESC`)
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT id, email, password_hash, is_admin, is_disabled,
+			created_at, updated_at
+		FROM users
+		ORDER BY created_at DESC`)
 	if err != nil {
 		return nil, fmt.Errorf("querying users: %w", err)
 	}
@@ -37,7 +41,11 @@ func (r *UserRepo) FindAll(ctx context.Context) ([]entities.User, error) {
 }
 
 func (r *UserRepo) FindByID(ctx context.Context, id uuid.UUID) (*entities.User, error) {
-	row := r.db.QueryRowContext(ctx, `SELECT id, email, password_hash, is_admin, is_disabled, created_at, updated_at FROM users WHERE id = $1`, id)
+	row := r.db.QueryRowContext(ctx, `
+		SELECT id, email, password_hash, is_admin, is_disabled,
+			created_at, updated_at
+		FROM users
+		WHERE id = $1`, id)
 	u, err := scanUserRow(row)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -49,7 +57,11 @@ func (r *UserRepo) FindByID(ctx context.Context, id uuid.UUID) (*entities.User, 
 }
 
 func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*entities.User, error) {
-	row := r.db.QueryRowContext(ctx, `SELECT id, email, password_hash, is_admin, is_disabled, created_at, updated_at FROM users WHERE email = $1`, email)
+	row := r.db.QueryRowContext(ctx, `
+		SELECT id, email, password_hash, is_admin, is_disabled,
+			created_at, updated_at
+		FROM users
+		WHERE email = $1`, email)
 	u, err := scanUserRow(row)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -61,7 +73,10 @@ func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*entities.Use
 }
 
 func (r *UserRepo) Create(ctx context.Context, u *entities.User) error {
-	_, err := r.db.ExecContext(ctx, `INSERT INTO users (id, email, password_hash, is_admin, is_disabled, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+	_, err := r.db.ExecContext(ctx, `
+		INSERT INTO users (id, email, password_hash, is_admin,
+			is_disabled, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)`,
 		u.ID, u.Email, u.PasswordHash, u.IsAdmin, u.IsDisabled, u.CreatedAt, u.UpdatedAt)
 	if err != nil {
 		return fmt.Errorf("inserting user: %w", err)
@@ -71,7 +86,12 @@ func (r *UserRepo) Create(ctx context.Context, u *entities.User) error {
 
 func (r *UserRepo) Update(ctx context.Context, u *entities.User) error {
 	u.UpdatedAt = time.Now()
-	_, err := r.db.ExecContext(ctx, `UPDATE users SET email = $1, password_hash = $2, is_admin = $3, is_disabled = $4, updated_at = $5 WHERE id = $6`,
+	_, err := r.db.ExecContext(ctx, `
+		UPDATE users
+		SET email = $1, password_hash = $2,
+			is_admin = $3, is_disabled = $4,
+			updated_at = $5
+		WHERE id = $6`,
 		u.Email, u.PasswordHash, u.IsAdmin, u.IsDisabled, u.UpdatedAt, u.ID)
 	if err != nil {
 		return fmt.Errorf("updating user: %w", err)

@@ -19,7 +19,14 @@ func NewEquipmentRepo(db *sql.DB) *EquipmentRepo {
 }
 
 func (r *EquipmentRepo) FindAll(ctx context.Context, userID uuid.UUID) ([]entities.Equipment, error) {
-	rows, err := r.db.QueryContext(ctx, `SELECT id, user_id, name, category, manufacturer, model, serial_number, install_date, warranty_expiry, created_at, updated_at FROM equipment WHERE user_id = ? ORDER BY name ASC`, userID.String())
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT id, user_id, name, category,
+			manufacturer, model, serial_number,
+			install_date, warranty_expiry,
+			created_at, updated_at
+		FROM equipment
+		WHERE user_id = ?
+		ORDER BY name ASC`, userID.String())
 	if err != nil {
 		return nil, fmt.Errorf("querying equipment: %w", err)
 	}
@@ -37,7 +44,13 @@ func (r *EquipmentRepo) FindAll(ctx context.Context, userID uuid.UUID) ([]entiti
 }
 
 func (r *EquipmentRepo) FindByID(ctx context.Context, userID uuid.UUID, id uuid.UUID) (*entities.Equipment, error) {
-	row := r.db.QueryRowContext(ctx, `SELECT id, user_id, name, category, manufacturer, model, serial_number, install_date, warranty_expiry, created_at, updated_at FROM equipment WHERE id = ? AND user_id = ?`, id.String(), userID.String())
+	row := r.db.QueryRowContext(ctx, `
+		SELECT id, user_id, name, category,
+			manufacturer, model, serial_number,
+			install_date, warranty_expiry,
+			created_at, updated_at
+		FROM equipment
+		WHERE id = ? AND user_id = ?`, id.String(), userID.String())
 	e, err := scanEquipmentRow(row)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -49,7 +62,12 @@ func (r *EquipmentRepo) FindByID(ctx context.Context, userID uuid.UUID, id uuid.
 }
 
 func (r *EquipmentRepo) Create(ctx context.Context, e *entities.Equipment) error {
-	_, err := r.db.ExecContext(ctx, `INSERT INTO equipment (id, user_id, name, category, manufacturer, model, serial_number, install_date, warranty_expiry, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+	_, err := r.db.ExecContext(ctx, `
+		INSERT INTO equipment (id, user_id, name, category,
+			manufacturer, model, serial_number,
+			install_date, warranty_expiry,
+			created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		e.ID.String(), e.UserID.String(), e.Name, string(e.Category), e.Manufacturer, e.Model, e.SerialNumber, fmtTimePtr(e.InstallDate), fmtTimePtr(e.WarrantyExpiry), e.CreatedAt.Format(time.RFC3339), e.UpdatedAt.Format(time.RFC3339))
 	if err != nil {
 		return fmt.Errorf("inserting equipment: %w", err)
@@ -59,7 +77,13 @@ func (r *EquipmentRepo) Create(ctx context.Context, e *entities.Equipment) error
 
 func (r *EquipmentRepo) Update(ctx context.Context, e *entities.Equipment) error {
 	e.UpdatedAt = time.Now()
-	_, err := r.db.ExecContext(ctx, `UPDATE equipment SET name = ?, category = ?, manufacturer = ?, model = ?, serial_number = ?, install_date = ?, warranty_expiry = ?, updated_at = ? WHERE id = ? AND user_id = ?`,
+	_, err := r.db.ExecContext(ctx, `
+		UPDATE equipment
+		SET name = ?, category = ?,
+			manufacturer = ?, model = ?, serial_number = ?,
+			install_date = ?, warranty_expiry = ?,
+			updated_at = ?
+		WHERE id = ? AND user_id = ?`,
 		e.Name, string(e.Category), e.Manufacturer, e.Model, e.SerialNumber, fmtTimePtr(e.InstallDate), fmtTimePtr(e.WarrantyExpiry), e.UpdatedAt.Format(time.RFC3339), e.ID.String(), e.UserID.String())
 	if err != nil {
 		return fmt.Errorf("updating equipment: %w", err)

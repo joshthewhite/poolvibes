@@ -20,7 +20,13 @@ func NewChemicalRepo(db *sql.DB) *ChemicalRepo {
 }
 
 func (r *ChemicalRepo) FindAll(ctx context.Context, userID uuid.UUID) ([]entities.Chemical, error) {
-	rows, err := r.db.QueryContext(ctx, `SELECT id, user_id, name, type, stock_amount, stock_unit, alert_threshold, last_purchased, created_at, updated_at FROM chemicals WHERE user_id = ? ORDER BY name ASC`, userID.String())
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT id, user_id, name, type,
+			stock_amount, stock_unit, alert_threshold,
+			last_purchased, created_at, updated_at
+		FROM chemicals
+		WHERE user_id = ?
+		ORDER BY name ASC`, userID.String())
 	if err != nil {
 		return nil, fmt.Errorf("querying chemicals: %w", err)
 	}
@@ -38,7 +44,12 @@ func (r *ChemicalRepo) FindAll(ctx context.Context, userID uuid.UUID) ([]entitie
 }
 
 func (r *ChemicalRepo) FindByID(ctx context.Context, userID uuid.UUID, id uuid.UUID) (*entities.Chemical, error) {
-	row := r.db.QueryRowContext(ctx, `SELECT id, user_id, name, type, stock_amount, stock_unit, alert_threshold, last_purchased, created_at, updated_at FROM chemicals WHERE id = ? AND user_id = ?`, id.String(), userID.String())
+	row := r.db.QueryRowContext(ctx, `
+		SELECT id, user_id, name, type,
+			stock_amount, stock_unit, alert_threshold,
+			last_purchased, created_at, updated_at
+		FROM chemicals
+		WHERE id = ? AND user_id = ?`, id.String(), userID.String())
 	c, err := scanChemicalRow(row)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -50,7 +61,11 @@ func (r *ChemicalRepo) FindByID(ctx context.Context, userID uuid.UUID, id uuid.U
 }
 
 func (r *ChemicalRepo) Create(ctx context.Context, c *entities.Chemical) error {
-	_, err := r.db.ExecContext(ctx, `INSERT INTO chemicals (id, user_id, name, type, stock_amount, stock_unit, alert_threshold, last_purchased, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+	_, err := r.db.ExecContext(ctx, `
+		INSERT INTO chemicals (id, user_id, name, type,
+			stock_amount, stock_unit, alert_threshold,
+			last_purchased, created_at, updated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		c.ID.String(), c.UserID.String(), c.Name, string(c.Type), c.Stock.Amount, string(c.Stock.Unit), c.AlertThreshold, fmtTimePtr(c.LastPurchased), c.CreatedAt.Format(time.RFC3339), c.UpdatedAt.Format(time.RFC3339))
 	if err != nil {
 		return fmt.Errorf("inserting chemical: %w", err)
@@ -60,7 +75,13 @@ func (r *ChemicalRepo) Create(ctx context.Context, c *entities.Chemical) error {
 
 func (r *ChemicalRepo) Update(ctx context.Context, c *entities.Chemical) error {
 	c.UpdatedAt = time.Now()
-	_, err := r.db.ExecContext(ctx, `UPDATE chemicals SET name = ?, type = ?, stock_amount = ?, stock_unit = ?, alert_threshold = ?, last_purchased = ?, updated_at = ? WHERE id = ? AND user_id = ?`,
+	_, err := r.db.ExecContext(ctx, `
+		UPDATE chemicals
+		SET name = ?, type = ?,
+			stock_amount = ?, stock_unit = ?,
+			alert_threshold = ?, last_purchased = ?,
+			updated_at = ?
+		WHERE id = ? AND user_id = ?`,
 		c.Name, string(c.Type), c.Stock.Amount, string(c.Stock.Unit), c.AlertThreshold, fmtTimePtr(c.LastPurchased), c.UpdatedAt.Format(time.RFC3339), c.ID.String(), c.UserID.String())
 	if err != nil {
 		return fmt.Errorf("updating chemical: %w", err)
