@@ -20,23 +20,35 @@ func NewTaskService(repo repositories.TaskRepository) *TaskService {
 }
 
 func (s *TaskService) List(ctx context.Context) ([]entities.Task, error) {
-	return s.repo.FindAll(ctx)
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return s.repo.FindAll(ctx, userID)
 }
 
 func (s *TaskService) Get(ctx context.Context, id string) (*entities.Task, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	return s.repo.FindByID(ctx, uid)
+	return s.repo.FindByID(ctx, userID, uid)
 }
 
 func (s *TaskService) Create(ctx context.Context, cmd command.CreateTask) (*entities.Task, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	rec, err := valueobjects.NewRecurrence(valueobjects.Frequency(cmd.RecurrenceFrequency), cmd.RecurrenceInterval)
 	if err != nil {
 		return nil, fmt.Errorf("recurrence: %w", err)
 	}
-	task := entities.NewTask(cmd.Name, cmd.Description, rec, cmd.DueDate)
+	task := entities.NewTask(userID, cmd.Name, cmd.Description, rec, cmd.DueDate)
 	if err := task.Validate(); err != nil {
 		return nil, fmt.Errorf("validation: %w", err)
 	}
@@ -47,11 +59,15 @@ func (s *TaskService) Create(ctx context.Context, cmd command.CreateTask) (*enti
 }
 
 func (s *TaskService) Update(ctx context.Context, cmd command.UpdateTask) (*entities.Task, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(cmd.ID)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	task, err := s.repo.FindByID(ctx, uid)
+	task, err := s.repo.FindByID(ctx, userID, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -76,11 +92,15 @@ func (s *TaskService) Update(ctx context.Context, cmd command.UpdateTask) (*enti
 }
 
 func (s *TaskService) Complete(ctx context.Context, id string) (*entities.Task, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	task, err := s.repo.FindByID(ctx, uid)
+	task, err := s.repo.FindByID(ctx, userID, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -98,9 +118,13 @@ func (s *TaskService) Complete(ctx context.Context, id string) (*entities.Task, 
 }
 
 func (s *TaskService) Delete(ctx context.Context, id string) error {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return fmt.Errorf("invalid ID: %w", err)
 	}
-	return s.repo.Delete(ctx, uid)
+	return s.repo.Delete(ctx, userID, uid)
 }

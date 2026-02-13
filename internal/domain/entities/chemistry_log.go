@@ -9,6 +9,7 @@ import (
 
 type ChemistryLog struct {
 	ID               uuid.UUID
+	UserID           uuid.UUID
 	PH               float64
 	FreeChlorine     float64
 	CombinedChlorine float64
@@ -22,10 +23,11 @@ type ChemistryLog struct {
 	UpdatedAt        time.Time
 }
 
-func NewChemistryLog(ph, freeChlorine, combinedChlorine, totalAlkalinity, cya, calciumHardness, temperature float64, notes string, testedAt time.Time) *ChemistryLog {
+func NewChemistryLog(userID uuid.UUID, ph, freeChlorine, combinedChlorine, totalAlkalinity, cya, calciumHardness, temperature float64, notes string, testedAt time.Time) *ChemistryLog {
 	now := time.Now()
 	return &ChemistryLog{
 		ID:               uuid.Must(uuid.NewV7()),
+		UserID:           userID,
 		PH:               ph,
 		FreeChlorine:     freeChlorine,
 		CombinedChlorine: combinedChlorine,

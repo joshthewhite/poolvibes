@@ -21,6 +21,7 @@ const (
 
 type Chemical struct {
 	ID             uuid.UUID
+	UserID         uuid.UUID
 	Name           string
 	Type           ChemicalType
 	Stock          valueobjects.Quantity
@@ -30,10 +31,11 @@ type Chemical struct {
 	UpdatedAt      time.Time
 }
 
-func NewChemical(name string, chemType ChemicalType, stock valueobjects.Quantity, alertThreshold float64) *Chemical {
+func NewChemical(userID uuid.UUID, name string, chemType ChemicalType, stock valueobjects.Quantity, alertThreshold float64) *Chemical {
 	now := time.Now()
 	return &Chemical{
 		ID:             uuid.Must(uuid.NewV7()),
+		UserID:         userID,
 		Name:           name,
 		Type:           chemType,
 		Stock:          stock,

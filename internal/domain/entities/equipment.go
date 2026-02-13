@@ -20,6 +20,7 @@ const (
 
 type Equipment struct {
 	ID             uuid.UUID
+	UserID         uuid.UUID
 	Name           string
 	Category       EquipmentCategory
 	Manufacturer   string
@@ -32,10 +33,11 @@ type Equipment struct {
 	UpdatedAt      time.Time
 }
 
-func NewEquipment(name string, category EquipmentCategory, manufacturer, model, serialNumber string, installDate, warrantyExpiry *time.Time) *Equipment {
+func NewEquipment(userID uuid.UUID, name string, category EquipmentCategory, manufacturer, model, serialNumber string, installDate, warrantyExpiry *time.Time) *Equipment {
 	now := time.Now()
 	return &Equipment{
 		ID:             uuid.Must(uuid.NewV7()),
+		UserID:         userID,
 		Name:           name,
 		Category:       category,
 		Manufacturer:   manufacturer,

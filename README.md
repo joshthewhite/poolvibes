@@ -4,6 +4,8 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 
 ## Features
 
+- **Authentication** — Email/password sign-up and sign-in with cookie-based sessions. Per-user data isolation (multi-tenancy).
+- **Admin Panel** — Admin users can manage accounts (enable/disable users, grant admin access).
 - **Water Chemistry** — Log pH, free/combined chlorine, total alkalinity, CYA, calcium hardness, and temperature. Out-of-range values are highlighted automatically.
 - **Task Scheduling** — Create recurring maintenance tasks (daily, weekly, monthly). Completing a task auto-generates the next occurrence.
 - **Equipment Tracking** — Track pool equipment with categories, manufacturer info, warranty status, and service history.
@@ -24,7 +26,7 @@ go build -o poolvibes .
 ./poolvibes serve
 ```
 
-Open http://localhost:8080
+Open http://localhost:8080 — you'll be redirected to sign up on first visit.
 
 ### Options
 
@@ -46,7 +48,7 @@ poolvibes/
 ├── migrations/                      # SQLite migrations (embedded)
 └── internal/
     ├── domain/
-    │   ├── entities/                # ChemistryLog, Task, Equipment, ServiceRecord, Chemical
+    │   ├── entities/                # User, Session, ChemistryLog, Task, Equipment, etc.
     │   ├── valueobjects/            # Recurrence, Quantity
     │   └── repositories/            # interfaces
     ├── application/

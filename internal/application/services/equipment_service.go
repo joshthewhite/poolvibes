@@ -20,12 +20,16 @@ func NewEquipmentService(eqRepo repositories.EquipmentRepository, srRepo reposit
 }
 
 func (s *EquipmentService) List(ctx context.Context) ([]entities.Equipment, error) {
-	items, err := s.eqRepo.FindAll(ctx)
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	items, err := s.eqRepo.FindAll(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 	for i := range items {
-		records, err := s.srRepo.FindByEquipmentID(ctx, items[i].ID)
+		records, err := s.srRepo.FindByEquipmentID(ctx, userID, items[i].ID)
 		if err != nil {
 			return nil, fmt.Errorf("loading service records: %w", err)
 		}
@@ -35,18 +39,22 @@ func (s *EquipmentService) List(ctx context.Context) ([]entities.Equipment, erro
 }
 
 func (s *EquipmentService) Get(ctx context.Context, id string) (*entities.Equipment, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	eq, err := s.eqRepo.FindByID(ctx, uid)
+	eq, err := s.eqRepo.FindByID(ctx, userID, uid)
 	if err != nil {
 		return nil, err
 	}
 	if eq == nil {
 		return nil, nil
 	}
-	records, err := s.srRepo.FindByEquipmentID(ctx, eq.ID)
+	records, err := s.srRepo.FindByEquipmentID(ctx, userID, eq.ID)
 	if err != nil {
 		return nil, fmt.Errorf("loading service records: %w", err)
 	}
@@ -55,7 +63,11 @@ func (s *EquipmentService) Get(ctx context.Context, id string) (*entities.Equipm
 }
 
 func (s *EquipmentService) Create(ctx context.Context, cmd command.CreateEquipment) (*entities.Equipment, error) {
-	eq := entities.NewEquipment(cmd.Name, entities.EquipmentCategory(cmd.Category), cmd.Manufacturer, cmd.Model, cmd.SerialNumber, cmd.InstallDate, cmd.WarrantyExpiry)
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	eq := entities.NewEquipment(userID, cmd.Name, entities.EquipmentCategory(cmd.Category), cmd.Manufacturer, cmd.Model, cmd.SerialNumber, cmd.InstallDate, cmd.WarrantyExpiry)
 	if err := eq.Validate(); err != nil {
 		return nil, fmt.Errorf("validation: %w", err)
 	}
@@ -66,11 +78,15 @@ func (s *EquipmentService) Create(ctx context.Context, cmd command.CreateEquipme
 }
 
 func (s *EquipmentService) Update(ctx context.Context, cmd command.UpdateEquipment) (*entities.Equipment, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(cmd.ID)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	eq, err := s.eqRepo.FindByID(ctx, uid)
+	eq, err := s.eqRepo.FindByID(ctx, userID, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -94,19 +110,27 @@ func (s *EquipmentService) Update(ctx context.Context, cmd command.UpdateEquipme
 }
 
 func (s *EquipmentService) Delete(ctx context.Context, id string) error {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return fmt.Errorf("invalid ID: %w", err)
 	}
-	return s.eqRepo.Delete(ctx, uid)
+	return s.eqRepo.Delete(ctx, userID, uid)
 }
 
 func (s *EquipmentService) AddServiceRecord(ctx context.Context, cmd command.CreateServiceRecord) (*entities.ServiceRecord, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	eqID, err := uuid.Parse(cmd.EquipmentID)
 	if err != nil {
 		return nil, fmt.Errorf("invalid equipment ID: %w", err)
 	}
-	sr := entities.NewServiceRecord(eqID, cmd.ServiceDate, cmd.Description, cmd.Cost, cmd.Technician)
+	sr := entities.NewServiceRecord(userID, eqID, cmd.ServiceDate, cmd.Description, cmd.Cost, cmd.Technician)
 	if err := sr.Validate(); err != nil {
 		return nil, fmt.Errorf("validation: %w", err)
 	}
@@ -117,9 +141,13 @@ func (s *EquipmentService) AddServiceRecord(ctx context.Context, cmd command.Cre
 }
 
 func (s *EquipmentService) DeleteServiceRecord(ctx context.Context, id string) error {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return fmt.Errorf("invalid ID: %w", err)
 	}
-	return s.srRepo.Delete(ctx, uid)
+	return s.srRepo.Delete(ctx, userID, uid)
 }

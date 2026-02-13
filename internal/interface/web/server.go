@@ -15,15 +15,19 @@ var layoutHTML embed.FS
 
 type Server struct {
 	mux       *http.ServeMux
+	authSvc   *services.AuthService
+	userSvc   *services.UserService
 	chemSvc   *services.ChemistryService
 	taskSvc   *services.TaskService
 	equipSvc  *services.EquipmentService
 	chemicSvc *services.ChemicalService
 }
 
-func NewServer(chemSvc *services.ChemistryService, taskSvc *services.TaskService, equipSvc *services.EquipmentService, chemicSvc *services.ChemicalService) *Server {
+func NewServer(authSvc *services.AuthService, userSvc *services.UserService, chemSvc *services.ChemistryService, taskSvc *services.TaskService, equipSvc *services.EquipmentService, chemicSvc *services.ChemicalService) *Server {
 	s := &Server{
 		mux:       http.NewServeMux(),
+		authSvc:   authSvc,
+		userSvc:   userSvc,
 		chemSvc:   chemSvc,
 		taskSvc:   taskSvc,
 		equipSvc:  equipSvc,
@@ -35,45 +39,67 @@ func NewServer(chemSvc *services.ChemistryService, taskSvc *services.TaskService
 
 func (s *Server) setupRoutes() {
 	pageHandler := handlers.NewPageHandler(layoutHTML)
+	authHandler := handlers.NewAuthHandler(s.authSvc)
 	chemHandler := handlers.NewChemistryHandler(s.chemSvc)
 	taskHandler := handlers.NewTaskHandler(s.taskSvc)
 	equipHandler := handlers.NewEquipmentHandler(s.equipSvc)
 	chemicHandler := handlers.NewChemicalHandler(s.chemicSvc)
+	adminHandler := handlers.NewAdminHandler(s.userSvc)
 
-	s.mux.HandleFunc("GET /{$}", pageHandler.Index)
+	auth := func(h http.HandlerFunc) http.HandlerFunc { return requireAuth(s.authSvc, h) }
+	admin := func(h http.HandlerFunc) http.HandlerFunc { return requireAdmin(s.authSvc, h) }
 
-	s.mux.HandleFunc("GET /chemistry", chemHandler.List)
-	s.mux.HandleFunc("GET /chemistry/new", chemHandler.NewForm)
-	s.mux.HandleFunc("POST /chemistry", chemHandler.Create)
-	s.mux.HandleFunc("GET /chemistry/{id}/edit", chemHandler.EditForm)
-	s.mux.HandleFunc("PUT /chemistry/{id}", chemHandler.Update)
-	s.mux.HandleFunc("DELETE /chemistry/{id}", chemHandler.Delete)
+	// Auth routes (no auth required)
+	s.mux.HandleFunc("GET /login", authHandler.LoginPage)
+	s.mux.HandleFunc("POST /login", authHandler.Login)
+	s.mux.HandleFunc("GET /signup", authHandler.SignupPage)
+	s.mux.HandleFunc("POST /signup", authHandler.Signup)
+	s.mux.HandleFunc("POST /logout", authHandler.Logout)
 
-	s.mux.HandleFunc("GET /tasks", taskHandler.List)
-	s.mux.HandleFunc("GET /tasks/new", taskHandler.NewForm)
-	s.mux.HandleFunc("POST /tasks", taskHandler.Create)
-	s.mux.HandleFunc("GET /tasks/{id}/edit", taskHandler.EditForm)
-	s.mux.HandleFunc("PUT /tasks/{id}", taskHandler.Update)
-	s.mux.HandleFunc("POST /tasks/{id}/complete", taskHandler.Complete)
-	s.mux.HandleFunc("DELETE /tasks/{id}", taskHandler.Delete)
+	// Page (auth required)
+	s.mux.HandleFunc("GET /{$}", auth(pageHandler.Index))
 
-	s.mux.HandleFunc("GET /equipment", equipHandler.List)
-	s.mux.HandleFunc("GET /equipment/new", equipHandler.NewForm)
-	s.mux.HandleFunc("POST /equipment", equipHandler.Create)
-	s.mux.HandleFunc("GET /equipment/{id}/edit", equipHandler.EditForm)
-	s.mux.HandleFunc("PUT /equipment/{id}", equipHandler.Update)
-	s.mux.HandleFunc("DELETE /equipment/{id}", equipHandler.Delete)
-	s.mux.HandleFunc("GET /equipment/{id}/service-records/new", equipHandler.NewServiceRecordForm)
-	s.mux.HandleFunc("POST /equipment/{id}/service-records", equipHandler.CreateServiceRecord)
-	s.mux.HandleFunc("DELETE /equipment/{id}/service-records/{recordId}", equipHandler.DeleteServiceRecord)
+	// Chemistry (auth required)
+	s.mux.HandleFunc("GET /chemistry", auth(chemHandler.List))
+	s.mux.HandleFunc("GET /chemistry/new", auth(chemHandler.NewForm))
+	s.mux.HandleFunc("POST /chemistry", auth(chemHandler.Create))
+	s.mux.HandleFunc("GET /chemistry/{id}/edit", auth(chemHandler.EditForm))
+	s.mux.HandleFunc("PUT /chemistry/{id}", auth(chemHandler.Update))
+	s.mux.HandleFunc("DELETE /chemistry/{id}", auth(chemHandler.Delete))
 
-	s.mux.HandleFunc("GET /chemicals", chemicHandler.List)
-	s.mux.HandleFunc("GET /chemicals/new", chemicHandler.NewForm)
-	s.mux.HandleFunc("POST /chemicals", chemicHandler.Create)
-	s.mux.HandleFunc("GET /chemicals/{id}/edit", chemicHandler.EditForm)
-	s.mux.HandleFunc("PUT /chemicals/{id}", chemicHandler.Update)
-	s.mux.HandleFunc("POST /chemicals/{id}/adjust", chemicHandler.AdjustStock)
-	s.mux.HandleFunc("DELETE /chemicals/{id}", chemicHandler.Delete)
+	// Tasks (auth required)
+	s.mux.HandleFunc("GET /tasks", auth(taskHandler.List))
+	s.mux.HandleFunc("GET /tasks/new", auth(taskHandler.NewForm))
+	s.mux.HandleFunc("POST /tasks", auth(taskHandler.Create))
+	s.mux.HandleFunc("GET /tasks/{id}/edit", auth(taskHandler.EditForm))
+	s.mux.HandleFunc("PUT /tasks/{id}", auth(taskHandler.Update))
+	s.mux.HandleFunc("POST /tasks/{id}/complete", auth(taskHandler.Complete))
+	s.mux.HandleFunc("DELETE /tasks/{id}", auth(taskHandler.Delete))
+
+	// Equipment (auth required)
+	s.mux.HandleFunc("GET /equipment", auth(equipHandler.List))
+	s.mux.HandleFunc("GET /equipment/new", auth(equipHandler.NewForm))
+	s.mux.HandleFunc("POST /equipment", auth(equipHandler.Create))
+	s.mux.HandleFunc("GET /equipment/{id}/edit", auth(equipHandler.EditForm))
+	s.mux.HandleFunc("PUT /equipment/{id}", auth(equipHandler.Update))
+	s.mux.HandleFunc("DELETE /equipment/{id}", auth(equipHandler.Delete))
+	s.mux.HandleFunc("GET /equipment/{id}/service-records/new", auth(equipHandler.NewServiceRecordForm))
+	s.mux.HandleFunc("POST /equipment/{id}/service-records", auth(equipHandler.CreateServiceRecord))
+	s.mux.HandleFunc("DELETE /equipment/{id}/service-records/{recordId}", auth(equipHandler.DeleteServiceRecord))
+
+	// Chemicals (auth required)
+	s.mux.HandleFunc("GET /chemicals", auth(chemicHandler.List))
+	s.mux.HandleFunc("GET /chemicals/new", auth(chemicHandler.NewForm))
+	s.mux.HandleFunc("POST /chemicals", auth(chemicHandler.Create))
+	s.mux.HandleFunc("GET /chemicals/{id}/edit", auth(chemicHandler.EditForm))
+	s.mux.HandleFunc("PUT /chemicals/{id}", auth(chemicHandler.Update))
+	s.mux.HandleFunc("POST /chemicals/{id}/adjust", auth(chemicHandler.AdjustStock))
+	s.mux.HandleFunc("DELETE /chemicals/{id}", auth(chemicHandler.Delete))
+
+	// Admin (admin required)
+	s.mux.HandleFunc("GET /admin/users", admin(adminHandler.ListUsers))
+	s.mux.HandleFunc("GET /admin/users/{id}/edit", admin(adminHandler.EditUser))
+	s.mux.HandleFunc("PUT /admin/users/{id}", admin(adminHandler.UpdateUser))
 }
 
 func (s *Server) Start(addr string) error {

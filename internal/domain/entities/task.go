@@ -18,6 +18,7 @@ const (
 
 type Task struct {
 	ID          uuid.UUID
+	UserID      uuid.UUID
 	Name        string
 	Description string
 	Recurrence  valueobjects.Recurrence
@@ -28,10 +29,11 @@ type Task struct {
 	UpdatedAt   time.Time
 }
 
-func NewTask(name, description string, recurrence valueobjects.Recurrence, dueDate time.Time) *Task {
+func NewTask(userID uuid.UUID, name, description string, recurrence valueobjects.Recurrence, dueDate time.Time) *Task {
 	now := time.Now()
 	return &Task{
 		ID:          uuid.Must(uuid.NewV7()),
+		UserID:      userID,
 		Name:        name,
 		Description: description,
 		Recurrence:  recurrence,
@@ -58,7 +60,7 @@ func (t *Task) Complete() *Task {
 	t.CompletedAt = &now
 	t.UpdatedAt = now
 
-	next := NewTask(t.Name, t.Description, t.Recurrence, t.Recurrence.NextDueDate(t.DueDate))
+	next := NewTask(t.UserID, t.Name, t.Description, t.Recurrence, t.Recurrence.NextDueDate(t.DueDate))
 	return next
 }
 

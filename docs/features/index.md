@@ -1,6 +1,10 @@
 # Features
 
-PoolVibes provides four core features for managing your pool:
+PoolVibes provides core features for managing your pool, with per-user data isolation.
+
+## Authentication & User Management
+
+Email/password authentication with cookie-based sessions. Each user's data is fully isolated — you only see your own chemistry logs, tasks, equipment, and chemicals. Admin users can manage accounts from the Admin tab.
 
 ## [Water Chemistry](water-chemistry.md)
 

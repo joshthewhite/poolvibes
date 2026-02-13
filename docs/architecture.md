@@ -20,7 +20,7 @@ PoolVibes follows Domain-Driven Design (DDD) with a layered architecture. Depend
 
 Pure business logic with no external dependencies. Contains:
 
-- **Entities** — `ChemistryLog`, `Task`, `Equipment`, `ServiceRecord`, `Chemical` with validation rules and business methods
+- **Entities** — `User`, `Session`, `ChemistryLog`, `Task`, `Equipment`, `ServiceRecord`, `Chemical` with validation rules and business methods
 - **Value Objects** — `Recurrence` (frequency + interval with next-due-date calculation), `Quantity` (amount + unit)
 - **Repository Interfaces** — Abstractions that infrastructure implements
 
@@ -29,7 +29,8 @@ Pure business logic with no external dependencies. Contains:
 Orchestrates domain logic through:
 
 - **Commands** — CRUD command structs (DTOs) for each feature
-- **Services** — Business logic coordination (e.g., auto-rescheduling tasks on completion, stock adjustment validation)
+- **Services** — Business logic coordination (auth, user management, auto-rescheduling tasks on completion, stock adjustment validation)
+- **Context Helpers** — `WithUser`/`UserFromContext` for propagating the authenticated user
 
 ### Infrastructure
 
@@ -44,7 +45,8 @@ External concerns:
 User-facing layer:
 
 - **HTTP Server** — Go `http.ServeMux` with method-based routing (`GET /tasks`, `POST /tasks`, etc.)
-- **Handlers** — SSE handlers using Datastar for reactive UI updates
+- **Middleware** — `requireAuth` (session cookie → user context), `requireAdmin` (admin check)
+- **Handlers** — SSE handlers using Datastar for reactive UI updates; standalone HTML auth pages
 - **Templates** — Single `layout.html` serving the SPA shell
 
 ## Directory Structure
@@ -87,8 +89,9 @@ poolvibes/
 ## Request Flow
 
 1. Browser sends request (or Datastar sends SSE request via `data-*` attributes)
-2. `http.ServeMux` routes to the appropriate handler
-3. Handler parses the request into a command struct
-4. Service validates and executes business logic via repository interfaces
-5. SQLite repository performs the database operation
-6. Handler sends SSE response back, patching the UI via Datastar
+2. Auth middleware checks session cookie, loads user into context
+3. `http.ServeMux` routes to the appropriate handler
+4. Handler parses the request into a command struct
+5. Service extracts user ID from context, validates and executes business logic via repository interfaces
+6. SQLite repository performs the database operation (scoped to user)
+7. Handler sends SSE response back, patching the UI via Datastar

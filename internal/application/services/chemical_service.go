@@ -20,23 +20,35 @@ func NewChemicalService(repo repositories.ChemicalRepository) *ChemicalService {
 }
 
 func (s *ChemicalService) List(ctx context.Context) ([]entities.Chemical, error) {
-	return s.repo.FindAll(ctx)
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return s.repo.FindAll(ctx, userID)
 }
 
 func (s *ChemicalService) Get(ctx context.Context, id string) (*entities.Chemical, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	return s.repo.FindByID(ctx, uid)
+	return s.repo.FindByID(ctx, userID, uid)
 }
 
 func (s *ChemicalService) Create(ctx context.Context, cmd command.CreateChemical) (*entities.Chemical, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	stock, err := valueobjects.NewQuantity(cmd.StockAmount, valueobjects.Unit(cmd.StockUnit))
 	if err != nil {
 		return nil, fmt.Errorf("stock: %w", err)
 	}
-	chem := entities.NewChemical(cmd.Name, entities.ChemicalType(cmd.Type), stock, cmd.AlertThreshold)
+	chem := entities.NewChemical(userID, cmd.Name, entities.ChemicalType(cmd.Type), stock, cmd.AlertThreshold)
 	if err := chem.Validate(); err != nil {
 		return nil, fmt.Errorf("validation: %w", err)
 	}
@@ -47,11 +59,15 @@ func (s *ChemicalService) Create(ctx context.Context, cmd command.CreateChemical
 }
 
 func (s *ChemicalService) Update(ctx context.Context, cmd command.UpdateChemical) (*entities.Chemical, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(cmd.ID)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	chem, err := s.repo.FindByID(ctx, uid)
+	chem, err := s.repo.FindByID(ctx, userID, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -76,11 +92,15 @@ func (s *ChemicalService) Update(ctx context.Context, cmd command.UpdateChemical
 }
 
 func (s *ChemicalService) AdjustStock(ctx context.Context, cmd command.AdjustChemicalStock) (*entities.Chemical, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(cmd.ID)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	chem, err := s.repo.FindByID(ctx, uid)
+	chem, err := s.repo.FindByID(ctx, userID, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -97,9 +117,13 @@ func (s *ChemicalService) AdjustStock(ctx context.Context, cmd command.AdjustChe
 }
 
 func (s *ChemicalService) Delete(ctx context.Context, id string) error {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return fmt.Errorf("invalid ID: %w", err)
 	}
-	return s.repo.Delete(ctx, uid)
+	return s.repo.Delete(ctx, userID, uid)
 }

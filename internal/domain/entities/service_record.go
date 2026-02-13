@@ -9,6 +9,7 @@ import (
 
 type ServiceRecord struct {
 	ID          uuid.UUID
+	UserID      uuid.UUID
 	EquipmentID uuid.UUID
 	ServiceDate time.Time
 	Description string
@@ -18,10 +19,11 @@ type ServiceRecord struct {
 	UpdatedAt   time.Time
 }
 
-func NewServiceRecord(equipmentID uuid.UUID, serviceDate time.Time, description string, cost float64, technician string) *ServiceRecord {
+func NewServiceRecord(userID, equipmentID uuid.UUID, serviceDate time.Time, description string, cost float64, technician string) *ServiceRecord {
 	now := time.Now()
 	return &ServiceRecord{
 		ID:          uuid.Must(uuid.NewV7()),
+		UserID:      userID,
 		EquipmentID: equipmentID,
 		ServiceDate: serviceDate,
 		Description: description,

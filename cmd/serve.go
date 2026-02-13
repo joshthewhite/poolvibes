@@ -39,13 +39,17 @@ var serveCmd = &cobra.Command{
 		equipRepo := sqlite.NewEquipmentRepo(db)
 		srRepo := sqlite.NewServiceRecordRepo(db)
 		chemRepo := sqlite.NewChemicalRepo(db)
+		userRepo := sqlite.NewUserRepo(db)
+		sessionRepo := sqlite.NewSessionRepo(db)
 
+		authSvc := services.NewAuthService(userRepo, sessionRepo)
+		userSvc := services.NewUserService(userRepo, sessionRepo)
 		chemSvc := services.NewChemistryService(chemLogRepo)
 		taskSvc := services.NewTaskService(taskRepo)
 		equipSvc := services.NewEquipmentService(equipRepo, srRepo)
 		chemicSvc := services.NewChemicalService(chemRepo)
 
-		server := web.NewServer(chemSvc, taskSvc, equipSvc, chemicSvc)
+		server := web.NewServer(authSvc, userSvc, chemSvc, taskSvc, equipSvc, chemicSvc)
 		return server.Start(addr)
 	},
 }

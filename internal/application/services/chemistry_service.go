@@ -19,19 +19,31 @@ func NewChemistryService(repo repositories.ChemistryLogRepository) *ChemistrySer
 }
 
 func (s *ChemistryService) List(ctx context.Context) ([]entities.ChemistryLog, error) {
-	return s.repo.FindAll(ctx)
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return s.repo.FindAll(ctx, userID)
 }
 
 func (s *ChemistryService) Get(ctx context.Context, id string) (*entities.ChemistryLog, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	return s.repo.FindByID(ctx, uid)
+	return s.repo.FindByID(ctx, userID, uid)
 }
 
 func (s *ChemistryService) Create(ctx context.Context, cmd command.CreateChemistryLog) (*entities.ChemistryLog, error) {
-	log := entities.NewChemistryLog(cmd.PH, cmd.FreeChlorine, cmd.CombinedChlorine, cmd.TotalAlkalinity, cmd.CYA, cmd.CalciumHardness, cmd.Temperature, cmd.Notes, cmd.TestedAt)
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	log := entities.NewChemistryLog(userID, cmd.PH, cmd.FreeChlorine, cmd.CombinedChlorine, cmd.TotalAlkalinity, cmd.CYA, cmd.CalciumHardness, cmd.Temperature, cmd.Notes, cmd.TestedAt)
 	if err := log.Validate(); err != nil {
 		return nil, fmt.Errorf("validation: %w", err)
 	}
@@ -42,11 +54,15 @@ func (s *ChemistryService) Create(ctx context.Context, cmd command.CreateChemist
 }
 
 func (s *ChemistryService) Update(ctx context.Context, cmd command.UpdateChemistryLog) (*entities.ChemistryLog, error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	uid, err := uuid.Parse(cmd.ID)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
-	log, err := s.repo.FindByID(ctx, uid)
+	log, err := s.repo.FindByID(ctx, userID, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -72,9 +88,13 @@ func (s *ChemistryService) Update(ctx context.Context, cmd command.UpdateChemist
 }
 
 func (s *ChemistryService) Delete(ctx context.Context, id string) error {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
 	uid, err := uuid.Parse(id)
 	if err != nil {
 		return fmt.Errorf("invalid ID: %w", err)
 	}
-	return s.repo.Delete(ctx, uid)
+	return s.repo.Delete(ctx, userID, uid)
 }
