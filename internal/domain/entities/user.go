@@ -14,6 +14,9 @@ type User struct {
 	PasswordHash string
 	IsAdmin      bool
 	IsDisabled   bool
+	Phone        string
+	NotifyEmail  bool
+	NotifySMS    bool
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -26,6 +29,8 @@ func NewUser(email, passwordHash string) *User {
 		PasswordHash: passwordHash,
 		IsAdmin:      false,
 		IsDisabled:   false,
+		NotifyEmail:  true,
+		NotifySMS:    false,
 		CreatedAt:    now,
 		UpdatedAt:    now,
 	}

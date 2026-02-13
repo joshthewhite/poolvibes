@@ -37,3 +37,7 @@ Tasks have three statuses:
 - **Complete** — Mark as done and auto-generate the next occurrence
 - **Delete** — Remove a task entirely
 - **List** — View all tasks with their status and due dates
+
+## Notifications
+
+Tasks that are due today can trigger email and SMS notifications. See [Notifications](notifications.md) for setup details.

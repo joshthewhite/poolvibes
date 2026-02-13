@@ -10,6 +10,7 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 - **Task Scheduling** — Create recurring maintenance tasks (daily, weekly, monthly). Completing a task auto-generates the next occurrence.
 - **Equipment Tracking** — Track pool equipment with categories, manufacturer info, warranty status, and service history.
 - **Chemical Inventory** — Monitor chemical stock levels with low-stock alerts and quick-adjust buttons.
+- **Notifications** — Email (Resend) and SMS (Twilio) alerts when tasks are due. Per-user preferences via Settings tab.
 
 ## Tech Stack
 
@@ -18,6 +19,7 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 - **SQLite** via [modernc.org/sqlite](https://pkg.go.dev/modernc.org/sqlite) (pure Go, no CGO) — default
 - **PostgreSQL** via [pgx](https://github.com/jackc/pgx) — optional, for hosted deployments
 - **Bulma** CSS from CDN
+- **Resend** for email notifications, **Twilio** for SMS notifications
 - **DDD architecture** — domain entities, repository interfaces, application services, infrastructure implementations
 
 ## Getting Started
@@ -32,9 +34,10 @@ Open http://localhost:8080 — you'll be redirected to sign up on first visit.
 ### Options
 
 ```
---addr string      server listen address (default ":8080")
---db string        database connection string (default "~/.poolvibes.db")
---db-driver string database driver: sqlite or postgres (default "sqlite")
+--addr string                  server listen address (default ":8080")
+--db string                    database connection string (default "~/.poolvibes.db")
+--db-driver string             database driver: sqlite or postgres (default "sqlite")
+--notify-check-interval string how often to check for due task notifications (default "1h")
 ```
 
 Database migrations run automatically on startup.
@@ -46,6 +49,20 @@ To use PostgreSQL instead of SQLite:
 ```sh
 ./poolvibes serve --db-driver postgres --db "postgres://user:pass@localhost:5432/poolvibes?sslmode=disable"
 ```
+
+### Notifications
+
+To enable task due notifications, configure your API keys in `~/.poolvibes.yaml`:
+
+```yaml
+resend_api_key: "re_..."
+resend_from: "notifications@yourdomain.com"
+twilio_account_sid: "AC..."
+twilio_auth_token: "..."
+twilio_from_number: "+15551234567"
+```
+
+Or via environment variables (`RESEND_API_KEY`, `TWILIO_ACCOUNT_SID`, etc.). Notifications are only sent when the corresponding keys are configured. Users can toggle email/SMS preferences from the Settings tab.
 
 ## Project Structure
 
@@ -67,9 +84,10 @@ poolvibes/
     │   ├── command/                 # CRUD command structs
     │   └── services/                # business logic
     ├── infrastructure/
-    │   └── db/
-    │       ├── sqlite/              # SQLite repos + connection
-    │       └── postgres/            # PostgreSQL repos + connection
+    │   ├── db/
+    │   │   ├── sqlite/              # SQLite repos + connection
+    │   │   └── postgres/            # PostgreSQL repos + connection
+    │   └── notify/                  # Email (Resend) and SMS (Twilio) notifiers
     └── interface/
         └── web/
             ├── server.go            # HTTP server + routes

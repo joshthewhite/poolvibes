@@ -20,7 +20,7 @@ PoolVibes follows Domain-Driven Design (DDD) with a layered architecture. Depend
 
 Pure business logic with no external dependencies. Contains:
 
-- **Entities** — `User`, `Session`, `ChemistryLog`, `Task`, `Equipment`, `ServiceRecord`, `Chemical` with validation rules and business methods
+- **Entities** — `User`, `Session`, `ChemistryLog`, `Task`, `TaskNotification`, `Equipment`, `ServiceRecord`, `Chemical` with validation rules and business methods
 - **Value Objects** — `Recurrence` (frequency + interval with next-due-date calculation), `Quantity` (amount + unit)
 - **Repository Interfaces** — Abstractions that infrastructure implements
 
@@ -29,7 +29,7 @@ Pure business logic with no external dependencies. Contains:
 Orchestrates domain logic through:
 
 - **Commands** — CRUD command structs (DTOs) for each feature
-- **Services** — Business logic coordination (auth, user management, auto-rescheduling tasks on completion, stock adjustment validation)
+- **Services** — Business logic coordination (auth, user management, auto-rescheduling tasks on completion, stock adjustment validation, notification scheduling)
 - **Context Helpers** — `WithUser`/`UserFromContext` for propagating the authenticated user
 
 ### Infrastructure
@@ -39,6 +39,7 @@ External concerns:
 - **Database Repositories** — SQLite and PostgreSQL implementations of domain repository interfaces
 - **Connection** — Database connection management, migration runner (per driver)
 - **Migrations** — SQL files embedded in the binary via Go's `embed` package, with separate migration sets for SQLite and PostgreSQL
+- **Notifiers** — Resend (email) and Twilio (SMS) implementations of the `Notifier` interface
 
 ### Interface
 
@@ -69,9 +70,10 @@ poolvibes/
     │   ├── command/                 # CRUD command structs
     │   └── services/                # Business logic
     ├── infrastructure/
-    │   └── db/
-    │       ├── sqlite/              # SQLite repos + connection
-    │       └── postgres/            # PostgreSQL repos + connection
+    │   ├── db/
+    │   │   ├── sqlite/              # SQLite repos + connection
+    │   │   └── postgres/            # PostgreSQL repos + connection
+    │   └── notify/                  # Email (Resend) and SMS (Twilio) notifiers
     └── interface/
         └── web/
             ├── server.go            # HTTP server + routes
@@ -89,6 +91,9 @@ erDiagram
         TEXT password_hash
         INTEGER is_admin
         INTEGER is_disabled
+        TEXT phone
+        INTEGER notify_email
+        INTEGER notify_sms
         TEXT created_at
         TEXT updated_at
     }
@@ -169,7 +174,18 @@ erDiagram
         TEXT updated_at
     }
 
+    task_notifications {
+        TEXT id PK
+        TEXT task_id FK
+        TEXT user_id FK
+        TEXT type
+        TEXT due_date
+        TEXT sent_at
+    }
+
     users ||--o{ sessions : "has"
+    users ||--o{ task_notifications : "has"
+    tasks ||--o{ task_notifications : "has"
     users ||--o{ chemistry_logs : "owns"
     users ||--o{ tasks : "owns"
     users ||--o{ equipment : "owns"

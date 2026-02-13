@@ -45,6 +45,7 @@ func (s *Server) setupRoutes() {
 	equipHandler := handlers.NewEquipmentHandler(s.equipSvc)
 	chemicHandler := handlers.NewChemicalHandler(s.chemicSvc)
 	adminHandler := handlers.NewAdminHandler(s.userSvc)
+	settingsHandler := handlers.NewSettingsHandler(s.userSvc)
 
 	auth := func(h http.HandlerFunc) http.HandlerFunc { return requireAuth(s.authSvc, h) }
 	admin := func(h http.HandlerFunc) http.HandlerFunc { return requireAdmin(s.authSvc, h) }
@@ -95,6 +96,10 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("PUT /chemicals/{id}", auth(chemicHandler.Update))
 	s.mux.HandleFunc("POST /chemicals/{id}/adjust", auth(chemicHandler.AdjustStock))
 	s.mux.HandleFunc("DELETE /chemicals/{id}", auth(chemicHandler.Delete))
+
+	// Settings (auth required)
+	s.mux.HandleFunc("GET /settings", auth(settingsHandler.Page))
+	s.mux.HandleFunc("PUT /settings", auth(settingsHandler.Update))
 
 	// Admin (admin required)
 	s.mux.HandleFunc("GET /admin/users", admin(adminHandler.ListUsers))

@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS task_notifications;
+
+ALTER TABLE users DROP COLUMN IF EXISTS phone;
+ALTER TABLE users DROP COLUMN IF EXISTS notify_email;
+ALTER TABLE users DROP COLUMN IF EXISTS notify_sms;

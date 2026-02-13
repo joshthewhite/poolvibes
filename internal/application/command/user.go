@@ -5,3 +5,9 @@ type UpdateUser struct {
 	IsAdmin    bool
 	IsDisabled bool
 }
+
+type UpdateNotificationPreferences struct {
+	Phone       string
+	NotifyEmail bool
+	NotifySMS   bool
+}
