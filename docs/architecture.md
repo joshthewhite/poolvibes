@@ -75,6 +75,105 @@ poolvibes/
             └── templates/           # layout.html
 ```
 
+## Database Schema
+
+```mermaid
+erDiagram
+    users {
+        TEXT id PK
+        TEXT email UK
+        TEXT password_hash
+        INTEGER is_admin
+        INTEGER is_disabled
+        TEXT created_at
+        TEXT updated_at
+    }
+
+    sessions {
+        TEXT id PK
+        TEXT user_id FK
+        TEXT expires_at
+        TEXT created_at
+    }
+
+    chemistry_logs {
+        TEXT id PK
+        TEXT user_id FK
+        REAL ph
+        REAL free_chlorine
+        REAL combined_chlorine
+        REAL total_alkalinity
+        REAL cya
+        REAL calcium_hardness
+        REAL temperature
+        TEXT notes
+        TEXT tested_at
+        TEXT created_at
+        TEXT updated_at
+    }
+
+    tasks {
+        TEXT id PK
+        TEXT user_id FK
+        TEXT name
+        TEXT description
+        TEXT recurrence_frequency
+        INTEGER recurrence_interval
+        TEXT due_date
+        TEXT status
+        TEXT completed_at
+        TEXT created_at
+        TEXT updated_at
+    }
+
+    equipment {
+        TEXT id PK
+        TEXT user_id FK
+        TEXT name
+        TEXT category
+        TEXT manufacturer
+        TEXT model
+        TEXT serial_number
+        TEXT install_date
+        TEXT warranty_expiry
+        TEXT created_at
+        TEXT updated_at
+    }
+
+    service_records {
+        TEXT id PK
+        TEXT user_id FK
+        TEXT equipment_id FK
+        TEXT service_date
+        TEXT description
+        REAL cost
+        TEXT technician
+        TEXT created_at
+        TEXT updated_at
+    }
+
+    chemicals {
+        TEXT id PK
+        TEXT user_id FK
+        TEXT name
+        TEXT type
+        REAL stock_amount
+        TEXT stock_unit
+        REAL alert_threshold
+        TEXT last_purchased
+        TEXT created_at
+        TEXT updated_at
+    }
+
+    users ||--o{ sessions : "has"
+    users ||--o{ chemistry_logs : "owns"
+    users ||--o{ tasks : "owns"
+    users ||--o{ equipment : "owns"
+    users ||--o{ service_records : "owns"
+    users ||--o{ chemicals : "owns"
+    equipment ||--o{ service_records : "has"
+```
+
 ## Tech Stack
 
 | Component | Choice | Rationale |
