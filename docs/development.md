@@ -34,6 +34,16 @@ New features follow the DDD layer structure:
 - Write table-driven tests
 - Use `context.Context` as the first parameter where appropriate
 
+## CI
+
+GitHub Actions runs on every push to `main` and on pull requests. The workflow (`.github/workflows/ci.yml`) runs:
+
+1. `go build ./...`
+2. `go vet ./...`
+3. `go test ./...`
+
+Railway's **Wait for CI** integration ensures deployments only proceed after CI passes.
+
 ## Database Migrations
 
 Migrations live in `migrations/` and are embedded into the binary at build time. They run automatically on server startup.

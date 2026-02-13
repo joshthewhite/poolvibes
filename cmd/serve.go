@@ -32,6 +32,9 @@ var serveCmd = &cobra.Command{
 	Short: "Start the PoolVibes web server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		addr, _ := cmd.Flags().GetString("addr")
+		if port := os.Getenv("PORT"); port != "" && !cmd.Flags().Changed("addr") {
+			addr = ":" + port
+		}
 		dbDSN, _ := cmd.Flags().GetString("db")
 		dbDriver, _ := cmd.Flags().GetString("db-driver")
 

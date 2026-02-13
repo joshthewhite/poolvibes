@@ -57,6 +57,10 @@ export DB="/var/lib/poolvibes/pool.db"
 ./poolvibes serve
 ```
 
+### PORT
+
+On platforms like Railway that inject a `PORT` environment variable, PoolVibes will automatically use it as the listen port when `--addr` is not explicitly provided. This takes precedence over the default `:8080`.
+
 ## Notifications
 
 PoolVibes can send email and SMS notifications when tasks are due. Notifications are checked on a configurable interval (default: 1 hour) and sent at most once per task per day per channel.

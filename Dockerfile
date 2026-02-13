@@ -10,5 +10,4 @@ FROM gcr.io/distroless/static-debian12
 
 COPY --from=build /poolvibes /poolvibes
 EXPOSE 8080
-ENTRYPOINT ["/poolvibes", "serve", "--addr", ":8080"]
-CMD ["--db-driver", "sqlite", "--db", "/data/poolvibes.db"]
+ENTRYPOINT ["/poolvibes", "serve"]
