@@ -15,7 +15,8 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 
 - **Go** with [Cobra](https://github.com/spf13/cobra) CLI and Go 1.22+ `http.ServeMux` router
 - **Datastar** for reactive SSE-driven UI (no JavaScript framework)
-- **SQLite** via [modernc.org/sqlite](https://pkg.go.dev/modernc.org/sqlite) (pure Go, no CGO)
+- **SQLite** via [modernc.org/sqlite](https://pkg.go.dev/modernc.org/sqlite) (pure Go, no CGO) — default
+- **PostgreSQL** via [pgx](https://github.com/jackc/pgx) — optional, for hosted deployments
 - **Bulma** CSS from CDN
 - **DDD architecture** — domain entities, repository interfaces, application services, infrastructure implementations
 
@@ -31,11 +32,20 @@ Open http://localhost:8080 — you'll be redirected to sign up on first visit.
 ### Options
 
 ```
---addr string   server listen address (default ":8080")
---db string     SQLite database path (default "~/.poolvibes.db")
+--addr string      server listen address (default ":8080")
+--db string        database connection string (default "~/.poolvibes.db")
+--db-driver string database driver: sqlite or postgres (default "sqlite")
 ```
 
 Database migrations run automatically on startup.
+
+#### PostgreSQL
+
+To use PostgreSQL instead of SQLite:
+
+```sh
+./poolvibes serve --db-driver postgres --db "postgres://user:pass@localhost:5432/poolvibes?sslmode=disable"
+```
 
 ## Project Structure
 
@@ -45,7 +55,9 @@ poolvibes/
 ├── cmd/
 │   ├── root.go                      # Cobra root command
 │   └── serve.go                     # serve command, wires all layers
-├── migrations/                      # SQLite migrations (embedded)
+├── migrations/
+│   ├── sqlite/                      # SQLite migrations (embedded)
+│   └── postgres/                    # PostgreSQL migrations (embedded)
 └── internal/
     ├── domain/
     │   ├── entities/                # User, Session, ChemistryLog, Task, Equipment, etc.
@@ -55,7 +67,9 @@ poolvibes/
     │   ├── command/                 # CRUD command structs
     │   └── services/                # business logic
     ├── infrastructure/
-    │   └── db/sqlite/               # SQLite repos + migrations
+    │   └── db/
+    │       ├── sqlite/              # SQLite repos + connection
+    │       └── postgres/            # PostgreSQL repos + connection
     └── interface/
         └── web/
             ├── server.go            # HTTP server + routes
