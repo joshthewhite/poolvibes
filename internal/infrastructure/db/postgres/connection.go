@@ -1,4 +1,4 @@
-package sqlite
+package postgres
 
 import (
 	"database/sql"
@@ -6,13 +6,13 @@ import (
 	"io/fs"
 
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/sqlite"
+	pgxmigrate "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
-	_ "modernc.org/sqlite"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func Open(dbPath string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite", dbPath+"?_pragma=journal_mode(WAL)&_pragma=foreign_keys(1)")
+func Open(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("opening database: %w", err)
 	}
@@ -23,17 +23,17 @@ func Open(dbPath string) (*sql.DB, error) {
 }
 
 func RunMigrations(db *sql.DB, migrationsFS fs.FS) error {
-	sourceDriver, err := iofs.New(migrationsFS, "migrations/sqlite")
+	sourceDriver, err := iofs.New(migrationsFS, "migrations/postgres")
 	if err != nil {
 		return fmt.Errorf("creating migration source: %w", err)
 	}
 
-	dbDriver, err := sqlite.WithInstance(db, &sqlite.Config{})
+	dbDriver, err := pgxmigrate.WithInstance(db, &pgxmigrate.Config{})
 	if err != nil {
 		return fmt.Errorf("creating migration db driver: %w", err)
 	}
 
-	m, err := migrate.NewWithInstance("iofs", sourceDriver, "sqlite", dbDriver)
+	m, err := migrate.NewWithInstance("iofs", sourceDriver, "postgres", dbDriver)
 	if err != nil {
 		return fmt.Errorf("creating migrator: %w", err)
 	}

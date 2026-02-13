@@ -8,7 +8,7 @@ PoolVibes follows Domain-Driven Design (DDD) with a layered architecture. Depend
 ┌─────────────────────────────────────┐
 │           Interface (Web)           │  HTTP handlers, templates
 ├─────────────────────────────────────┤
-│          Infrastructure             │  SQLite repos, DB connection
+│          Infrastructure             │  SQLite/PostgreSQL repos, DB connection
 ├─────────────────────────────────────┤
 │           Application               │  Commands, services
 ├─────────────────────────────────────┤
@@ -36,9 +36,9 @@ Orchestrates domain logic through:
 
 External concerns:
 
-- **SQLite Repositories** — Implement domain repository interfaces using SQL queries
-- **Connection** — Database connection management, migration runner
-- **Migrations** — SQL files embedded in the binary via Go's `embed` package
+- **Database Repositories** — SQLite and PostgreSQL implementations of domain repository interfaces
+- **Connection** — Database connection management, migration runner (per driver)
+- **Migrations** — SQL files embedded in the binary via Go's `embed` package, with separate migration sets for SQLite and PostgreSQL
 
 ### Interface
 
@@ -57,7 +57,9 @@ poolvibes/
 ├── cmd/
 │   ├── root.go                      # Cobra root command, Viper config
 │   └── serve.go                     # Serve command, wires all layers
-├── migrations/                      # SQLite migrations (embedded)
+├── migrations/
+│   ├── sqlite/                      # SQLite migrations (embedded)
+│   └── postgres/                    # PostgreSQL migrations (embedded)
 └── internal/
     ├── domain/
     │   ├── entities/                # ChemistryLog, Task, Equipment, ServiceRecord, Chemical
@@ -67,7 +69,9 @@ poolvibes/
     │   ├── command/                 # CRUD command structs
     │   └── services/                # Business logic
     ├── infrastructure/
-    │   └── db/sqlite/               # SQLite repos, connection, migrations
+    │   └── db/
+    │       ├── sqlite/              # SQLite repos + connection
+    │       └── postgres/            # PostgreSQL repos + connection
     └── interface/
         └── web/
             ├── server.go            # HTTP server + routes
@@ -181,7 +185,7 @@ erDiagram
 | Router | `http.ServeMux` | Go 1.22+ method routing, no external dependency |
 | Frontend | Datastar | SSE-driven reactive UI, no JavaScript framework |
 | CSS | Bulma 1.0.4 | Lightweight, CDN-hosted |
-| Database | modernc.org/sqlite | Pure Go, no CGO required |
+| Database | modernc.org/sqlite (default), pgx (PostgreSQL) | SQLite: pure Go, no CGO; PostgreSQL: for hosted deployments |
 | Migrations | golang-migrate | Embedded SQL files, auto-run on startup |
 | CLI | Cobra + Viper | Standard Go CLI pattern |
 
@@ -192,5 +196,5 @@ erDiagram
 3. `http.ServeMux` routes to the appropriate handler
 4. Handler parses the request into a command struct
 5. Service extracts user ID from context, validates and executes business logic via repository interfaces
-6. SQLite repository performs the database operation (scoped to user)
+6. Database repository (SQLite or PostgreSQL) performs the operation (scoped to user)
 7. Handler sends SSE response back, patching the UI via Datastar

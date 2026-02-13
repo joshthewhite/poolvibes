@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS service_records;
+DROP TABLE IF EXISTS equipment;
+DROP TABLE IF EXISTS chemicals;
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS chemistry_logs;
