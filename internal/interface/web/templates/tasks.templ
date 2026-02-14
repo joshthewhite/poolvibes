@@ -1,0 +1,184 @@
+package templates
+
+import (
+	"fmt"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
+)
+
+templ TaskList(active, completed []entities.Task) {
+	<div id="tab-content" data-signals__ifmissing-show-completed="false">
+		@PageHeader("Maintenance Tasks", "+ Add Task", "/tasks/new")
+		if len(active) == 0 && len(completed) == 0 {
+			@EmptyState("No tasks yet", "Add your first maintenance task")
+		} else {
+			for _, t := range active {
+				@TaskCard(t)
+			}
+			if len(completed) > 0 {
+				<button data-on:click="$showCompleted = !$showCompleted" class="button is-small is-fullwidth is-ghost has-text-grey mt-4 mb-4">
+					<span data-show="!$showCompleted">{ fmt.Sprintf("Show completed (%d)", len(completed)) }</span>
+					<span data-show="$showCompleted">{ fmt.Sprintf("Hide completed (%d)", len(completed)) }</span>
+				</button>
+				<div data-show="$showCompleted">
+					for _, t := range completed {
+						@TaskCard(t)
+					}
+				</div>
+			}
+		}
+	</div>
+}
+
+templ TaskCard(t entities.Task) {
+	<div class="box">
+		<div class="level is-mobile">
+			<div class="level-left">
+				<div class="level-item">
+					@TaskCompleteButton(t)
+				</div>
+				<div class="level-item">
+					<div>
+						<p class="has-text-weight-semibold">{ t.Name }</p>
+						<p class="is-size-7 has-text-grey">
+							{ fmt.Sprintf("Due: %s \u00b7 Every %d %s", t.DueDate.Format("Jan 2, 2006"), t.Recurrence.Interval, t.Recurrence.Frequency) }
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="level-right">
+				<div class="level-item">
+					<div class="tags">
+						@TaskStatusTag(t.Status)
+					</div>
+				</div>
+				<div class="level-item">
+					<div class="buttons are-small">
+						<button data-on:click={ "@get('/tasks/" + t.ID.String() + "/edit')" } class="button is-link is-outlined is-small">Edit</button>
+						<button data-on:click={ "@delete('/tasks/" + t.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ TaskCompleteButton(t entities.Task) {
+	if t.Status == entities.TaskStatusCompleted {
+		<span class="icon has-text-success"><i>&#10003;</i></span>
+	} else {
+		<button
+			data-on:click={ "@post('/tasks/" + t.ID.String() + "/complete')" }
+			class="button is-small is-rounded is-white"
+			title="Mark complete"
+			style="width:28px;height:28px;border:2px solid #dbdbdb;padding:0;"
+		></button>
+	}
+}
+
+templ TaskStatusTag(status entities.TaskStatus) {
+	switch status {
+		case entities.TaskStatusCompleted:
+			<span class="tag is-success is-light">Completed</span>
+		case entities.TaskStatusOverdue:
+			<span class="tag is-danger is-light">Overdue</span>
+		default:
+			<span class="tag is-warning is-light">Pending</span>
+	}
+}
+
+templ TaskFormFields() {
+	<div>
+		<div class="field">
+			<label class="label">Name</label>
+			<div class="control">
+				<input data-bind:taskName type="text" class="input"/>
+			</div>
+		</div>
+		<div class="field">
+			<label class="label">Description</label>
+			<div class="control">
+				<textarea data-bind:taskDescription rows="2" class="textarea"></textarea>
+			</div>
+		</div>
+		<div class="columns">
+			<div class="column">
+				<div class="field">
+					<label class="label">Frequency</label>
+					<div class="control">
+						<div class="select is-fullwidth">
+							<select data-bind:recurrenceFrequency>
+								<option value="daily">Daily</option>
+								<option value="weekly">Weekly</option>
+								<option value="monthly">Monthly</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="field">
+					<label class="label">Interval</label>
+					<div class="control">
+						<input data-bind:recurrenceInterval type="number" min="1" class="input"/>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="field">
+					<label class="label">Due Date</label>
+					<div class="control">
+						<input data-bind:dueDate type="date" class="input"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ TaskNewForm(dueDate string) {
+	@Modal("Add Task", "/tasks", taskNewFormContent(dueDate))
+}
+
+templ taskNewFormContent(dueDate string) {
+	<div
+		data-signals:taskName="''"
+		data-signals:taskDescription="''"
+		data-signals:recurrenceFrequency="'weekly'"
+		data-signals:recurrenceInterval="1"
+		data-signals:dueDate={ "'" + dueDate + "'" }
+	>
+		@TaskFormFields()
+		<div class="field is-grouped is-grouped-right mt-4">
+			<div class="control">
+				<button data-on:click="@get('/tasks')" class="button">Cancel</button>
+			</div>
+			<div class="control">
+				<button data-on:click="@post('/tasks')" class="button is-link">Save</button>
+			</div>
+		</div>
+	</div>
+}
+
+templ TaskEditForm(t *entities.Task) {
+	@Modal("Edit Task", "/tasks", taskEditFormContent(t))
+}
+
+templ taskEditFormContent(t *entities.Task) {
+	<div
+		data-signals:taskName={ "'" + escapeJS(t.Name) + "'" }
+		data-signals:taskDescription={ "'" + escapeJS(t.Description) + "'" }
+		data-signals:recurrenceFrequency={ "'" + string(t.Recurrence.Frequency) + "'" }
+		data-signals:recurrenceInterval={ fmt.Sprintf("%d", t.Recurrence.Interval) }
+		data-signals:dueDate={ "'" + t.DueDate.Format("2006-01-02") + "'" }
+	>
+		@TaskFormFields()
+		<div class="field is-grouped is-grouped-right mt-4">
+			<div class="control">
+				<button data-on:click="@get('/tasks')" class="button">Cancel</button>
+			</div>
+			<div class="control">
+				<button data-on:click={ "@put('/tasks/" + t.ID.String() + "')" } class="button is-link">Update</button>
+			</div>
+		</div>
+	</div>
+}

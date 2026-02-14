@@ -27,6 +27,7 @@ Pool maintenance management app. Go CLI with DDD architecture and Datastar hyper
 
 - **Router**: Go 1.22+ `http.ServeMux` (method-based routing, `r.PathValue()`)
 - **Frontend**: [Datastar](https://data-star.dev) — SSE-driven reactive UI via `datastar-go` SDK
+- **Templates**: [templ](https://templ.guide) — type-safe HTML templates compiled to Go
 - **CSS**: [Bulma](https://bulma.io) v1.0.4 from CDN
 - **Database**: SQLite via [modernc.org/sqlite](https://pkg.go.dev/modernc.org/sqlite) (pure Go, no CGO)
 - **Migrations**: [golang-migrate/migrate](https://github.com/golang-migrate/migrate) with embedded SQL files
@@ -38,6 +39,7 @@ Pool maintenance management app. Go CLI with DDD architecture and Datastar hyper
 
 ### Commands
 
+- **Generate templates**: `templ generate` (required after editing `.templ` files; generated `*_templ.go` files are committed)
 - **Build**: `go build ./...`
 - **Test**: `go test ./...`
 - **Test (verbose)**: `go test -v ./...`

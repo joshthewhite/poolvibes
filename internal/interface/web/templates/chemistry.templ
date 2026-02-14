@@ -1,0 +1,191 @@
+package templates
+
+import (
+	"fmt"
+	"time"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
+)
+
+templ ChemistryList(logs []entities.ChemistryLog) {
+	<div id="tab-content">
+		@PageHeader("Water Chemistry Logs", "+ Add Test", "/chemistry/new")
+		if len(logs) == 0 {
+			@EmptyState("No chemistry logs yet", "Add your first water test to get started")
+		} else {
+			<div class="table-container">
+				<table class="table is-fullwidth is-hoverable is-striped">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>pH</th>
+							<th>FC</th>
+							<th>CC</th>
+							<th>TA</th>
+							<th>CYA</th>
+							<th>CH</th>
+							<th>Temp</th>
+							<th class="has-text-right">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, l := range logs {
+							@chemistryRow(l)
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</div>
+}
+
+templ chemistryRow(l entities.ChemistryLog) {
+	<tr>
+		<td>{ l.TestedAt.Format("Jan 2, 3:04 PM") }</td>
+		<td><span class={ valueClass(l.PHInRange()) }>{ fmtFloat(l.PH, 1) }</span></td>
+		<td><span class={ valueClass(l.FreeChlorineInRange()) }>{ fmtFloat(l.FreeChlorine, 1) }</span></td>
+		<td><span class={ valueClass(l.CombinedChlorineInRange()) }>{ fmtFloat(l.CombinedChlorine, 1) }</span></td>
+		<td><span class={ valueClass(l.TotalAlkalinityInRange()) }>{ fmtFloat(l.TotalAlkalinity, 0) }</span></td>
+		<td><span class={ valueClass(l.CYAInRange()) }>{ fmtFloat(l.CYA, 0) }</span></td>
+		<td><span class={ valueClass(l.CalciumHardnessInRange()) }>{ fmtFloat(l.CalciumHardness, 0) }</span></td>
+		<td>{ fmt.Sprintf("%.0f", l.Temperature) }&deg;F</td>
+		<td class="has-text-right">
+			<div class="buttons is-right are-small">
+				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/edit')" } class="button is-link is-outlined is-small">Edit</button>
+				<button data-on:click={ "@delete('/chemistry/" + l.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
+			</div>
+		</td>
+	</tr>
+}
+
+templ ChemistryFormFields() {
+	<div class="columns is-multiline">
+		<div class="column is-half">
+			<div class="field">
+				<label class="label">pH</label>
+				<div class="control">
+					<input data-bind:ph type="number" step="0.1" min="0" max="14" class="input"/>
+				</div>
+			</div>
+		</div>
+		<div class="column is-half">
+			<div class="field">
+				<label class="label">Free Chlorine (ppm)</label>
+				<div class="control">
+					<input data-bind:freeChlorine type="number" step="0.1" min="0" class="input"/>
+				</div>
+			</div>
+		</div>
+		<div class="column is-half">
+			<div class="field">
+				<label class="label">Combined Chlorine (ppm)</label>
+				<div class="control">
+					<input data-bind:combinedChlorine type="number" step="0.1" min="0" class="input"/>
+				</div>
+			</div>
+		</div>
+		<div class="column is-half">
+			<div class="field">
+				<label class="label">Total Alkalinity (ppm)</label>
+				<div class="control">
+					<input data-bind:totalAlkalinity type="number" step="1" min="0" class="input"/>
+				</div>
+			</div>
+		</div>
+		<div class="column is-half">
+			<div class="field">
+				<label class="label">CYA (ppm)</label>
+				<div class="control">
+					<input data-bind:cya type="number" step="1" min="0" class="input"/>
+				</div>
+			</div>
+		</div>
+		<div class="column is-half">
+			<div class="field">
+				<label class="label">Calcium Hardness (ppm)</label>
+				<div class="control">
+					<input data-bind:calciumHardness type="number" step="1" min="0" class="input"/>
+				</div>
+			</div>
+		</div>
+		<div class="column is-half">
+			<div class="field">
+				<label class="label">Temperature (&deg;F)</label>
+				<div class="control">
+					<input data-bind:temperature type="number" step="1" class="input"/>
+				</div>
+			</div>
+		</div>
+		<div class="column is-half">
+			<div class="field">
+				<label class="label">Tested At</label>
+				<div class="control">
+					<input data-bind:testedAt type="datetime-local" class="input"/>
+				</div>
+			</div>
+		</div>
+		<div class="column is-full">
+			<div class="field">
+				<label class="label">Notes</label>
+				<div class="control">
+					<textarea data-bind:notes rows="2" class="textarea"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ ChemistryNewForm(now time.Time) {
+	@Modal("Add Chemistry Log", "/chemistry", chemistryNewFormContent(now))
+}
+
+templ chemistryNewFormContent(now time.Time) {
+	<div
+		data-signals:ph="7.4"
+		data-signals:freeChlorine="2.0"
+		data-signals:combinedChlorine="0.0"
+		data-signals:totalAlkalinity="100"
+		data-signals:cya="40"
+		data-signals:calciumHardness="300"
+		data-signals:temperature="80"
+		data-signals:notes="''"
+		data-signals:testedAt={ "'" + now.Format("2006-01-02T15:04") + "'" }
+	>
+		@ChemistryFormFields()
+		<div class="field is-grouped is-grouped-right mt-4">
+			<div class="control">
+				<button data-on:click="@get('/chemistry')" class="button">Cancel</button>
+			</div>
+			<div class="control">
+				<button data-on:click="@post('/chemistry')" class="button is-link">Save</button>
+			</div>
+		</div>
+	</div>
+}
+
+templ ChemistryEditForm(l *entities.ChemistryLog) {
+	@Modal("Edit Chemistry Log", "/chemistry", chemistryEditFormContent(l))
+}
+
+templ chemistryEditFormContent(l *entities.ChemistryLog) {
+	<div
+		data-signals:ph={ fmtFloatG(l.PH) }
+		data-signals:freeChlorine={ fmtFloatG(l.FreeChlorine) }
+		data-signals:combinedChlorine={ fmtFloatG(l.CombinedChlorine) }
+		data-signals:totalAlkalinity={ fmtFloatG(l.TotalAlkalinity) }
+		data-signals:cya={ fmtFloatG(l.CYA) }
+		data-signals:calciumHardness={ fmtFloatG(l.CalciumHardness) }
+		data-signals:temperature={ fmtFloatG(l.Temperature) }
+		data-signals:notes={ "'" + escapeJS(l.Notes) + "'" }
+		data-signals:testedAt={ "'" + l.TestedAt.Format("2006-01-02T15:04") + "'" }
+	>
+		@ChemistryFormFields()
+		<div class="field is-grouped is-grouped-right mt-4">
+			<div class="control">
+				<button data-on:click="@get('/chemistry')" class="button">Cancel</button>
+			</div>
+			<div class="control">
+				<button data-on:click={ "@put('/chemistry/" + l.ID.String() + "')" } class="button is-link">Update</button>
+			</div>
+		</div>
+	</div>
+}

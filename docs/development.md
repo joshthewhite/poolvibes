@@ -3,11 +3,13 @@
 ## Prerequisites
 
 - Go 1.25 or later
+- [templ](https://templ.guide) CLI (`go install github.com/a-h/templ/cmd/templ@latest`) — only needed when editing `.templ` files
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
+| `templ generate` | Regenerate Go code from `.templ` files (generated `*_templ.go` files are committed) |
 | `go build ./...` | Build all packages |
 | `go test ./...` | Run tests |
 | `go test -v ./...` | Run tests with verbose output |
@@ -23,7 +25,7 @@ New features follow the DDD layer structure:
 1. **Domain** — Define the entity in `internal/domain/entities/`, add a repository interface in `internal/domain/repositories/`
 2. **Application** — Create command structs in `internal/application/command/` and a service in `internal/application/services/`
 3. **Infrastructure** — Implement the repository in `internal/infrastructure/db/sqlite/` and add a migration in `migrations/`
-4. **Interface** — Add HTTP handlers in `internal/interface/web/handlers/` and register routes in `server.go`
+4. **Interface** — Add templ components in `internal/interface/web/templates/`, HTTP handlers in `internal/interface/web/handlers/`, and register routes in `server.go`
 
 ## Code Conventions
 

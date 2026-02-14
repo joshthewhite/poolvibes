@@ -1,0 +1,183 @@
+package templates
+
+import (
+	"fmt"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
+)
+
+templ ChemicalList(chemicals []entities.Chemical) {
+	<div id="tab-content">
+		@PageHeader("Chemical Inventory", "+ Add Chemical", "/chemicals/new")
+		if len(chemicals) == 0 {
+			@EmptyState("No chemicals tracked", "Add chemicals to track your inventory")
+		} else {
+			<div class="columns is-multiline">
+				for _, c := range chemicals {
+					@ChemicalCard(c)
+				}
+			</div>
+		}
+	</div>
+}
+
+templ ChemicalCard(c entities.Chemical) {
+	<div class="column is-one-third">
+		<div
+			class="card"
+			if c.IsLowStock() {
+				style="border: 2px solid hsl(348, 86%, 61%); background: hsl(348, 86%, 97%);"
+			}
+		>
+			<div class="card-content">
+				<!-- Header -->
+				<div class="level is-mobile mb-2">
+					<div class="level-left">
+						<div class="level-item">
+							<div>
+								<p class="has-text-weight-bold">{ c.Name }</p>
+								<div>
+									<span class="tag is-light is-small">{ string(c.Type) }</span>
+									if c.IsLowStock() {
+										<span class="tag is-danger is-light ml-2">Low Stock</span>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="level-right">
+						<div class="level-item">
+							<div class="buttons are-small">
+								<button data-on:click={ "@get('/chemicals/" + c.ID.String() + "/edit')" } class="button is-link is-outlined is-small">Edit</button>
+								<button data-on:click={ "@delete('/chemicals/" + c.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Stock display -->
+				<p class="is-size-3 has-text-weight-bold mt-2">
+					{ fmtFloat(c.Stock.Amount, 1) } <span class="is-size-6 has-text-weight-normal has-text-grey">{ c.Stock.Unit }</span>
+				</p>
+				<p class="is-size-7 has-text-grey-light">{ fmt.Sprintf("Alert threshold: %.1f %s", c.AlertThreshold, c.Stock.Unit) }</p>
+				<!-- Quick adjust buttons -->
+				<hr class="my-3" style="height:1px;background:#f0f0f0;border:none;"/>
+				<div class="buttons are-small" data-signals:adjustDelta="0">
+					<button data-on:click={ "$adjustDelta = -1; @post('/chemicals/" + c.ID.String() + "/adjust')" } class="button is-small">-1</button>
+					<button data-on:click={ "$adjustDelta = -5; @post('/chemicals/" + c.ID.String() + "/adjust')" } class="button is-small">-5</button>
+					<button data-on:click={ "$adjustDelta = 5; @post('/chemicals/" + c.ID.String() + "/adjust')" } class="button is-small is-success is-outlined">+5</button>
+					<button data-on:click={ "$adjustDelta = 10; @post('/chemicals/" + c.ID.String() + "/adjust')" } class="button is-small is-success is-outlined">+10</button>
+				</div>
+				if c.LastPurchased != nil {
+					<p class="is-size-7 has-text-grey-light mt-2">{ fmt.Sprintf("Last purchased: %s", c.LastPurchased.Format("Jan 2, 2006")) }</p>
+				}
+			</div>
+		</div>
+	</div>
+}
+
+templ ChemicalFormFields() {
+	<div>
+		<div class="field">
+			<label class="label">Name</label>
+			<div class="control">
+				<input data-bind:chemName type="text" class="input"/>
+			</div>
+		</div>
+		<div class="field">
+			<label class="label">Type</label>
+			<div class="control">
+				<div class="select is-fullwidth">
+					<select data-bind:chemType>
+						<option value="sanitizer">Sanitizer</option>
+						<option value="shock">Shock</option>
+						<option value="balancer">Balancer</option>
+						<option value="algaecide">Algaecide</option>
+						<option value="clarifier">Clarifier</option>
+						<option value="other">Other</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="columns">
+			<div class="column">
+				<div class="field">
+					<label class="label">Stock Amount</label>
+					<div class="control">
+						<input data-bind:chemStockAmount type="number" step="0.1" min="0" class="input"/>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="field">
+					<label class="label">Unit</label>
+					<div class="control">
+						<div class="select is-fullwidth">
+							<select data-bind:chemStockUnit>
+								<option value="lbs">Pounds (lbs)</option>
+								<option value="oz">Ounces (oz)</option>
+								<option value="gal">Gallons (gal)</option>
+								<option value="L">Liters (L)</option>
+								<option value="kg">Kilograms (kg)</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="field">
+					<label class="label">Alert At</label>
+					<div class="control">
+						<input data-bind:chemAlertThreshold type="number" step="0.1" min="0" class="input"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ ChemicalNewForm() {
+	@Modal("Add Chemical", "/chemicals", chemicalNewFormContent())
+}
+
+templ chemicalNewFormContent() {
+	<div
+		data-signals:chemName="''"
+		data-signals:chemType="'sanitizer'"
+		data-signals:chemStockAmount="0"
+		data-signals:chemStockUnit="'lbs'"
+		data-signals:chemAlertThreshold="5"
+	>
+		@ChemicalFormFields()
+		<div class="field is-grouped is-grouped-right mt-4">
+			<div class="control">
+				<button data-on:click="@get('/chemicals')" class="button">Cancel</button>
+			</div>
+			<div class="control">
+				<button data-on:click="@post('/chemicals')" class="button is-link">Save</button>
+			</div>
+		</div>
+	</div>
+}
+
+templ ChemicalEditForm(c *entities.Chemical) {
+	@Modal("Edit Chemical", "/chemicals", chemicalEditFormContent(c))
+}
+
+templ chemicalEditFormContent(c *entities.Chemical) {
+	<div
+		data-signals:chemName={ "'" + escapeJS(c.Name) + "'" }
+		data-signals:chemType={ "'" + string(c.Type) + "'" }
+		data-signals:chemStockAmount={ fmtFloatG(c.Stock.Amount) }
+		data-signals:chemStockUnit={ "'" + c.Stock.Unit + "'" }
+		data-signals:chemAlertThreshold={ fmtFloatG(c.AlertThreshold) }
+	>
+		@ChemicalFormFields()
+		<div class="field is-grouped is-grouped-right mt-4">
+			<div class="control">
+				<button data-on:click="@get('/chemicals')" class="button">Cancel</button>
+			</div>
+			<div class="control">
+				<button data-on:click={ "@put('/chemicals/" + c.ID.String() + "')" } class="button is-link">Update</button>
+			</div>
+		</div>
+	</div>
+}

@@ -48,7 +48,7 @@ User-facing layer:
 - **HTTP Server** — Go `http.ServeMux` with method-based routing (`GET /tasks`, `POST /tasks`, etc.)
 - **Middleware** — `requireAuth` (session cookie → user context), `requireAdmin` (admin check)
 - **Handlers** — SSE handlers using Datastar for reactive UI updates; standalone HTML auth pages
-- **Templates** — Single `layout.html` serving the SPA shell
+- **Templates** — [templ](https://templ.guide) components compiled to Go code (type-safe, with syntax highlighting and auto-escaping)
 
 ## Directory Structure
 
@@ -78,7 +78,7 @@ poolvibes/
         └── web/
             ├── server.go            # HTTP server + routes
             ├── handlers/            # SSE handlers per feature
-            └── templates/           # layout.html
+            └── templates/           # templ components (*.templ + generated *_templ.go)
 ```
 
 ## Database Schema
@@ -200,6 +200,7 @@ erDiagram
 |-----------|--------|-----------|
 | Router | `http.ServeMux` | Go 1.22+ method routing, no external dependency |
 | Frontend | Datastar | SSE-driven reactive UI, no JavaScript framework |
+| Templates | templ | Type-safe HTML templates compiled to Go |
 | CSS | Bulma 1.0.4 | Lightweight, CDN-hosted |
 | Database | modernc.org/sqlite (default), pgx (PostgreSQL) | SQLite: pure Go, no CGO; PostgreSQL: for hosted deployments |
 | Migrations | golang-migrate | Embedded SQL files, auto-run on startup |

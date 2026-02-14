@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"fmt"
-	"html"
 	"net/http"
 
 	"github.com/joshthewhite/poolvibes/internal/application/command"
 	"github.com/joshthewhite/poolvibes/internal/application/services"
+	"github.com/joshthewhite/poolvibes/internal/interface/web/templates"
 )
 
 type AuthHandler struct {
@@ -18,16 +17,19 @@ func NewAuthHandler(svc *services.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) LoginPage(w http.ResponseWriter, r *http.Request) {
-	h.renderAuthPage(w, "Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "", false).Render(r.Context(), w)
 }
 
 func (h *AuthHandler) SignupPage(w http.ResponseWriter, r *http.Request) {
-	h.renderAuthPage(w, "Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "", true).Render(r.Context(), w)
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		h.renderAuthPage(w, "Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "Invalid form data")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "Invalid form data", false).Render(r.Context(), w)
 		return
 	}
 	email := r.FormValue("email")
@@ -38,7 +40,8 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Password: password,
 	})
 	if err != nil {
-		h.renderAuthPage(w, "Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", err.Error())
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", err.Error(), false).Render(r.Context(), w)
 		return
 	}
 
@@ -54,7 +57,8 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		h.renderAuthPage(w, "Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "Invalid form data")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "Invalid form data", true).Render(r.Context(), w)
 		return
 	}
 	email := r.FormValue("email")
@@ -62,7 +66,8 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	confirm := r.FormValue("confirm")
 
 	if password != confirm {
-		h.renderAuthPage(w, "Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "Passwords do not match")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "Passwords do not match", true).Render(r.Context(), w)
 		return
 	}
 
@@ -71,7 +76,8 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		Password: password,
 	})
 	if err != nil {
-		h.renderAuthPage(w, "Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", err.Error())
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", err.Error(), true).Render(r.Context(), w)
 		return
 	}
 
@@ -97,81 +103,4 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		MaxAge: -1,
 	})
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
-}
-
-func (h *AuthHandler) renderAuthPage(w http.ResponseWriter, title, action, buttonText, altURL, altText, errMsg string) {
-	errorHTML := ""
-	if errMsg != "" {
-		errorHTML = fmt.Sprintf(`<div class="notification is-danger is-light">%s</div>`, html.EscapeString(errMsg))
-	}
-
-	confirmField := ""
-	if title == "Sign Up" {
-		confirmField = `
-				<div class="field">
-					<label class="label">Confirm Password</label>
-					<div class="control">
-						<input name="confirm" type="password" class="input" placeholder="Confirm your password" required>
-					</div>
-				</div>`
-	}
-
-	page := fmt.Sprintf(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PoolVibes - %s</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
-</head>
-<body>
-    <section class="section">
-        <div class="container">
-            <div class="columns is-centered">
-                <div class="column is-4">
-                    <div class="box">
-                        <h1 class="title has-text-centered">PoolVibes</h1>
-                        <h2 class="subtitle has-text-centered">%s</h2>
-                        %s
-                        <form method="POST" action="%s">
-                            <div class="field">
-                                <label class="label">Email</label>
-                                <div class="control">
-                                    <input name="email" type="email" class="input" placeholder="you@example.com" required>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">Password</label>
-                                <div class="control">
-                                    <input name="password" type="password" class="input" placeholder="Your password" required>
-                                </div>
-                            </div>%s
-                            <div class="field">
-                                <div class="control">
-                                    <button type="submit" class="button is-link is-fullwidth">%s</button>
-                                </div>
-                            </div>
-                        </form>
-                        <p class="has-text-centered mt-4">
-                            <a href="%s">%s</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</body>
-</html>`,
-		html.EscapeString(title),
-		html.EscapeString(title),
-		errorHTML,
-		html.EscapeString(action),
-		confirmField,
-		html.EscapeString(buttonText),
-		html.EscapeString(altURL),
-		html.EscapeString(altText),
-	)
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write([]byte(page))
 }

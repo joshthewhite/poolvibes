@@ -1,0 +1,78 @@
+package templates
+
+import "github.com/joshthewhite/poolvibes/internal/domain/entities"
+
+templ AdminUserList(users []entities.User) {
+	<div id="tab-content">
+		<div class="level">
+			<div class="level-left">
+				<h2 class="title is-4">Users</h2>
+			</div>
+		</div>
+		<table class="table is-fullwidth is-striped is-hoverable">
+			<thead>
+				<tr>
+					<th>Email</th>
+					<th>Admin</th>
+					<th>Disabled</th>
+					<th>Created</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, u := range users {
+					<tr>
+						<td>{ u.Email }</td>
+						<td>
+							if u.IsAdmin {
+								Yes
+							}
+						</td>
+						<td>
+							if u.IsDisabled {
+								Yes
+							}
+						</td>
+						<td>{ u.CreatedAt.Format("2006-01-02") }</td>
+						<td>
+							<button class="button is-small is-info" data-on:click={ "@get('/admin/users/" + u.ID.String() + "/edit')" }>Edit</button>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+templ AdminEditUser(user *entities.User) {
+	@Modal("Edit User", "/chemistry", adminEditUserForm(user))
+}
+
+templ adminEditUserForm(user *entities.User) {
+	<div
+		data-signals:isAdmin={ boolStr(user.IsAdmin) }
+		data-signals:isDisabled={ boolStr(user.IsDisabled) }
+	>
+		<div class="field">
+			<label class="label">Email</label>
+			<div class="control">
+				<input type="text" class="input" value={ user.Email } disabled/>
+			</div>
+		</div>
+		<div class="field">
+			<label class="checkbox">
+				<input data-bind:isAdmin type="checkbox"/> Admin
+			</label>
+		</div>
+		<div class="field">
+			<label class="checkbox">
+				<input data-bind:isDisabled type="checkbox"/> Disabled
+			</label>
+		</div>
+		<div class="field">
+			<div class="control">
+				<button class="button is-link" data-on:click={ "@put('/admin/users/" + user.ID.String() + "')" }>Save</button>
+			</div>
+		</div>
+	</div>
+}

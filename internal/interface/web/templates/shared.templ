@@ -1,0 +1,52 @@
+package templates
+
+templ Modal(title string, cancelPath string, content templ.Component) {
+	<div id="modal" class="modal is-active">
+		<div class="modal-background" data-on:click={ "@get('" + cancelPath + "')" }></div>
+		<div class="modal-card" style="max-width: 720px;">
+			<header class="modal-card-head">
+				<p class="modal-card-title">{ title }</p>
+			</header>
+			<section class="modal-card-body">
+				<div id="modal-error"></div>
+				@content
+			</section>
+		</div>
+	</div>
+}
+
+templ EmptyModal() {
+	<div id="modal"></div>
+}
+
+templ ModalError(msg string) {
+	<div id="modal-error" class="notification is-danger is-light">{ msg }</div>
+}
+
+templ EmptyState(title, subtitle string) {
+	<div class="has-text-centered py-6 has-text-grey-light">
+		<p class="is-size-5">{ title }</p>
+		<p class="is-size-7 mt-1">{ subtitle }</p>
+	</div>
+}
+
+templ PageHeader(title, buttonText, buttonPath string) {
+	<div class="level">
+		<div class="level-left">
+			<div class="level-item">
+				<h2 class="title is-4">{ title }</h2>
+			</div>
+		</div>
+		<div class="level-right">
+			<div class="level-item">
+				<button data-on:click={ "@get('" + buttonPath + "')" } class="button is-link">{ buttonText }</button>
+			</div>
+		</div>
+	</div>
+}
+
+templ SettingsMessage(cssClass, msg string) {
+	<div id="settings-message">
+		<div class={ "notification", cssClass }>{ msg }</div>
+	</div>
+}

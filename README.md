@@ -16,6 +16,7 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 
 - **Go** with [Cobra](https://github.com/spf13/cobra) CLI and Go 1.22+ `http.ServeMux` router
 - **Datastar** for reactive SSE-driven UI (no JavaScript framework)
+- **[templ](https://templ.guide)** for type-safe HTML templates compiled to Go
 - **SQLite** via [modernc.org/sqlite](https://pkg.go.dev/modernc.org/sqlite) (pure Go, no CGO) — default
 - **PostgreSQL** via [pgx](https://github.com/jackc/pgx) — optional, for hosted deployments
 - **Bulma** CSS from CDN
@@ -105,12 +106,13 @@ poolvibes/
         └── web/
             ├── server.go            # HTTP server + routes
             ├── handlers/            # SSE handlers per feature
-            └── templates/           # layout.html
+            └── templates/           # templ components (*.templ + generated *_templ.go)
 ```
 
 ## Development
 
 ```sh
+templ generate          # regenerate templates (after editing .templ files)
 go build ./...          # build
 go vet ./...            # lint
 go test ./...           # test

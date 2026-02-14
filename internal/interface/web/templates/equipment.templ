@@ -1,0 +1,276 @@
+package templates
+
+import (
+	"fmt"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
+)
+
+templ EquipmentList(items []entities.Equipment) {
+	<div id="tab-content">
+		@PageHeader("Equipment", "+ Add Equipment", "/equipment/new")
+		if len(items) == 0 {
+			@EmptyState("No equipment yet", "Add your pool equipment to track maintenance")
+		} else {
+			<div class="columns is-multiline">
+				for _, eq := range items {
+					@EquipmentCard(eq)
+				}
+			</div>
+		}
+	</div>
+}
+
+templ EquipmentCard(eq entities.Equipment) {
+	<div class="column is-half">
+		<div class="card">
+			<div class="card-content">
+				<!-- Header -->
+				<div class="level is-mobile mb-3">
+					<div class="level-left">
+						<div class="level-item">
+							<div>
+								<p class="title is-5 mb-1">{ eq.Name }</p>
+								<span class="tag is-light">{ string(eq.Category) }</span>
+							</div>
+						</div>
+					</div>
+					<div class="level-right">
+						<div class="level-item">
+							<div class="buttons are-small">
+								<button data-on:click={ "@get('/equipment/" + eq.ID.String() + "/edit')" } class="button is-link is-outlined is-small">Edit</button>
+								<button data-on:click={ "@delete('/equipment/" + eq.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				if eq.Manufacturer != "" || eq.Model != "" {
+					<p class="is-size-7 has-text-grey">{ eq.Manufacturer } { eq.Model }</p>
+				}
+				if eq.SerialNumber != "" {
+					<p class="is-size-7 has-text-grey-light">S/N: { eq.SerialNumber }</p>
+				}
+				if eq.WarrantyExpiry != nil {
+					<p class="is-size-7 mt-1">
+						if eq.IsWarrantyActive() {
+							<span class="tag is-success is-light is-small">{ fmt.Sprintf("Warranty: %s", eq.WarrantyExpiry.Format("Jan 2, 2006")) }</span>
+						} else {
+							<span class="tag is-danger is-light is-small">{ fmt.Sprintf("Warranty: %s", eq.WarrantyExpiry.Format("Jan 2, 2006")) }</span>
+						}
+					</p>
+				}
+				<!-- Service records -->
+				<hr class="my-3" style="height:1px;background:#f0f0f0;border:none;"/>
+				<div class="level is-mobile mb-2">
+					<div class="level-left">
+						<div class="level-item">
+							<span class="has-text-weight-semibold is-size-7">Service History</span>
+						</div>
+					</div>
+					<div class="level-right">
+						<div class="level-item">
+							<button data-on:click={ "@get('/equipment/" + eq.ID.String() + "/service-records/new')" } class="button is-link is-outlined is-small">+ Add</button>
+						</div>
+					</div>
+				</div>
+				if len(eq.ServiceRecords) == 0 {
+					<p class="is-size-7 has-text-grey-light">No service records</p>
+				} else {
+					for _, sr := range eq.ServiceRecords {
+						<div class="level is-mobile mb-1" style="margin-bottom:0.25rem!important;">
+							<div class="level-left">
+								<div class="level-item">
+									<span class="is-size-7">{ sr.Description }</span>
+								</div>
+								<div class="level-item">
+									<span class="is-size-7 has-text-grey-light">{ sr.ServiceDate.Format("Jan 2") }</span>
+								</div>
+							</div>
+							<div class="level-right">
+								if sr.Cost > 0 {
+									<div class="level-item">
+										<span class="is-size-7 has-text-grey">{ fmt.Sprintf("$%.2f", sr.Cost) }</span>
+									</div>
+								}
+								<div class="level-item">
+									<button data-on:click={ "@delete('/equipment/" + eq.ID.String() + "/service-records/" + sr.ID.String() + "')" } class="delete is-small"></button>
+								</div>
+							</div>
+						</div>
+					}
+				}
+			</div>
+		</div>
+	</div>
+}
+
+templ EquipmentFormFields() {
+	<div>
+		<div class="field">
+			<label class="label">Name</label>
+			<div class="control">
+				<input data-bind:eqName type="text" class="input"/>
+			</div>
+		</div>
+		<div class="field">
+			<label class="label">Category</label>
+			<div class="control">
+				<div class="select is-fullwidth">
+					<select data-bind:eqCategory>
+						<option value="pump">Pump</option>
+						<option value="filter">Filter</option>
+						<option value="heater">Heater</option>
+						<option value="chlorinator">Chlorinator</option>
+						<option value="cleaner">Cleaner</option>
+						<option value="other">Other</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="columns">
+			<div class="column">
+				<div class="field">
+					<label class="label">Manufacturer</label>
+					<div class="control">
+						<input data-bind:eqManufacturer type="text" class="input"/>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="field">
+					<label class="label">Model</label>
+					<div class="control">
+						<input data-bind:eqModel type="text" class="input"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="field">
+			<label class="label">Serial Number</label>
+			<div class="control">
+				<input data-bind:eqSerialNumber type="text" class="input"/>
+			</div>
+		</div>
+		<div class="columns">
+			<div class="column">
+				<div class="field">
+					<label class="label">Install Date</label>
+					<div class="control">
+						<input data-bind:eqInstallDate type="date" class="input"/>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="field">
+					<label class="label">Warranty Expiry</label>
+					<div class="control">
+						<input data-bind:eqWarrantyExpiry type="date" class="input"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ EquipmentNewForm() {
+	@Modal("Add Equipment", "/equipment", equipmentNewFormContent())
+}
+
+templ equipmentNewFormContent() {
+	<div
+		data-signals:eqName="''"
+		data-signals:eqCategory="'pump'"
+		data-signals:eqManufacturer="''"
+		data-signals:eqModel="''"
+		data-signals:eqSerialNumber="''"
+		data-signals:eqInstallDate="''"
+		data-signals:eqWarrantyExpiry="''"
+	>
+		@EquipmentFormFields()
+		<div class="field is-grouped is-grouped-right mt-4">
+			<div class="control">
+				<button data-on:click="@get('/equipment')" class="button">Cancel</button>
+			</div>
+			<div class="control">
+				<button data-on:click="@post('/equipment')" class="button is-link">Save</button>
+			</div>
+		</div>
+	</div>
+}
+
+templ EquipmentEditForm(eq *entities.Equipment) {
+	@Modal("Edit Equipment", "/equipment", equipmentEditFormContent(eq))
+}
+
+templ equipmentEditFormContent(eq *entities.Equipment) {
+	<div
+		data-signals:eqName={ "'" + escapeJS(eq.Name) + "'" }
+		data-signals:eqCategory={ "'" + string(eq.Category) + "'" }
+		data-signals:eqManufacturer={ "'" + escapeJS(eq.Manufacturer) + "'" }
+		data-signals:eqModel={ "'" + escapeJS(eq.Model) + "'" }
+		data-signals:eqSerialNumber={ "'" + escapeJS(eq.SerialNumber) + "'" }
+		data-signals:eqInstallDate={ "'" + fmtDatePtr(eq.InstallDate) + "'" }
+		data-signals:eqWarrantyExpiry={ "'" + fmtDatePtr(eq.WarrantyExpiry) + "'" }
+	>
+		@EquipmentFormFields()
+		<div class="field is-grouped is-grouped-right mt-4">
+			<div class="control">
+				<button data-on:click="@get('/equipment')" class="button">Cancel</button>
+			</div>
+			<div class="control">
+				<button data-on:click={ "@put('/equipment/" + eq.ID.String() + "')" } class="button is-link">Update</button>
+			</div>
+		</div>
+	</div>
+}
+
+templ ServiceRecordNewForm(eqID string, today string) {
+	@Modal("Add Service Record", "/equipment", serviceRecordNewFormContent(eqID, today))
+}
+
+templ serviceRecordNewFormContent(eqID string, today string) {
+	<div
+		data-signals:srServiceDate={ "'" + today + "'" }
+		data-signals:srDescription="''"
+		data-signals:srCost="0"
+		data-signals:srTechnician="''"
+	>
+		<div class="field">
+			<label class="label">Service Date</label>
+			<div class="control">
+				<input data-bind:srServiceDate type="date" class="input"/>
+			</div>
+		</div>
+		<div class="field">
+			<label class="label">Description</label>
+			<div class="control">
+				<textarea data-bind:srDescription rows="2" class="textarea"></textarea>
+			</div>
+		</div>
+		<div class="columns">
+			<div class="column">
+				<div class="field">
+					<label class="label">Cost ($)</label>
+					<div class="control">
+						<input data-bind:srCost type="number" step="0.01" min="0" class="input"/>
+					</div>
+				</div>
+			</div>
+			<div class="column">
+				<div class="field">
+					<label class="label">Technician</label>
+					<div class="control">
+						<input data-bind:srTechnician type="text" class="input"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="field is-grouped is-grouped-right mt-4">
+			<div class="control">
+				<button data-on:click="@get('/equipment')" class="button">Cancel</button>
+			</div>
+			<div class="control">
+				<button data-on:click={ "@post('/equipment/" + eqID + "/service-records')" } class="button is-link">Save</button>
+			</div>
+		</div>
+	</div>
+}

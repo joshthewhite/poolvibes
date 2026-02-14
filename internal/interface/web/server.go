@@ -1,7 +1,6 @@
 package web
 
 import (
-	"embed"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,9 +8,6 @@ import (
 	"github.com/joshthewhite/poolvibes/internal/application/services"
 	"github.com/joshthewhite/poolvibes/internal/interface/web/handlers"
 )
-
-//go:embed templates/layout.html
-var layoutHTML embed.FS
 
 type Server struct {
 	mux       *http.ServeMux
@@ -38,7 +34,7 @@ func NewServer(authSvc *services.AuthService, userSvc *services.UserService, che
 }
 
 func (s *Server) setupRoutes() {
-	pageHandler := handlers.NewPageHandler(layoutHTML)
+	pageHandler := handlers.NewPageHandler()
 	authHandler := handlers.NewAuthHandler(s.authSvc)
 	chemHandler := handlers.NewChemistryHandler(s.chemSvc)
 	taskHandler := handlers.NewTaskHandler(s.taskSvc)
