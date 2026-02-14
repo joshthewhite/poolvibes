@@ -15,9 +15,9 @@ func escapeJS(s string) string {
 
 func valueClass(inRange bool) string {
 	if inRange {
-		return "has-text-success has-text-weight-semibold"
+		return "value-ok"
 	}
-	return "has-text-danger has-text-weight-bold"
+	return "value-warn"
 }
 
 func fmtDatePtr(t *time.Time) string {

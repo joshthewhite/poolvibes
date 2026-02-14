@@ -197,14 +197,14 @@ func adminEditUserForm(user *entities.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" disabled></div></div><div class=\"field\"><label class=\"checkbox\"><input data-bind:isAdmin type=\"checkbox\"> Admin</label></div><div class=\"field\"><label class=\"checkbox\"><input data-bind:isDisabled type=\"checkbox\"> Disabled</label></div><div class=\"field\"><div class=\"control\"><button class=\"button is-link\" data-on:click=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" disabled></div></div><div class=\"field\"><label class=\"checkbox\"><input data-bind:isAdmin type=\"checkbox\"> Admin</label></div><div class=\"field\"><label class=\"checkbox\"><input data-bind:isDisabled type=\"checkbox\"> Disabled</label></div><div class=\"field\"><div class=\"control\"><button class=\"button is-primary\" data-on:click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("@put('/admin/users/" + user.ID.String() + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/admin.templ`, Line: 74, Col: 98}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/admin.templ`, Line: 74, Col: 101}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {

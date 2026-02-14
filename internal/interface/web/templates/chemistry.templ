@@ -52,7 +52,7 @@ templ chemistryRow(l entities.ChemistryLog) {
 		<td class="has-text-right">
 			<div class="buttons is-right are-small">
 				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/plan')" } class="button is-info is-outlined is-small">Plan</button>
-				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/edit')" } class="button is-link is-outlined is-small">Edit</button>
+				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/edit')" } class="button is-primary is-outlined is-small">Edit</button>
 				<button data-on:click={ "@delete('/chemistry/" + l.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
 			</div>
 		</td>
@@ -158,7 +158,7 @@ templ chemistryNewFormContent(now time.Time) {
 				<button data-on:click="@get('/chemistry')" class="button">Cancel</button>
 			</div>
 			<div class="control">
-				<button data-on:click="@post('/chemistry')" class="button is-link">Save</button>
+				<button data-on:click="@post('/chemistry')" class="button is-primary">Save</button>
 			</div>
 		</div>
 	</div>
@@ -186,7 +186,7 @@ templ chemistryEditFormContent(l *entities.ChemistryLog) {
 				<button data-on:click="@get('/chemistry')" class="button">Cancel</button>
 			</div>
 			<div class="control">
-				<button data-on:click={ "@put('/chemistry/" + l.ID.String() + "')" } class="button is-link">Update</button>
+				<button data-on:click={ "@put('/chemistry/" + l.ID.String() + "')" } class="button is-primary">Update</button>
 			</div>
 		</div>
 	</div>

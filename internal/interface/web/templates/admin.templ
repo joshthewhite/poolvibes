@@ -71,7 +71,7 @@ templ adminEditUserForm(user *entities.User) {
 		</div>
 		<div class="field">
 			<div class="control">
-				<button class="button is-link" data-on:click={ "@put('/admin/users/" + user.ID.String() + "')" }>Save</button>
+				<button class="button is-primary" data-on:click={ "@put('/admin/users/" + user.ID.String() + "')" }>Save</button>
 			</div>
 		</div>
 	</div>

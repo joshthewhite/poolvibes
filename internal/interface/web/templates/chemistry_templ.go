@@ -356,7 +356,7 @@ func chemistryRow(l entities.ChemistryLog) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" class=\"button is-link is-outlined is-small\">Edit</button> <button data-on:click=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" class=\"button is-primary is-outlined is-small\">Edit</button> <button data-on:click=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -477,7 +477,7 @@ func chemistryNewFormContent(now time.Time) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"field is-grouped is-grouped-right mt-4\"><div class=\"control\"><button data-on:click=\"@get('/chemistry')\" class=\"button\">Cancel</button></div><div class=\"control\"><button data-on:click=\"@post('/chemistry')\" class=\"button is-link\">Save</button></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"field is-grouped is-grouped-right mt-4\"><div class=\"control\"><button data-on:click=\"@get('/chemistry')\" class=\"button\">Cancel</button></div><div class=\"control\"><button data-on:click=\"@post('/chemistry')\" class=\"button is-primary\">Save</button></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -673,7 +673,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "\" class=\"button is-link\">Update</button></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "\" class=\"button is-primary\">Update</button></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
