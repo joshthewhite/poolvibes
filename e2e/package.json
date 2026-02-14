@@ -1,0 +1,11 @@
+{
+  "name": "poolvibes-e2e",
+  "private": true,
+  "scripts": {
+    "capture": "tsx capture.ts"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.52.0",
+    "tsx": "^4.19.0"
+  }
+}

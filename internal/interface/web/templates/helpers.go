@@ -57,3 +57,67 @@ func fmtGallons(n int) string {
 	}
 	return string(result)
 }
+
+func dueInText(dueDate time.Time) string {
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	due := time.Date(dueDate.Year(), dueDate.Month(), dueDate.Day(), 0, 0, 0, 0, dueDate.Location())
+
+	days := int(due.Sub(today).Hours() / 24)
+
+	switch {
+	case days == 0:
+		return "due today"
+	case days == 1:
+		return "due tomorrow"
+	case days > 1 && days <= 13:
+		return fmt.Sprintf("due in %d days", days)
+	case days > 13 && days <= 8*7:
+		weeks := days / 7
+		if weeks == 1 {
+			return "due in 1 week"
+		}
+		return fmt.Sprintf("due in %d weeks", weeks)
+	case days > 8*7:
+		months := days / 30
+		if months <= 1 {
+			return "due in 1 month"
+		}
+		return fmt.Sprintf("due in %d months", months)
+	case days == -1:
+		return "overdue 1 day"
+	case days < -1 && days >= -13:
+		return fmt.Sprintf("overdue %d days", -days)
+	case days < -13 && days >= -8*7:
+		weeks := -days / 7
+		if weeks == 1 {
+			return "overdue 1 week"
+		}
+		return fmt.Sprintf("overdue %d weeks", weeks)
+	default:
+		months := -days / 30
+		if months <= 1 {
+			return "overdue 1 month"
+		}
+		return fmt.Sprintf("overdue %d months", months)
+	}
+}
+
+func dueInClass(dueDate time.Time) string {
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	due := time.Date(dueDate.Year(), dueDate.Month(), dueDate.Day(), 0, 0, 0, 0, dueDate.Location())
+
+	days := int(due.Sub(today).Hours() / 24)
+
+	switch {
+	case days < 0:
+		return "tag is-danger is-light"
+	case days <= 1:
+		return "tag is-warning"
+	case days <= 3:
+		return "tag is-warning is-light"
+	default:
+		return "tag is-light"
+	}
+}

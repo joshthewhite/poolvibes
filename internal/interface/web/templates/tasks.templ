@@ -48,7 +48,7 @@ templ TaskCard(t entities.Task) {
 			<div class="level-right">
 				<div class="level-item">
 					<div class="tags">
-						@TaskStatusTag(t.Status)
+						@TaskDueTag(t)
 					</div>
 				</div>
 				<div class="level-item">
@@ -75,14 +75,11 @@ templ TaskCompleteButton(t entities.Task) {
 	}
 }
 
-templ TaskStatusTag(status entities.TaskStatus) {
-	switch status {
-		case entities.TaskStatusCompleted:
-			<span class="tag is-success is-light">Completed</span>
-		case entities.TaskStatusOverdue:
-			<span class="tag is-danger is-light">Overdue</span>
-		default:
-			<span class="tag is-warning is-light">Pending</span>
+templ TaskDueTag(t entities.Task) {
+	if t.Status == entities.TaskStatusCompleted {
+		<span class="tag is-success is-light">Completed</span>
+	} else {
+		<span class={ dueInClass(t.DueDate) }>{ dueInText(t.DueDate) }</span>
 	}
 }
 

@@ -25,5 +25,10 @@ go.work.sum
 # Claude Code local settings
 .claude/settings.local.json
 
+# E2E capture tool
+e2e/node_modules/
+e2e/screenshots/
+e2e/bin/
+
 # OS
 .DS_Store
