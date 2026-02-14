@@ -15,7 +15,8 @@ templ Layout(email string, isAdmin bool) {
 			</style>
 		</head>
 		<body>
-			<div data-signals:tab="'chemistry'" data-signals:_loading="false" data-persist="tab">
+			<script>window._savedTab = localStorage.getItem('poolvibes_tab') || 'chemistry';</script>
+			<div data-signals:tab="window._savedTab" data-signals:_loading="false" data-effect="localStorage.setItem('poolvibes_tab', $tab)">
 				<!-- Navbar -->
 				<nav class="navbar is-link" role="navigation">
 					<div class="container">

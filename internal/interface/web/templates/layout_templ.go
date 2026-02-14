@@ -29,14 +29,14 @@ func Layout(email string, isAdmin bool) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>PoolVibes - Pool Maintenance</title><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css\"><script type=\"module\" src=\"https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js\"></script><style>\n\t\t\t\t[data-show] { display: none; }\n\t\t\t\t.tabs li.is-active a { border-bottom-color: #3273dc; color: #3273dc; }\n\t\t\t</style></head><body><div data-signals:tab=\"'chemistry'\" data-signals:_loading=\"false\" data-persist=\"tab\"><!-- Navbar --><nav class=\"navbar is-link\" role=\"navigation\"><div class=\"container\"><div class=\"navbar-brand\"><a class=\"navbar-item\" href=\"/\"><strong class=\"is-size-4\">PoolVibes</strong></a></div><div class=\"navbar-end\"><span class=\"navbar-item has-text-light\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>PoolVibes - Pool Maintenance</title><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css\"><script type=\"module\" src=\"https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js\"></script><style>\n\t\t\t\t[data-show] { display: none; }\n\t\t\t\t.tabs li.is-active a { border-bottom-color: #3273dc; color: #3273dc; }\n\t\t\t</style></head><body><script>window._savedTab = localStorage.getItem('poolvibes_tab') || 'chemistry';</script><div data-signals:tab=\"window._savedTab\" data-signals:_loading=\"false\" data-effect=\"localStorage.setItem('poolvibes_tab', $tab)\"><!-- Navbar --><nav class=\"navbar is-link\" role=\"navigation\"><div class=\"container\"><div class=\"navbar-brand\"><a class=\"navbar-item\" href=\"/\"><strong class=\"is-size-4\">PoolVibes</strong></a></div><div class=\"navbar-end\"><span class=\"navbar-item has-text-light\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/layout.templ`, Line: 28, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/layout.templ`, Line: 29, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
