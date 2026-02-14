@@ -1,9 +1,12 @@
 package web
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/joshthewhite/poolvibes/internal/application/services"
 	"github.com/joshthewhite/poolvibes/internal/interface/web/handlers"
@@ -103,10 +106,39 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("PUT /admin/users/{id}", admin(adminHandler.UpdateUser))
 }
 
-func (s *Server) Start(addr string) error {
-	fmt.Printf("PoolVibes server starting on %s\n", addr)
-	handler := logRequests(s.mux)
-	return http.ListenAndServe(addr, handler)
+func (s *Server) Start(ctx context.Context, addr string) error {
+	srv := &http.Server{
+		Addr:    addr,
+		Handler: logRequests(s.mux),
+	}
+
+	errCh := make(chan error, 1)
+	go func() {
+		fmt.Printf("PoolVibes server starting on %s\n", addr)
+		errCh <- srv.ListenAndServe()
+	}()
+
+	select {
+	case err := <-errCh:
+		return err
+	case <-ctx.Done():
+	}
+
+	log.Println("Shutting down server...")
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		return fmt.Errorf("server shutdown: %w", err)
+	}
+
+	// Wait for ListenAndServe to return
+	if err := <-errCh; err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("server error: %w", err)
+	}
+
+	log.Println("Server stopped gracefully")
+	return nil
 }
 
 func logRequests(next http.Handler) http.Handler {

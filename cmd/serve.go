@@ -125,6 +125,9 @@ var serveCmd = &cobra.Command{
 			}
 		}
 
+		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+		defer stop()
+
 		if emailNotifier != nil || smsNotifier != nil {
 			intervalStr := viper.GetString("notify-check-interval")
 			interval, err := time.ParseDuration(intervalStr)
@@ -132,17 +135,11 @@ var serveCmd = &cobra.Command{
 				interval = 1 * time.Hour
 			}
 			notifSvc := services.NewNotificationService(taskRepo, userRepo, taskNotifRepo, emailNotifier, smsNotifier, interval)
-			ctx, cancel := context.WithCancel(context.Background())
-			defer cancel()
 			go notifSvc.Start(ctx)
 		}
 
-		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-		defer stop()
-		_ = ctx // context available for graceful shutdown if needed
-
 		server := web.NewServer(authSvc, userSvc, chemSvc, taskSvc, equipSvc, chemicSvc)
-		return server.Start(addr)
+		return server.Start(ctx, addr)
 	},
 }
 
