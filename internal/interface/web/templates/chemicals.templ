@@ -23,10 +23,7 @@ templ ChemicalList(chemicals []entities.Chemical) {
 templ ChemicalCard(c entities.Chemical) {
 	<div class="column is-one-third">
 		<div
-			class="card"
-			if c.IsLowStock() {
-				style="border: 2px solid hsl(348, 86%, 61%); background: hsl(348, 86%, 97%);"
-			}
+			class={ "card", templ.KV("pv-low-stock", c.IsLowStock()) }
 		>
 			<div class="card-content">
 				<!-- Header -->
@@ -47,7 +44,7 @@ templ ChemicalCard(c entities.Chemical) {
 					<div class="level-right">
 						<div class="level-item">
 							<div class="buttons are-small">
-								<button data-on:click={ "@get('/chemicals/" + c.ID.String() + "/edit')" } class="button is-link is-outlined is-small">Edit</button>
+								<button data-on:click={ "@get('/chemicals/" + c.ID.String() + "/edit')" } class="button is-primary is-outlined is-small">Edit</button>
 								<button data-on:click={ "@delete('/chemicals/" + c.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
 							</div>
 						</div>
@@ -59,7 +56,7 @@ templ ChemicalCard(c entities.Chemical) {
 				</p>
 				<p class="is-size-7 has-text-grey-light">{ fmt.Sprintf("Alert threshold: %.1f %s", c.AlertThreshold, c.Stock.Unit) }</p>
 				<!-- Quick adjust buttons -->
-				<hr class="my-3" style="height:1px;background:#f0f0f0;border:none;"/>
+				<hr class="my-3 pv-divider"/>
 				<div class="buttons are-small" data-signals:adjustDelta="0">
 					<button data-on:click={ "$adjustDelta = -1; @post('/chemicals/" + c.ID.String() + "/adjust')" } class="button is-small">-1</button>
 					<button data-on:click={ "$adjustDelta = -5; @post('/chemicals/" + c.ID.String() + "/adjust')" } class="button is-small">-5</button>
@@ -152,7 +149,7 @@ templ chemicalNewFormContent() {
 				<button data-on:click="@get('/chemicals')" class="button">Cancel</button>
 			</div>
 			<div class="control">
-				<button data-on:click="@post('/chemicals')" class="button is-link">Save</button>
+				<button data-on:click="@post('/chemicals')" class="button is-primary">Save</button>
 			</div>
 		</div>
 	</div>
@@ -176,7 +173,7 @@ templ chemicalEditFormContent(c *entities.Chemical) {
 				<button data-on:click="@get('/chemicals')" class="button">Cancel</button>
 			</div>
 			<div class="control">
-				<button data-on:click={ "@put('/chemicals/" + c.ID.String() + "')" } class="button is-link">Update</button>
+				<button data-on:click={ "@put('/chemicals/" + c.ID.String() + "')" } class="button is-primary">Update</button>
 			</div>
 		</div>
 	</div>

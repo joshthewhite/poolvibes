@@ -37,7 +37,7 @@ templ EquipmentCard(eq entities.Equipment) {
 					<div class="level-right">
 						<div class="level-item">
 							<div class="buttons are-small">
-								<button data-on:click={ "@get('/equipment/" + eq.ID.String() + "/edit')" } class="button is-link is-outlined is-small">Edit</button>
+								<button data-on:click={ "@get('/equipment/" + eq.ID.String() + "/edit')" } class="button is-primary is-outlined is-small">Edit</button>
 								<button data-on:click={ "@delete('/equipment/" + eq.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
 							</div>
 						</div>
@@ -59,7 +59,7 @@ templ EquipmentCard(eq entities.Equipment) {
 					</p>
 				}
 				<!-- Service records -->
-				<hr class="my-3" style="height:1px;background:#f0f0f0;border:none;"/>
+				<hr class="my-3 pv-divider"/>
 				<div class="level is-mobile mb-2">
 					<div class="level-left">
 						<div class="level-item">
@@ -68,7 +68,7 @@ templ EquipmentCard(eq entities.Equipment) {
 					</div>
 					<div class="level-right">
 						<div class="level-item">
-							<button data-on:click={ "@get('/equipment/" + eq.ID.String() + "/service-records/new')" } class="button is-link is-outlined is-small">+ Add</button>
+							<button data-on:click={ "@get('/equipment/" + eq.ID.String() + "/service-records/new')" } class="button is-primary is-outlined is-small">+ Add</button>
 						</div>
 					</div>
 				</div>
@@ -191,7 +191,7 @@ templ equipmentNewFormContent() {
 				<button data-on:click="@get('/equipment')" class="button">Cancel</button>
 			</div>
 			<div class="control">
-				<button data-on:click="@post('/equipment')" class="button is-link">Save</button>
+				<button data-on:click="@post('/equipment')" class="button is-primary">Save</button>
 			</div>
 		</div>
 	</div>
@@ -217,7 +217,7 @@ templ equipmentEditFormContent(eq *entities.Equipment) {
 				<button data-on:click="@get('/equipment')" class="button">Cancel</button>
 			</div>
 			<div class="control">
-				<button data-on:click={ "@put('/equipment/" + eq.ID.String() + "')" } class="button is-link">Update</button>
+				<button data-on:click={ "@put('/equipment/" + eq.ID.String() + "')" } class="button is-primary">Update</button>
 			</div>
 		</div>
 	</div>
@@ -269,7 +269,7 @@ templ serviceRecordNewFormContent(eqID string, today string) {
 				<button data-on:click="@get('/equipment')" class="button">Cancel</button>
 			</div>
 			<div class="control">
-				<button data-on:click={ "@post('/equipment/" + eqID + "/service-records')" } class="button is-link">Save</button>
+				<button data-on:click={ "@post('/equipment/" + eqID + "/service-records')" } class="button is-primary">Save</button>
 			</div>
 		</div>
 	</div>

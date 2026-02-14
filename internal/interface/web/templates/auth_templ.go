@@ -42,14 +42,14 @@ func AuthPage(title, action, buttonText, altURL, altText, errMsg string, isSignu
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css\"></head><body><section class=\"section\"><div class=\"container\"><div class=\"columns is-centered\"><div class=\"column is-4\"><div class=\"box\"><h1 class=\"title has-text-centered\">PoolVibes</h1><h2 class=\"subtitle has-text-centered\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css\"><style>\n\t\t\t\t:root {\n\t\t\t\t\t--pv-primary: #0d9488;\n\t\t\t\t\t--pv-primary-hover: #0f766e;\n\t\t\t\t\t--pv-bg: #f8fafc;\n\t\t\t\t\t--pv-border: #e2e8f0;\n\t\t\t\t\t--pv-text: #0f172a;\n\t\t\t\t\t--bulma-primary: var(--pv-primary);\n\t\t\t\t\t--bulma-primary-h: 175;\n\t\t\t\t\t--bulma-primary-s: 84%;\n\t\t\t\t\t--bulma-primary-l: 32%;\n\t\t\t\t\t--bulma-link: var(--pv-primary);\n\t\t\t\t\t--bulma-link-h: 175;\n\t\t\t\t\t--bulma-link-s: 84%;\n\t\t\t\t\t--bulma-link-l: 32%;\n\t\t\t\t}\n\t\t\t\tbody {\n\t\t\t\t\tfont-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;\n\t\t\t\t\tbackground: var(--pv-bg);\n\t\t\t\t\tcolor: var(--pv-text);\n\t\t\t\t}\n\t\t\t\t.box {\n\t\t\t\t\tborder: 1px solid var(--pv-border);\n\t\t\t\t\tborder-radius: 0.5rem;\n\t\t\t\t\tbox-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);\n\t\t\t\t}\n\t\t\t\t.button.is-primary {\n\t\t\t\t\tbackground: var(--pv-primary);\n\t\t\t\t\tborder-color: transparent;\n\t\t\t\t\tfont-weight: 500;\n\t\t\t\t\tborder-radius: 0.375rem;\n\t\t\t\t}\n\t\t\t\t.button.is-primary:hover {\n\t\t\t\t\tbackground: var(--pv-primary-hover);\n\t\t\t\t}\n\t\t\t\t.input {\n\t\t\t\t\tborder-color: var(--pv-border);\n\t\t\t\t\tborder-radius: 0.375rem;\n\t\t\t\t}\n\t\t\t\t.input:focus {\n\t\t\t\t\tborder-color: var(--pv-primary);\n\t\t\t\t\tbox-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);\n\t\t\t\t}\n\t\t\t\t.label {\n\t\t\t\t\tfont-weight: 500;\n\t\t\t\t\tfont-size: 0.875rem;\n\t\t\t\t\tcolor: var(--pv-text);\n\t\t\t\t}\n\t\t\t\t.title {\n\t\t\t\t\tcolor: var(--pv-text);\n\t\t\t\t\tfont-weight: 700;\n\t\t\t\t\tletter-spacing: -0.025em;\n\t\t\t\t}\n\t\t\t\t.auth-brand {\n\t\t\t\t\tcolor: var(--pv-primary);\n\t\t\t\t}\n\t\t\t\t.notification {\n\t\t\t\t\tborder-radius: 0.5rem;\n\t\t\t\t}\n\n\t\t\t\t/* Dark mode */\n\t\t\t\t@media (prefers-color-scheme: dark) {\n\t\t\t\t\t:root {\n\t\t\t\t\t\t--pv-primary: #2dd4bf;\n\t\t\t\t\t\t--pv-primary-hover: #14b8a6;\n\t\t\t\t\t\t--pv-bg: #0f172a;\n\t\t\t\t\t\t--pv-border: #1e293b;\n\t\t\t\t\t\t--pv-text: #f1f5f9;\n\t\t\t\t\t\t--pv-surface: #1e293b;\n\t\t\t\t\t\t--pv-text-secondary: #94a3b8;\n\t\t\t\t\t\t--bulma-primary-h: 168;\n\t\t\t\t\t\t--bulma-primary-s: 72%;\n\t\t\t\t\t\t--bulma-primary-l: 51%;\n\t\t\t\t\t\t--bulma-link-h: 168;\n\t\t\t\t\t\t--bulma-link-s: 72%;\n\t\t\t\t\t\t--bulma-link-l: 51%;\n\t\t\t\t\t\t--bulma-scheme-main: var(--pv-bg);\n\t\t\t\t\t\t--bulma-text: var(--pv-text);\n\t\t\t\t\t\t--bulma-text-strong: #ffffff;\n\t\t\t\t\t\t--bulma-border: var(--pv-border);\n\t\t\t\t\t}\n\t\t\t\t\t.box {\n\t\t\t\t\t\tbackground: var(--pv-surface);\n\t\t\t\t\t\tborder-color: var(--pv-border);\n\t\t\t\t\t}\n\t\t\t\t\t.input {\n\t\t\t\t\t\tbackground-color: var(--pv-surface);\n\t\t\t\t\t\tborder-color: var(--pv-border);\n\t\t\t\t\t\tcolor: var(--pv-text);\n\t\t\t\t\t}\n\t\t\t\t\t.input:focus {\n\t\t\t\t\t\tborder-color: var(--pv-primary);\n\t\t\t\t\t\tbox-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);\n\t\t\t\t\t}\n\t\t\t\t\t.label {\n\t\t\t\t\t\tcolor: var(--pv-text);\n\t\t\t\t\t}\n\t\t\t\t\t.title {\n\t\t\t\t\t\tcolor: var(--pv-text);\n\t\t\t\t\t}\n\t\t\t\t\t.subtitle {\n\t\t\t\t\t\tcolor: var(--pv-text-secondary);\n\t\t\t\t\t}\n\t\t\t\t\t.notification.is-danger.is-light {\n\t\t\t\t\t\tbackground: rgba(248, 113, 113, 0.1);\n\t\t\t\t\t\tcolor: #f87171;\n\t\t\t\t\t}\n\t\t\t\t\ta {\n\t\t\t\t\t\tcolor: var(--pv-primary);\n\t\t\t\t\t}\n\t\t\t\t\ta:hover {\n\t\t\t\t\t\tcolor: var(--pv-primary-hover);\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t</style></head><body><section class=\"section\"><div class=\"container\"><div class=\"columns is-centered\"><div class=\"column is-4\"><div class=\"box\"><h1 class=\"title has-text-centered auth-brand\">PoolVibes</h1><h2 class=\"subtitle has-text-centered\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 19, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 137, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -67,7 +67,7 @@ func AuthPage(title, action, buttonText, altURL, altText, errMsg string, isSignu
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(errMsg)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 21, Col: 62}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 139, Col: 62}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -85,7 +85,7 @@ func AuthPage(title, action, buttonText, altURL, altText, errMsg string, isSignu
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(action))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 23, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 141, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -101,14 +101,14 @@ func AuthPage(title, action, buttonText, altURL, altText, errMsg string, isSignu
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"field\"><div class=\"control\"><button type=\"submit\" class=\"button is-link is-fullwidth\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"field\"><div class=\"control\"><button type=\"submit\" class=\"button is-primary is-fullwidth\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(buttonText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 46, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 164, Col: 84}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -121,7 +121,7 @@ func AuthPage(title, action, buttonText, altURL, altText, errMsg string, isSignu
 		var templ_7745c5c3_Var7 templ.SafeURL
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(altURL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 51, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 169, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -134,7 +134,7 @@ func AuthPage(title, action, buttonText, altURL, altText, errMsg string, isSignu
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(altText)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 51, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/auth.templ`, Line: 169, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {

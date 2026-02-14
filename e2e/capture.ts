@@ -368,8 +368,72 @@ async function main() {
     await clickTab(page, "Admin");
     await screenshot(page, "admin-users.png");
 
+    // -----------------------------------------------------------------------
+    // Dark mode
+    // -----------------------------------------------------------------------
+    console.log("\n🌙 Switching to dark mode...");
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.waitForTimeout(300);
+
+    // Auth pages (need a separate page since auth is a different HTML document)
+    console.log("📋 Capturing dark auth pages...");
+    const darkAuthPage = await context.newPage();
+    await darkAuthPage.emulateMedia({ colorScheme: "dark" });
+    await darkAuthPage.goto(`${BASE}/login`);
+    await darkAuthPage.waitForTimeout(300);
+    await screenshot(darkAuthPage, "dark-login.png");
+    await darkAuthPage.goto(`${BASE}/signup`);
+    await darkAuthPage.waitForTimeout(300);
+    await screenshot(darkAuthPage, "dark-signup.png");
+    await darkAuthPage.close();
+
+    // Re-login on main page (cookie still valid, just navigate)
+    await page.goto(`${BASE}/`);
+    await page.waitForTimeout(1500);
+
+    console.log("📋 Capturing dark populated states...");
+    await clickTab(page, "Water Chemistry");
+    await screenshot(page, "dark-chemistry-data.png");
+
+    await clickTab(page, "Tasks");
+    await screenshot(page, "dark-tasks-data.png");
+
+    await clickTab(page, "Equipment");
+    await screenshot(page, "dark-equipment-data.png");
+
+    await clickTab(page, "Chemicals");
+    await screenshot(page, "dark-chemicals-data.png");
+
+    await clickTab(page, "Settings");
+    await screenshot(page, "dark-settings.png");
+
+    console.log("\n📋 Capturing dark modals...");
+    await captureModal(
+      page,
+      "Water Chemistry",
+      "+ Add Test",
+      "dark-chemistry-modal.png",
+    );
+    await captureModal(page, "Tasks", "+ Add Task", "dark-tasks-modal.png");
+    await captureModal(
+      page,
+      "Equipment",
+      "+ Add Equipment",
+      "dark-equipment-modal.png",
+    );
+    await captureModal(
+      page,
+      "Chemicals",
+      "+ Add Chemical",
+      "dark-chemicals-modal.png",
+    );
+
+    console.log("\n📋 Capturing dark admin page...");
+    await clickTab(page, "Admin");
+    await screenshot(page, "dark-admin-users.png");
+
     await browser.close();
-    console.log("\n✅ All screenshots captured!");
+    console.log("\n✅ All screenshots captured (light + dark)!");
     console.log(`   📂 ${SCREENSHOTS_DIR}/`);
   } finally {
     server.kill("SIGTERM");

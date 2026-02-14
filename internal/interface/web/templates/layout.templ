@@ -7,18 +7,469 @@ templ Layout(email string, isAdmin bool) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>PoolVibes - Pool Maintenance</title>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"/>
 			<script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js"></script>
 			<style>
+				/* PoolVibes Design System */
+				:root {
+					--pv-primary: #0d9488;
+					--pv-primary-hover: #0f766e;
+					--pv-primary-light: #ccfbf1;
+					--pv-navbar: #0f172a;
+					--pv-success: #10b981;
+					--pv-danger: #ef4444;
+					--pv-warning: #f59e0b;
+					--pv-bg: #f8fafc;
+					--pv-border: #e2e8f0;
+					--pv-text: #0f172a;
+					--pv-text-secondary: #64748b;
+
+					/* Bulma overrides */
+					--bulma-primary: var(--pv-primary);
+					--bulma-primary-h: 175;
+					--bulma-primary-s: 84%;
+					--bulma-primary-l: 32%;
+					--bulma-link: var(--pv-primary);
+					--bulma-link-h: 175;
+					--bulma-link-s: 84%;
+					--bulma-link-l: 32%;
+					--bulma-success: var(--pv-success);
+					--bulma-success-h: 160;
+					--bulma-success-s: 84%;
+					--bulma-success-l: 39%;
+					--bulma-danger: var(--pv-danger);
+					--bulma-danger-h: 0;
+					--bulma-danger-s: 84%;
+					--bulma-danger-l: 60%;
+					--bulma-warning: var(--pv-warning);
+					--bulma-warning-h: 38;
+					--bulma-warning-s: 92%;
+					--bulma-warning-l: 50%;
+				}
+
+				body {
+					font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+					background: var(--pv-bg);
+					color: var(--pv-text);
+				}
+
 				[data-show] { display: none; }
-				.tabs li.is-active a { border-bottom-color: #3273dc; color: #3273dc; }
+
+				/* Navbar */
+				.navbar.pv-navbar {
+					background: var(--pv-navbar);
+					min-height: 3.5rem;
+				}
+				.navbar.pv-navbar .navbar-item,
+				.navbar.pv-navbar .navbar-brand .navbar-item {
+					color: #f1f5f9;
+				}
+				.navbar.pv-navbar .navbar-brand .navbar-item strong {
+					color: #ffffff;
+					letter-spacing: -0.025em;
+				}
+				.navbar.pv-navbar .navbar-item.pv-email {
+					color: #94a3b8;
+					font-size: 0.875rem;
+				}
+				.navbar.pv-navbar .button.pv-logout {
+					color: #94a3b8;
+					border-color: #334155;
+					background: transparent;
+					font-size: 0.8rem;
+				}
+				.navbar.pv-navbar .button.pv-logout:hover {
+					color: #f1f5f9;
+					border-color: #94a3b8;
+				}
+
+				/* Tabs — underline style */
+				.tabs.pv-tabs {
+					border-bottom-color: var(--pv-border);
+					font-size: 0.925rem;
+				}
+				.tabs.pv-tabs li a {
+					color: var(--pv-text-secondary);
+					border-bottom-color: transparent;
+					border-bottom-width: 2px;
+					padding-bottom: calc(0.5em - 2px);
+					font-weight: 500;
+				}
+				.tabs.pv-tabs li a:hover {
+					color: var(--pv-text);
+					border-bottom-color: #cbd5e1;
+				}
+				.tabs.pv-tabs li.is-active a {
+					color: var(--pv-primary);
+					border-bottom-color: var(--pv-primary);
+					font-weight: 600;
+				}
+
+				/* Cards & Boxes */
+				.box, .card {
+					border: 1px solid var(--pv-border);
+					border-radius: 0.5rem;
+					box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+				}
+				.card-content {
+					padding: 1.25rem;
+				}
+
+				/* Tables */
+				.table thead th {
+					background: #f1f5f9;
+					color: var(--pv-text-secondary);
+					font-weight: 600;
+					font-size: 0.8rem;
+					text-transform: uppercase;
+					letter-spacing: 0.05em;
+					border-bottom: 2px solid var(--pv-border);
+				}
+				.table td {
+					border-color: #f1f5f9;
+					vertical-align: middle;
+				}
+				.table.is-striped tbody tr:nth-child(even) {
+					background: #f8fafc;
+				}
+				.table.is-hoverable tbody tr:hover {
+					background: #f1f5f9;
+				}
+
+				/* Buttons */
+				.button.is-primary {
+					background: var(--pv-primary);
+					border-color: transparent;
+					font-weight: 500;
+				}
+				.button.is-primary:hover {
+					background: var(--pv-primary-hover);
+				}
+				.button.is-primary.is-outlined {
+					background: transparent;
+					color: var(--pv-primary);
+					border-color: var(--pv-primary);
+				}
+				.button.is-primary.is-outlined:hover {
+					background: var(--pv-primary);
+					color: #fff;
+				}
+				.button {
+					border-radius: 0.375rem;
+					font-weight: 500;
+				}
+
+				/* Modals */
+				.modal-card-head {
+					border-top: 3px solid var(--pv-primary);
+					background: #fff;
+					border-bottom: 1px solid var(--pv-border);
+				}
+				.modal-card-title {
+					font-weight: 600;
+					color: var(--pv-text);
+				}
+				.modal-card {
+					border-radius: 0.5rem;
+					overflow: hidden;
+				}
+
+				/* Inputs */
+				.input, .textarea, .select select {
+					border-color: var(--pv-border);
+					border-radius: 0.375rem;
+				}
+				.input:focus, .textarea:focus, .select select:focus {
+					border-color: var(--pv-primary);
+					box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+				}
+				.label {
+					font-weight: 500;
+					font-size: 0.875rem;
+					color: var(--pv-text);
+				}
+
+				/* Tags */
+				.tag {
+					border-radius: 0.375rem;
+					font-weight: 500;
+				}
+
+				/* Empty states */
+				.has-text-grey-light {
+					opacity: 0.8;
+				}
+
+				/* Value classes for chemistry readings */
+				.value-ok {
+					color: var(--pv-success);
+					font-weight: 600;
+				}
+				.value-warn {
+					color: var(--pv-danger);
+					font-weight: 700;
+				}
+
+				/* Titles */
+				.title {
+					color: var(--pv-text);
+					font-weight: 700;
+					letter-spacing: -0.025em;
+				}
+
+				/* Notification tweaks */
+				.notification {
+					border-radius: 0.5rem;
+				}
+
+				/* Section padding adjustment */
+				.section {
+					padding-left: 1.5rem;
+					padding-right: 1.5rem;
+				}
+
+				/* Utility classes (light defaults) */
+				.pv-divider {
+					height: 1px;
+					background: #f0f0f0;
+					border: none;
+				}
+				.pv-low-stock {
+					border: 2px solid hsl(348, 86%, 61%);
+					background: hsl(348, 86%, 97%);
+				}
+				.pv-complete-btn {
+					width: 28px;
+					height: 28px;
+					border: 2px solid #dbdbdb;
+					padding: 0;
+				}
+
+				/* Dark mode */
+				@media (prefers-color-scheme: dark) {
+					:root {
+						--pv-primary: #2dd4bf;
+						--pv-primary-hover: #14b8a6;
+						--pv-primary-light: #042f2e;
+						--pv-navbar: #020617;
+						--pv-success: #34d399;
+						--pv-danger: #f87171;
+						--pv-warning: #fbbf24;
+						--pv-bg: #0f172a;
+						--pv-border: #1e293b;
+						--pv-text: #f1f5f9;
+						--pv-text-secondary: #94a3b8;
+						--pv-surface: #1e293b;
+						--pv-surface-hover: #334155;
+						--pv-surface-alt: #162032;
+
+						/* Bulma dark overrides */
+						--bulma-primary-h: 168;
+						--bulma-primary-s: 72%;
+						--bulma-primary-l: 51%;
+						--bulma-link-h: 168;
+						--bulma-link-s: 72%;
+						--bulma-link-l: 51%;
+						--bulma-success-h: 160;
+						--bulma-success-s: 67%;
+						--bulma-success-l: 52%;
+						--bulma-danger-h: 0;
+						--bulma-danger-s: 91%;
+						--bulma-danger-l: 71%;
+						--bulma-warning-h: 43;
+						--bulma-warning-s: 96%;
+						--bulma-warning-l: 56%;
+						--bulma-scheme-main: var(--pv-bg);
+						--bulma-scheme-main-bis: var(--pv-surface);
+						--bulma-scheme-main-ter: var(--pv-surface-hover);
+						--bulma-text: var(--pv-text);
+						--bulma-text-strong: #ffffff;
+						--bulma-border: var(--pv-border);
+						--bulma-border-weak: #162032;
+					}
+
+					/* Cards & Boxes */
+					.box, .card {
+						background: var(--pv-surface);
+						border-color: var(--pv-border);
+					}
+
+					/* Tables */
+					.table thead th {
+						background: var(--pv-surface);
+						color: var(--pv-text-secondary);
+					}
+					.table td {
+						border-color: var(--pv-border);
+						color: var(--pv-text);
+					}
+					.table {
+						background-color: var(--pv-bg);
+						color: var(--pv-text);
+					}
+					.table.is-striped tbody tr:nth-child(even) {
+						background: var(--pv-surface-alt);
+					}
+					.table.is-hoverable tbody tr:hover {
+						background: var(--pv-surface-hover);
+					}
+
+					/* Modal */
+					.modal-card-head {
+						background: var(--pv-surface);
+						border-bottom-color: var(--pv-border);
+					}
+					.modal-card-body {
+						background: var(--pv-bg);
+					}
+					.modal-card-foot {
+						background: var(--pv-surface);
+						border-top-color: var(--pv-border);
+					}
+
+					/* Inputs */
+					.input, .textarea, .select select {
+						background-color: var(--pv-surface);
+						border-color: var(--pv-border);
+						color: var(--pv-text);
+					}
+					.input:focus, .textarea:focus, .select select:focus {
+						border-color: var(--pv-primary);
+						box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);
+					}
+
+					/* Buttons */
+					.button {
+						background-color: var(--pv-surface);
+						border-color: var(--pv-border);
+						color: var(--pv-text);
+					}
+					.button:hover {
+						border-color: var(--pv-text-secondary);
+					}
+					.button.is-primary {
+						background: var(--pv-primary);
+						color: #0f172a;
+						border-color: transparent;
+					}
+					.button.is-primary:hover {
+						background: var(--pv-primary-hover);
+					}
+					.button.is-primary.is-outlined {
+						background: transparent;
+						color: var(--pv-primary);
+						border-color: var(--pv-primary);
+					}
+					.button.is-primary.is-outlined:hover {
+						background: var(--pv-primary);
+						color: #0f172a;
+					}
+					.button.is-danger.is-outlined {
+						color: var(--pv-danger);
+						border-color: var(--pv-danger);
+					}
+					.button.is-danger.is-outlined:hover {
+						background: var(--pv-danger);
+						color: #0f172a;
+					}
+					.button.is-success.is-outlined {
+						color: var(--pv-success);
+						border-color: var(--pv-success);
+					}
+					.button.is-success.is-outlined:hover {
+						background: var(--pv-success);
+						color: #0f172a;
+					}
+					.button.is-white {
+						background: var(--pv-surface);
+						color: var(--pv-text);
+					}
+					.button.is-ghost {
+						background: transparent;
+						color: var(--pv-text-secondary);
+					}
+
+					/* Tabs */
+					.tabs.pv-tabs li a:hover {
+						color: var(--pv-text);
+						border-bottom-color: var(--pv-text-secondary);
+					}
+
+					/* Tags */
+					.tag.is-light {
+						background: var(--pv-surface-hover);
+						color: var(--pv-text);
+					}
+					.tag.is-success.is-light {
+						background: rgba(52, 211, 153, 0.15);
+						color: var(--pv-success);
+					}
+					.tag.is-danger.is-light {
+						background: rgba(248, 113, 113, 0.15);
+						color: var(--pv-danger);
+					}
+					.tag.is-warning.is-light {
+						background: rgba(251, 191, 36, 0.15);
+						color: var(--pv-warning);
+					}
+
+					/* Notification */
+					.notification.is-danger.is-light {
+						background: rgba(248, 113, 113, 0.1);
+						color: var(--pv-danger);
+					}
+					.notification.is-success.is-light {
+						background: rgba(52, 211, 153, 0.1);
+						color: var(--pv-success);
+					}
+
+					/* Select dropdown arrow */
+					.select:not(.is-multiple):not(.is-loading)::after {
+						border-color: var(--pv-text-secondary);
+					}
+
+					/* Divider */
+					.pv-divider {
+						background: var(--pv-border);
+					}
+
+					/* Low stock card */
+					.pv-low-stock {
+						border-color: var(--pv-danger);
+						background: rgba(248, 113, 113, 0.1);
+					}
+
+					/* Complete button */
+					.pv-complete-btn {
+						border-color: var(--pv-text-secondary);
+					}
+
+					/* Text helpers */
+					.has-text-grey, .has-text-grey-light {
+						color: var(--pv-text-secondary) !important;
+					}
+					.has-text-weight-bold, .has-text-weight-semibold {
+						color: var(--pv-text);
+					}
+
+					/* Delete button (X) */
+					.delete {
+						background-color: var(--pv-surface-hover);
+					}
+					.delete:hover {
+						background-color: var(--pv-text-secondary);
+					}
+				}
 			</style>
 		</head>
 		<body>
 			<script>window._savedTab = localStorage.getItem('poolvibes_tab') || 'chemistry';</script>
 			<div data-signals:tab="window._savedTab" data-signals:_loading="false" data-effect="localStorage.setItem('poolvibes_tab', $tab)">
 				<!-- Navbar -->
-				<nav class="navbar is-link" role="navigation">
+				<nav class="navbar pv-navbar" role="navigation">
 					<div class="container">
 						<div class="navbar-brand">
 							<a class="navbar-item" href="/">
@@ -26,10 +477,10 @@ templ Layout(email string, isAdmin bool) {
 							</a>
 						</div>
 						<div class="navbar-end">
-							<span class="navbar-item has-text-light">{ email }</span>
+							<span class="navbar-item pv-email">{ email }</span>
 							<div class="navbar-item">
 								<form method="POST" action="/logout">
-									<button type="submit" class="button is-small is-light is-outlined">Logout</button>
+									<button type="submit" class="button is-small pv-logout">Logout</button>
 								</form>
 							</div>
 						</div>
@@ -38,7 +489,7 @@ templ Layout(email string, isAdmin bool) {
 				<!-- Tab Navigation -->
 				<section class="section" style="padding-bottom: 0;">
 					<div class="container">
-						<div class="tabs is-boxed is-medium">
+						<div class="tabs pv-tabs">
 							<ul>
 								<li data-class:is-active="$tab === 'chemistry'">
 									<a data-on:click="$tab = 'chemistry'; @get('/chemistry')">Water Chemistry</a>

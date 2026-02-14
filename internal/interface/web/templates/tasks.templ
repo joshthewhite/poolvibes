@@ -53,7 +53,7 @@ templ TaskCard(t entities.Task) {
 				</div>
 				<div class="level-item">
 					<div class="buttons are-small">
-						<button data-on:click={ "@get('/tasks/" + t.ID.String() + "/edit')" } class="button is-link is-outlined is-small">Edit</button>
+						<button data-on:click={ "@get('/tasks/" + t.ID.String() + "/edit')" } class="button is-primary is-outlined is-small">Edit</button>
 						<button data-on:click={ "@delete('/tasks/" + t.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
 					</div>
 				</div>
@@ -68,9 +68,8 @@ templ TaskCompleteButton(t entities.Task) {
 	} else {
 		<button
 			data-on:click={ "@post('/tasks/" + t.ID.String() + "/complete')" }
-			class="button is-small is-rounded is-white"
+			class="button is-small is-rounded is-white pv-complete-btn"
 			title="Mark complete"
-			style="width:28px;height:28px;border:2px solid #dbdbdb;padding:0;"
 		></button>
 	}
 }
@@ -150,7 +149,7 @@ templ taskNewFormContent(dueDate string) {
 				<button data-on:click="@get('/tasks')" class="button">Cancel</button>
 			</div>
 			<div class="control">
-				<button data-on:click="@post('/tasks')" class="button is-link">Save</button>
+				<button data-on:click="@post('/tasks')" class="button is-primary">Save</button>
 			</div>
 		</div>
 	</div>
@@ -174,7 +173,7 @@ templ taskEditFormContent(t *entities.Task) {
 				<button data-on:click="@get('/tasks')" class="button">Cancel</button>
 			</div>
 			<div class="control">
-				<button data-on:click={ "@put('/tasks/" + t.ID.String() + "')" } class="button is-link">Update</button>
+				<button data-on:click={ "@put('/tasks/" + t.ID.String() + "')" } class="button is-primary">Update</button>
 			</div>
 		</div>
 	</div>
