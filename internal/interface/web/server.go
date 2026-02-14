@@ -39,7 +39,7 @@ func NewServer(authSvc *services.AuthService, userSvc *services.UserService, che
 func (s *Server) setupRoutes() {
 	pageHandler := handlers.NewPageHandler()
 	authHandler := handlers.NewAuthHandler(s.authSvc)
-	chemHandler := handlers.NewChemistryHandler(s.chemSvc)
+	chemHandler := handlers.NewChemistryHandler(s.chemSvc, s.userSvc)
 	taskHandler := handlers.NewTaskHandler(s.taskSvc)
 	equipHandler := handlers.NewEquipmentHandler(s.equipSvc)
 	chemicHandler := handlers.NewChemicalHandler(s.chemicSvc)
@@ -65,6 +65,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("POST /chemistry", auth(chemHandler.Create))
 	s.mux.HandleFunc("GET /chemistry/{id}/edit", auth(chemHandler.EditForm))
 	s.mux.HandleFunc("PUT /chemistry/{id}", auth(chemHandler.Update))
+	s.mux.HandleFunc("GET /chemistry/{id}/plan", auth(chemHandler.Plan))
 	s.mux.HandleFunc("DELETE /chemistry/{id}", auth(chemHandler.Delete))
 
 	// Tasks (auth required)

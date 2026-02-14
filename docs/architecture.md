@@ -94,6 +94,7 @@ erDiagram
         TEXT phone
         INTEGER notify_email
         INTEGER notify_sms
+        INTEGER pool_gallons
         TEXT created_at
         TEXT updated_at
     }

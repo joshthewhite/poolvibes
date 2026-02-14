@@ -21,7 +21,7 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 func (r *UserRepo) FindAll(ctx context.Context) ([]entities.User, error) {
 	rows, err := r.db.QueryContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
-			phone, notify_email, notify_sms,
+			phone, notify_email, notify_sms, pool_gallons,
 			created_at, updated_at
 		FROM users
 		ORDER BY created_at DESC`)
@@ -44,7 +44,7 @@ func (r *UserRepo) FindAll(ctx context.Context) ([]entities.User, error) {
 func (r *UserRepo) FindByID(ctx context.Context, id uuid.UUID) (*entities.User, error) {
 	row := r.db.QueryRowContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
-			phone, notify_email, notify_sms,
+			phone, notify_email, notify_sms, pool_gallons,
 			created_at, updated_at
 		FROM users
 		WHERE id = $1`, id)
@@ -61,7 +61,7 @@ func (r *UserRepo) FindByID(ctx context.Context, id uuid.UUID) (*entities.User, 
 func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*entities.User, error) {
 	row := r.db.QueryRowContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
-			phone, notify_email, notify_sms,
+			phone, notify_email, notify_sms, pool_gallons,
 			created_at, updated_at
 		FROM users
 		WHERE email = $1`, email)
@@ -78,11 +78,11 @@ func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*entities.Use
 func (r *UserRepo) Create(ctx context.Context, u *entities.User) error {
 	_, err := r.db.ExecContext(ctx, `
 		INSERT INTO users (id, email, password_hash, is_admin,
-			is_disabled, phone, notify_email, notify_sms,
+			is_disabled, phone, notify_email, notify_sms, pool_gallons,
 			created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
 		u.ID, u.Email, u.PasswordHash, u.IsAdmin, u.IsDisabled,
-		u.Phone, u.NotifyEmail, u.NotifySMS,
+		u.Phone, u.NotifyEmail, u.NotifySMS, u.PoolGallons,
 		u.CreatedAt, u.UpdatedAt)
 	if err != nil {
 		return fmt.Errorf("inserting user: %w", err)
@@ -97,11 +97,11 @@ func (r *UserRepo) Update(ctx context.Context, u *entities.User) error {
 		SET email = $1, password_hash = $2,
 			is_admin = $3, is_disabled = $4,
 			phone = $5, notify_email = $6, notify_sms = $7,
-			updated_at = $8
-		WHERE id = $9`,
+			pool_gallons = $8, updated_at = $9
+		WHERE id = $10`,
 		u.Email, u.PasswordHash, u.IsAdmin, u.IsDisabled,
 		u.Phone, u.NotifyEmail, u.NotifySMS,
-		u.UpdatedAt, u.ID)
+		u.PoolGallons, u.UpdatedAt, u.ID)
 	if err != nil {
 		return fmt.Errorf("updating user: %w", err)
 	}
@@ -123,7 +123,7 @@ type scanner interface {
 func scanUserFromRow(s scanner) (*entities.User, error) {
 	var u entities.User
 	if err := s.Scan(&u.ID, &u.Email, &u.PasswordHash, &u.IsAdmin, &u.IsDisabled,
-		&u.Phone, &u.NotifyEmail, &u.NotifySMS,
+		&u.Phone, &u.NotifyEmail, &u.NotifySMS, &u.PoolGallons,
 		&u.CreatedAt, &u.UpdatedAt); err != nil {
 		return nil, err
 	}

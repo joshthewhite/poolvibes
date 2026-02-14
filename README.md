@@ -6,7 +6,7 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 
 - **Authentication** — Email/password sign-up and sign-in with cookie-based sessions. Per-user data isolation (multi-tenancy).
 - **Admin Panel** — Admin users can manage accounts (enable/disable users, grant admin access).
-- **Water Chemistry** — Log pH, free/combined chlorine, total alkalinity, CYA, calcium hardness, and temperature. Out-of-range values are highlighted automatically.
+- **Water Chemistry** — Log pH, free/combined chlorine, total alkalinity, CYA, calcium hardness, and temperature. Out-of-range values are highlighted automatically. Generate treatment plans with chemical dosages based on your pool size.
 - **Task Scheduling** — Create recurring maintenance tasks (daily, weekly, monthly). Completing a task auto-generates the next occurrence.
 - **Equipment Tracking** — Track pool equipment with categories, manufacturer info, warranty status, and service history.
 - **Chemical Inventory** — Monitor chemical stock levels with low-stock alerts and quick-adjust buttons.

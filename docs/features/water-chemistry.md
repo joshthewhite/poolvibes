@@ -22,9 +22,18 @@ Each log entry also supports an optional **Notes** field for recording observati
 
 Values outside their ideal range are highlighted automatically in the chemistry log list. This makes it easy to spot readings that need attention without comparing numbers manually.
 
+## Treatment Plans
+
+After logging a chemistry test, click the **Plan** button on any row to generate a treatment plan. The plan calculates specific chemical dosages to bring out-of-range readings back to ideal levels, scaled to your pool's volume.
+
+Treatment plans use generic chemical names (muriatic acid, cal-hypo, baking soda, etc.) and cover corrections for: high/low pH, low free chlorine, high combined chlorine, high/low total alkalinity, low CYA, and low calcium hardness.
+
+To get accurate dosages, set your pool's gallon size in **Settings** under "Pool Details."
+
 ## Operations
 
 - **Create** — Log a new water test with any combination of parameters
 - **Edit** — Update a previously recorded test
 - **Delete** — Remove a log entry
+- **Plan** — Generate a treatment plan with chemical dosages
 - **List** — View all chemistry logs sorted by test date

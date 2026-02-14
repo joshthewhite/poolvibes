@@ -10,4 +10,5 @@ type UpdateNotificationPreferences struct {
 	Phone       string
 	NotifyEmail bool
 	NotifySMS   bool
+	PoolGallons int
 }

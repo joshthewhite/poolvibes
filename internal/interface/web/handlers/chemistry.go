@@ -6,16 +6,18 @@ import (
 
 	"github.com/joshthewhite/poolvibes/internal/application/command"
 	"github.com/joshthewhite/poolvibes/internal/application/services"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
 	"github.com/joshthewhite/poolvibes/internal/interface/web/templates"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
 type ChemistryHandler struct {
-	svc *services.ChemistryService
+	svc     *services.ChemistryService
+	userSvc *services.UserService
 }
 
-func NewChemistryHandler(svc *services.ChemistryService) *ChemistryHandler {
-	return &ChemistryHandler{svc: svc}
+func NewChemistryHandler(svc *services.ChemistryService, userSvc *services.UserService) *ChemistryHandler {
+	return &ChemistryHandler{svc: svc, userSvc: userSvc}
 }
 
 type chemistrySignals struct {
@@ -133,4 +135,24 @@ func (h *ChemistryHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	logs, _ := h.svc.List(r.Context())
 	sse := datastar.NewSSE(w, r)
 	sse.PatchElementTempl(templates.ChemistryList(logs))
+}
+
+func (h *ChemistryHandler) Plan(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	log, err := h.svc.Get(r.Context(), id)
+	if err != nil || log == nil {
+		http.Error(w, "not found", http.StatusNotFound)
+		return
+	}
+
+	user, err := services.UserFromContext(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	plan := entities.GenerateTreatmentPlan(log, user.PoolGallons)
+
+	sse := datastar.NewSSE(w, r)
+	sse.PatchElementTempl(templates.TreatmentPlanModal(plan))
 }

@@ -41,3 +41,19 @@ func fmtFloat(f float64, prec int) string {
 func fmtFloatG(f float64) string {
 	return fmt.Sprintf("%g", f)
 }
+
+func fmtGallons(n int) string {
+	s := fmt.Sprintf("%d", n)
+	if n < 1000 {
+		return s
+	}
+	// Insert commas from right to left
+	var result []byte
+	for i, c := range s {
+		if i > 0 && (len(s)-i)%3 == 0 {
+			result = append(result, ',')
+		}
+		result = append(result, byte(c))
+	}
+	return string(result)
+}

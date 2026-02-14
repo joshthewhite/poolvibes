@@ -17,6 +17,7 @@ type User struct {
 	Phone        string
 	NotifyEmail  bool
 	NotifySMS    bool
+	PoolGallons  int
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }

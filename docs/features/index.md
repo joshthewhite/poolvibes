@@ -8,7 +8,7 @@ Email/password authentication with cookie-based sessions. Each user's data is fu
 
 ## [Water Chemistry](water-chemistry.md)
 
-Log water test results and track parameters over time. Out-of-range values are highlighted automatically so you can see what needs attention at a glance.
+Log water test results and track parameters over time. Out-of-range values are highlighted automatically so you can see what needs attention at a glance. Generate treatment plans with specific chemical dosages based on your pool size.
 
 ## [Tasks](tasks.md)
 

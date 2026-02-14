@@ -2,6 +2,7 @@ package templates
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 	"github.com/joshthewhite/poolvibes/internal/domain/entities"
 )
@@ -50,6 +51,7 @@ templ chemistryRow(l entities.ChemistryLog) {
 		<td>{ fmt.Sprintf("%.0f", l.Temperature) }&deg;F</td>
 		<td class="has-text-right">
 			<div class="buttons is-right are-small">
+				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/plan')" } class="button is-info is-outlined is-small">Plan</button>
 				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/edit')" } class="button is-link is-outlined is-small">Edit</button>
 				<button data-on:click={ "@delete('/chemistry/" + l.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
 			</div>
@@ -186,6 +188,62 @@ templ chemistryEditFormContent(l *entities.ChemistryLog) {
 			<div class="control">
 				<button data-on:click={ "@put('/chemistry/" + l.ID.String() + "')" } class="button is-link">Update</button>
 			</div>
+		</div>
+	</div>
+}
+
+templ TreatmentPlanModal(plan *entities.TreatmentPlan) {
+	@Modal("Treatment Plan", "/chemistry", treatmentPlanContent(plan))
+}
+
+templ treatmentPlanContent(plan *entities.TreatmentPlan) {
+	if plan.PoolGallons == 0 {
+		<div class="notification is-warning is-light">
+			<p>
+				<strong>Pool volume not configured.</strong> Set your pool size in
+				<a data-on:click="@get('/settings')" style="cursor: pointer;">Settings</a> to get accurate chemical dosages.
+			</p>
+		</div>
+	} else if len(plan.Steps) == 0 {
+		<div class="notification is-success is-light">
+			<p><strong>All readings are in range!</strong> No chemical adjustments needed. Keep up the great work.</p>
+		</div>
+	} else {
+		<p class="mb-4 has-text-grey">
+			Dosages calculated for a { fmt.Sprintf("%s", fmtGallons(plan.PoolGallons)) } gallon pool.
+		</p>
+		for i, step := range plan.Steps {
+			<div class="box mb-4">
+				<div class="level mb-2">
+					<div class="level-left">
+						<span class="tag is-info is-medium mr-2">{ strconv.Itoa(i + 1) }</span>
+						<strong class="is-size-5">{ step.Problem }</strong>
+					</div>
+				</div>
+				<p class="has-text-grey mb-3">{ step.Explanation }</p>
+				<div class="columns is-multiline">
+					<div class="column is-half">
+						<p class="heading">Chemical</p>
+						<p>{ step.Chemical }</p>
+					</div>
+					<div class="column is-one-quarter">
+						<p class="heading">Total Amount</p>
+						<p class="has-text-weight-semibold">{ step.Amount }</p>
+					</div>
+					<div class="column is-one-quarter">
+						<p class="heading">Max Per Dose</p>
+						<p>{ step.MaxDose }</p>
+					</div>
+				</div>
+				<div class="notification is-light is-info is-size-7 mb-0">
+					{ step.Instructions }
+				</div>
+			</div>
+		}
+	}
+	<div class="field is-grouped is-grouped-right mt-4">
+		<div class="control">
+			<button data-on:click="@get('/chemistry')" class="button">Close</button>
 		</div>
 	</div>
 }
