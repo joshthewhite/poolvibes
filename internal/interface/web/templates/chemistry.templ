@@ -10,12 +10,12 @@ import (
 templ ChemistryList(data ChemistryListData) {
 	<div
 		id="tab-content"
-		data-signals__ifmissing:chemPage="1"
-		data-signals__ifmissing:chemSortBy="'tested_at'"
-		data-signals__ifmissing:chemSortDir="'desc'"
-		data-signals__ifmissing:chemOutOfRange="false"
-		data-signals__ifmissing:chemDateFrom="''"
-		data-signals__ifmissing:chemDateTo="''"
+		data-signals:chemPage__ifmissing="1"
+		data-signals:chemSortBy__ifmissing="'tested_at'"
+		data-signals:chemSortDir__ifmissing="'desc'"
+		data-signals:chemOutOfRange__ifmissing="false"
+		data-signals:chemDateFrom__ifmissing="''"
+		data-signals:chemDateTo__ifmissing="''"
 	>
 		@PageHeader("Water Chemistry Logs", "+ Add Test", "/chemistry/new")
 		@chemistryFilterBar(data)
@@ -83,8 +83,8 @@ templ chemistryFilterBar(data ChemistryListData) {
 				<div class="field">
 					<label class="label is-small mb-1">&nbsp;</label>
 					<div class="buttons">
-						<button data-on:click="chemPage.value=1; @get('/chemistry')" class="button is-small is-primary">Apply</button>
-						<button data-on:click="chemDateFrom.value=''; chemDateTo.value=''; chemOutOfRange.value=false; chemPage.value=1; @get('/chemistry')" class="button is-small">Clear</button>
+						<button data-on:click="$chempage=1; @get('/chemistry')" class="button is-small is-primary">Apply</button>
+						<button data-on:click="$chemdatefrom=''; $chemdateto=''; $chemoutofrange=false; $chempage=1; @get('/chemistry')" class="button is-small">Clear</button>
 					</div>
 				</div>
 			</div>
@@ -101,12 +101,12 @@ templ sortableHeader(label, col, currentSortBy, currentSortDir string) {
 templ chemistryPagination(data ChemistryListData) {
 	<nav class="pagination is-small is-centered mt-4" role="navigation" aria-label="pagination">
 		if data.Result.Page > 1 {
-			<a class="pagination-previous" data-on:click={ fmt.Sprintf("chemPage.value=%d; @get('/chemistry')", data.Result.Page-1) }>Previous</a>
+			<a class="pagination-previous" data-on:click={ fmt.Sprintf("$chempage=%d; @get('/chemistry')", data.Result.Page-1) }>Previous</a>
 		} else {
 			<a class="pagination-previous" disabled>Previous</a>
 		}
 		if data.Result.Page < data.Result.TotalPages {
-			<a class="pagination-next" data-on:click={ fmt.Sprintf("chemPage.value=%d; @get('/chemistry')", data.Result.Page+1) }>Next</a>
+			<a class="pagination-next" data-on:click={ fmt.Sprintf("$chempage=%d; @get('/chemistry')", data.Result.Page+1) }>Next</a>
 		} else {
 			<a class="pagination-next" disabled>Next</a>
 		}
@@ -117,7 +117,7 @@ templ chemistryPagination(data ChemistryListData) {
 				} else if p == data.Result.Page {
 					<li><a class="pagination-link is-current" aria-current="page">{ strconv.Itoa(p) }</a></li>
 				} else {
-					<li><a class="pagination-link" data-on:click={ fmt.Sprintf("chemPage.value=%d; @get('/chemistry')", p) }>{ strconv.Itoa(p) }</a></li>
+					<li><a class="pagination-link" data-on:click={ fmt.Sprintf("$chempage=%d; @get('/chemistry')", p) }>{ strconv.Itoa(p) }</a></li>
 				}
 			}
 		</ul>

@@ -137,7 +137,7 @@ func sortAction(col, currentSortBy, currentSortDir string) string {
 	if col == currentSortBy && currentSortDir == "desc" {
 		newDir = "asc"
 	}
-	return fmt.Sprintf("chemSortBy.value='%s'; chemSortDir.value='%s'; chemPage.value=1; @get('/chemistry')", col, newDir)
+	return fmt.Sprintf("$chemsortby='%s'; $chemsortdir='%s'; $chempage=1; @get('/chemistry')", col, newDir)
 }
 
 // sortIndicator returns an arrow character for the active sort column.

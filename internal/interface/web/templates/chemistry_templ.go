@@ -36,7 +36,7 @@ func ChemistryList(data ChemistryListData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"tab-content\" data-signals__ifmissing:chemPage=\"1\" data-signals__ifmissing:chemSortBy=\"'tested_at'\" data-signals__ifmissing:chemSortDir=\"'desc'\" data-signals__ifmissing:chemOutOfRange=\"false\" data-signals__ifmissing:chemDateFrom=\"''\" data-signals__ifmissing:chemDateTo=\"''\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"tab-content\" data-signals:chemPage__ifmissing=\"1\" data-signals:chemSortBy__ifmissing=\"'tested_at'\" data-signals:chemSortDir__ifmissing=\"'desc'\" data-signals:chemOutOfRange__ifmissing=\"false\" data-signals:chemDateFrom__ifmissing=\"''\" data-signals:chemDateTo__ifmissing=\"''\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -156,7 +156,7 @@ func chemistryFilterBar(data ChemistryListData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"></div></div></div><div class=\"column is-narrow\"><div class=\"field\"><label class=\"label is-small mb-1\">&nbsp;</label><div class=\"control\"><label class=\"checkbox is-size-7\"><input data-bind:chemOutOfRange type=\"checkbox\"> Out of range only</label></div></div></div><div class=\"column is-narrow\"><div class=\"field\"><label class=\"label is-small mb-1\">&nbsp;</label><div class=\"buttons\"><button data-on:click=\"chemPage.value=1; @get('/chemistry')\" class=\"button is-small is-primary\">Apply</button> <button data-on:click=\"chemDateFrom.value=''; chemDateTo.value=''; chemOutOfRange.value=false; chemPage.value=1; @get('/chemistry')\" class=\"button is-small\">Clear</button></div></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\"></div></div></div><div class=\"column is-narrow\"><div class=\"field\"><label class=\"label is-small mb-1\">&nbsp;</label><div class=\"control\"><label class=\"checkbox is-size-7\"><input data-bind:chemOutOfRange type=\"checkbox\"> Out of range only</label></div></div></div><div class=\"column is-narrow\"><div class=\"field\"><label class=\"label is-small mb-1\">&nbsp;</label><div class=\"buttons\"><button data-on:click=\"$chempage=1; @get('/chemistry')\" class=\"button is-small is-primary\">Apply</button> <button data-on:click=\"$chemdatefrom=''; $chemdateto=''; $chemoutofrange=false; $chempage=1; @get('/chemistry')\" class=\"button is-small\">Clear</button></div></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -259,9 +259,9 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("chemPage.value=%d; @get('/chemistry')", data.Result.Page-1))
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$chempage=%d; @get('/chemistry')", data.Result.Page-1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 104, Col: 122}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 104, Col: 117}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -283,9 +283,9 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("chemPage.value=%d; @get('/chemistry')", data.Result.Page+1))
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$chempage=%d; @get('/chemistry')", data.Result.Page+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 109, Col: 118}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 109, Col: 113}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -335,9 +335,9 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var13 string
-				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("chemPage.value=%d; @get('/chemistry')", p))
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$chempage=%d; @get('/chemistry')", p))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 120, Col: 107}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 120, Col: 102}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -350,7 +350,7 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 120, Col: 127}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 120, Col: 122}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
