@@ -9,7 +9,7 @@ templ Layout(email string, isAdmin bool) {
 			<title>PoolVibes - Pool Maintenance</title>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap" rel="stylesheet"/>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"/>
 			<script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js"></script>
 			<style>
@@ -18,14 +18,14 @@ templ Layout(email string, isAdmin bool) {
 					--pv-primary: #0d9488;
 					--pv-primary-hover: #0f766e;
 					--pv-primary-light: #ccfbf1;
-					--pv-navbar: #0f172a;
+					--pv-navbar: #13111C;
 					--pv-success: #10b981;
 					--pv-danger: #ef4444;
 					--pv-warning: #f59e0b;
-					--pv-bg: #f8fafc;
-					--pv-border: #e2e8f0;
-					--pv-text: #0f172a;
-					--pv-text-secondary: #64748b;
+					--pv-bg: #f8f7fc;
+					--pv-border: #e0dce8;
+					--pv-text: #1a1726;
+					--pv-text-secondary: #6e6a80;
 
 					/* Bulma overrides */
 					--bulma-primary: var(--pv-primary);
@@ -65,25 +65,25 @@ templ Layout(email string, isAdmin bool) {
 				}
 				.navbar.pv-navbar .navbar-item,
 				.navbar.pv-navbar .navbar-brand .navbar-item {
-					color: #f1f5f9;
+					color: #f1eff8;
 				}
 				.navbar.pv-navbar .navbar-brand .navbar-item strong {
 					color: #ffffff;
 					letter-spacing: -0.025em;
 				}
 				.navbar.pv-navbar .navbar-item.pv-email {
-					color: #94a3b8;
+					color: #8b869e;
 					font-size: 0.875rem;
 				}
 				.navbar.pv-navbar .button.pv-logout {
-					color: #94a3b8;
-					border-color: #334155;
+					color: #8b869e;
+					border-color: #2a2640;
 					background: transparent;
 					font-size: 0.8rem;
 				}
 				.navbar.pv-navbar .button.pv-logout:hover {
-					color: #f1f5f9;
-					border-color: #94a3b8;
+					color: #f1eff8;
+					border-color: #8b869e;
 				}
 
 				/* Tabs — underline style */
@@ -100,7 +100,7 @@ templ Layout(email string, isAdmin bool) {
 				}
 				.tabs.pv-tabs li a:hover {
 					color: var(--pv-text);
-					border-bottom-color: #cbd5e1;
+					border-bottom-color: #c8c3d4;
 				}
 				.tabs.pv-tabs li.is-active a {
 					color: var(--pv-primary);
@@ -112,7 +112,7 @@ templ Layout(email string, isAdmin bool) {
 				.box, .card {
 					border: 1px solid var(--pv-border);
 					border-radius: 0.5rem;
-					box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+					box-shadow: 0 1px 3px rgba(26, 23, 38, 0.04), 0 2px 8px rgba(26, 23, 38, 0.03);
 				}
 				.card-content {
 					padding: 1.25rem;
@@ -120,7 +120,7 @@ templ Layout(email string, isAdmin bool) {
 
 				/* Tables */
 				.table thead th {
-					background: #f1f5f9;
+					background: #f1eff8;
 					color: var(--pv-text-secondary);
 					font-weight: 600;
 					font-size: 0.8rem;
@@ -129,14 +129,14 @@ templ Layout(email string, isAdmin bool) {
 					border-bottom: 2px solid var(--pv-border);
 				}
 				.table td {
-					border-color: #f1f5f9;
+					border-color: #f1eff8;
 					vertical-align: middle;
 				}
 				.table.is-striped tbody tr:nth-child(even) {
-					background: #f8fafc;
+					background: #f8f7fc;
 				}
 				.table.is-hoverable tbody tr:hover {
-					background: #f1f5f9;
+					background: #f1eff8;
 				}
 
 				/* Buttons */
@@ -214,7 +214,8 @@ templ Layout(email string, isAdmin bool) {
 				}
 
 				/* Titles */
-				.title {
+				.title, h1, h2, h3 {
+					font-family: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 					color: var(--pv-text);
 					font-weight: 700;
 					letter-spacing: -0.025em;
@@ -234,7 +235,7 @@ templ Layout(email string, isAdmin bool) {
 				/* Utility classes (light defaults) */
 				.pv-divider {
 					height: 1px;
-					background: #f0f0f0;
+					background: #e8e5f0;
 					border: none;
 				}
 				.pv-low-stock {
@@ -244,7 +245,7 @@ templ Layout(email string, isAdmin bool) {
 				.pv-complete-btn {
 					width: 28px;
 					height: 28px;
-					border: 2px solid #dbdbdb;
+					border: 2px solid #d4d0de;
 					padding: 0;
 				}
 
@@ -254,17 +255,17 @@ templ Layout(email string, isAdmin bool) {
 						--pv-primary: #2dd4bf;
 						--pv-primary-hover: #14b8a6;
 						--pv-primary-light: #042f2e;
-						--pv-navbar: #020617;
+						--pv-navbar: #0d0b14;
 						--pv-success: #34d399;
 						--pv-danger: #f87171;
 						--pv-warning: #fbbf24;
-						--pv-bg: #0f172a;
-						--pv-border: #1e293b;
-						--pv-text: #f1f5f9;
-						--pv-text-secondary: #94a3b8;
-						--pv-surface: #1e293b;
-						--pv-surface-hover: #334155;
-						--pv-surface-alt: #162032;
+						--pv-bg: #13111C;
+						--pv-border: #211e2e;
+						--pv-text: #eeedf5;
+						--pv-text-secondary: #8b869e;
+						--pv-surface: #1c1929;
+						--pv-surface-hover: #2a2640;
+						--pv-surface-alt: #181530;
 
 						/* Bulma dark overrides */
 						--bulma-primary-h: 168;
@@ -288,13 +289,14 @@ templ Layout(email string, isAdmin bool) {
 						--bulma-text: var(--pv-text);
 						--bulma-text-strong: #ffffff;
 						--bulma-border: var(--pv-border);
-						--bulma-border-weak: #162032;
+						--bulma-border-weak: #181530;
 					}
 
 					/* Cards & Boxes */
 					.box, .card {
 						background: var(--pv-surface);
 						border-color: var(--pv-border);
+						box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.12);
 					}
 
 					/* Tables */
@@ -352,7 +354,7 @@ templ Layout(email string, isAdmin bool) {
 					}
 					.button.is-primary {
 						background: var(--pv-primary);
-						color: #0f172a;
+						color: #13111C;
 						border-color: transparent;
 					}
 					.button.is-primary:hover {
@@ -365,7 +367,7 @@ templ Layout(email string, isAdmin bool) {
 					}
 					.button.is-primary.is-outlined:hover {
 						background: var(--pv-primary);
-						color: #0f172a;
+						color: #13111C;
 					}
 					.button.is-danger.is-outlined {
 						color: var(--pv-danger);
@@ -373,7 +375,7 @@ templ Layout(email string, isAdmin bool) {
 					}
 					.button.is-danger.is-outlined:hover {
 						background: var(--pv-danger);
-						color: #0f172a;
+						color: #13111C;
 					}
 					.button.is-success.is-outlined {
 						color: var(--pv-success);
@@ -381,7 +383,7 @@ templ Layout(email string, isAdmin bool) {
 					}
 					.button.is-success.is-outlined:hover {
 						background: var(--pv-success);
-						color: #0f172a;
+						color: #13111C;
 					}
 					.button.is-white {
 						background: var(--pv-surface);
