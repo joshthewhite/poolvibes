@@ -498,7 +498,8 @@ templ Layout(email string, isAdmin bool) {
 							<a class="navbar-item" href="/">
 								<strong class="is-size-4">PoolVibes</strong>
 							</a>
-							<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+							<a role="button" class="navbar-burger" aria-label="menu"
+								data-attr:aria-expanded="$_menuOpen"
 								data-class:is-active="$_menuOpen"
 								data-on:click="$_menuOpen = !$_menuOpen">
 								<span aria-hidden="true"></span>
