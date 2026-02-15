@@ -36,7 +36,7 @@ func ChemistryList(data ChemistryListData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"tab-content\" data-signals:chemPage__ifmissing=\"1\" data-signals:chemSortBy__ifmissing=\"'tested_at'\" data-signals:chemSortDir__ifmissing=\"'desc'\" data-signals:chemOutOfRange__ifmissing=\"false\" data-signals:chemDateFrom__ifmissing=\"''\" data-signals:chemDateTo__ifmissing=\"''\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"tab-content\" data-signals:chemPage__ifmissing=\"1\" data-signals:chemSortBy__ifmissing=\"'tested_at'\" data-signals:chemSortDir__ifmissing=\"'desc'\" data-signals:chemOutOfRange__ifmissing=\"false\" data-signals:chemDateFrom__ifmissing=\"''\" data-signals:chemDateTo__ifmissing=\"''\" data-signals:_chemExpandIdx=\"'none'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -137,7 +137,7 @@ func chemistryFilterBar(data ChemistryListData) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.DateFrom)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 59, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 60, Col: 92}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -150,7 +150,7 @@ func chemistryFilterBar(data ChemistryListData) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.DateTo)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 67, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 68, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -192,7 +192,7 @@ func sortableHeader(label, col, currentSortBy, currentSortDir string) templ.Comp
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(sortAction(col, currentSortBy, currentSortDir))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 96, Col: 111}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 97, Col: 111}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -205,7 +205,7 @@ func sortableHeader(label, col, currentSortBy, currentSortDir string) templ.Comp
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 97, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 98, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -214,7 +214,7 @@ func sortableHeader(label, col, currentSortBy, currentSortDir string) templ.Comp
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(sortIndicator(col, currentSortBy, currentSortDir))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 97, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 98, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -256,7 +256,7 @@ func sortableHeaderHiddenMobile(label, col, currentSortBy, currentSortDir string
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(sortAction(col, currentSortBy, currentSortDir))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 102, Col: 136}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 103, Col: 136}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -269,7 +269,7 @@ func sortableHeaderHiddenMobile(label, col, currentSortBy, currentSortDir string
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 103, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 104, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -278,7 +278,7 @@ func sortableHeaderHiddenMobile(label, col, currentSortBy, currentSortDir string
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(sortIndicator(col, currentSortBy, currentSortDir))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 103, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 104, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -325,7 +325,7 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$chempage=%d; @get('/chemistry')", data.Result.Page-1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 110, Col: 117}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 111, Col: 117}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -349,7 +349,7 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$chempage=%d; @get('/chemistry')", data.Result.Page+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 115, Col: 113}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 116, Col: 113}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -383,7 +383,7 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 124, Col: 84}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 125, Col: 84}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -401,7 +401,7 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$chempage=%d; @get('/chemistry')", p))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 126, Col: 102}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 127, Col: 102}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -414,7 +414,7 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(p))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 126, Col: 122}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 127, Col: 122}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -433,7 +433,7 @@ func chemistryPagination(data ChemistryListData) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(showingRange(data.Result.Page, data.Result.PageSize, data.Result.TotalItems))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 131, Col: 137}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 132, Col: 137}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -475,7 +475,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(l.TestedAt.Format("Jan 2, 3:04 PM"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 136, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 137, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -510,7 +510,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.PH, 1))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 137, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 138, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -545,7 +545,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.FreeChlorine, 1))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 138, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 139, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
@@ -580,7 +580,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var30 string
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.CombinedChlorine, 1))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 139, Col: 120}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 140, Col: 120}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
@@ -615,7 +615,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.TotalAlkalinity, 0))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 140, Col: 118}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 141, Col: 118}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 		if templ_7745c5c3_Err != nil {
@@ -650,7 +650,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var36 string
 		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.CYA, 0))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 141, Col: 94}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 142, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 		if templ_7745c5c3_Err != nil {
@@ -685,7 +685,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var39 string
 		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.CalciumHardness, 0))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 142, Col: 118}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 143, Col: 118}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 		if templ_7745c5c3_Err != nil {
@@ -698,7 +698,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var40 string
 		templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.0f", l.Temperature))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 143, Col: 67}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 144, Col: 67}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 		if templ_7745c5c3_Err != nil {
@@ -709,35 +709,35 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var41 string
-		templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$_chemExpand%d = !$_chemExpand%d", idx, idx))
+		templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$_chemExpandIdx = $_chemExpandIdx === '%d' ? 'none' : '%d'", idx, idx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 147, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 148, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\" class=\"button is-small pv-expand-btn\"><span data-show=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\" class=\"button is-small pv-expand-btn\"><span data-class:is-hidden=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var42 string
-		templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("!$_chemExpand%d", idx))
+		templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$_chemExpandIdx === '%d'", idx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 150, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 151, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "\">&#9660;</span> <span data-show=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "\">&#9660;</span> <span class=\"is-hidden\" data-class:is-hidden=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var43 string
-		templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$_chemExpand%d", idx))
+		templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$_chemExpandIdx !== '%d'", idx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 151, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 152, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 		if templ_7745c5c3_Err != nil {
@@ -750,7 +750,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var44 string
 		templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs("@get('/chemistry/" + l.ID.String() + "/plan')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 153, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 154, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 		if templ_7745c5c3_Err != nil {
@@ -763,7 +763,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var45 string
 		templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs("@get('/chemistry/" + l.ID.String() + "/edit')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 154, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 155, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 		if templ_7745c5c3_Err != nil {
@@ -776,20 +776,20 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var46 string
 		templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs("@delete('/chemistry/" + l.ID.String() + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 155, Col: 73}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 156, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "\" class=\"button is-danger is-outlined is-small\">Delete</button></div></td></tr><tr class=\"pv-detail-row\" data-show=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "\" class=\"button is-danger is-outlined is-small\">Delete</button></div></td></tr><tr class=\"pv-detail-row is-hidden\" data-class:is-hidden=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var47 string
-		templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$_chemExpand%d", idx))
+		templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$_chemExpandIdx !== '%d'", idx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 159, Col: 73}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 160, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 		if templ_7745c5c3_Err != nil {
@@ -824,7 +824,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var50 string
 		templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.CombinedChlorine, 1))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 163, Col: 115}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 164, Col: 115}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var50))
 		if templ_7745c5c3_Err != nil {
@@ -859,7 +859,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var53 string
 		templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.TotalAlkalinity, 0))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 166, Col: 113}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 167, Col: 113}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var53))
 		if templ_7745c5c3_Err != nil {
@@ -894,7 +894,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var56 string
 		templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.CYA, 0))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 169, Col: 90}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 170, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var56))
 		if templ_7745c5c3_Err != nil {
@@ -929,7 +929,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var59 string
 		templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloat(l.CalciumHardness, 0))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 172, Col: 113}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 173, Col: 113}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var59))
 		if templ_7745c5c3_Err != nil {
@@ -942,7 +942,7 @@ func chemistryRow(l entities.ChemistryLog, idx int) templ.Component {
 		var templ_7745c5c3_Var60 string
 		templ_7745c5c3_Var60, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.0f", l.Temperature))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 175, Col: 64}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 176, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var60))
 		if templ_7745c5c3_Err != nil {
@@ -1042,7 +1042,7 @@ func chemistryNewFormContent(now time.Time) templ.Component {
 		var templ_7745c5c3_Var64 string
 		templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.JoinStringErrs("'" + now.Format("2006-01-02T15:04") + "'")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 273, Col: 68}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 274, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var64))
 		if templ_7745c5c3_Err != nil {
@@ -1121,7 +1121,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var67 string
 		templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloatG(l.PH))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 293, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 294, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var67))
 		if templ_7745c5c3_Err != nil {
@@ -1134,7 +1134,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var68 string
 		templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloatG(l.FreeChlorine))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 294, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 295, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 		if templ_7745c5c3_Err != nil {
@@ -1147,7 +1147,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var69 string
 		templ_7745c5c3_Var69, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloatG(l.CombinedChlorine))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 295, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 296, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var69))
 		if templ_7745c5c3_Err != nil {
@@ -1160,7 +1160,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var70 string
 		templ_7745c5c3_Var70, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloatG(l.TotalAlkalinity))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 296, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 297, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var70))
 		if templ_7745c5c3_Err != nil {
@@ -1173,7 +1173,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var71 string
 		templ_7745c5c3_Var71, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloatG(l.CYA))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 297, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 298, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var71))
 		if templ_7745c5c3_Err != nil {
@@ -1186,7 +1186,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var72 string
 		templ_7745c5c3_Var72, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloatG(l.CalciumHardness))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 298, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 299, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var72))
 		if templ_7745c5c3_Err != nil {
@@ -1199,7 +1199,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var73 string
 		templ_7745c5c3_Var73, templ_7745c5c3_Err = templ.JoinStringErrs(fmtFloatG(l.Temperature))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 299, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 300, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var73))
 		if templ_7745c5c3_Err != nil {
@@ -1212,7 +1212,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var74 string
 		templ_7745c5c3_Var74, templ_7745c5c3_Err = templ.JoinStringErrs("'" + escapeJS(l.Notes) + "'")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 300, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 301, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var74))
 		if templ_7745c5c3_Err != nil {
@@ -1225,7 +1225,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var75 string
 		templ_7745c5c3_Var75, templ_7745c5c3_Err = templ.JoinStringErrs("'" + l.TestedAt.Format("2006-01-02T15:04") + "'")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 301, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 302, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var75))
 		if templ_7745c5c3_Err != nil {
@@ -1246,7 +1246,7 @@ func chemistryEditFormContent(l *entities.ChemistryLog) templ.Component {
 		var templ_7745c5c3_Var76 string
 		templ_7745c5c3_Var76, templ_7745c5c3_Err = templ.JoinStringErrs("@put('/chemistry/" + l.ID.String() + "')")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 309, Col: 70}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 310, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var76))
 		if templ_7745c5c3_Err != nil {
@@ -1328,7 +1328,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 			var templ_7745c5c3_Var79 string
 			templ_7745c5c3_Var79, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", fmtGallons(plan.PoolGallons)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 333, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 334, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var79))
 			if templ_7745c5c3_Err != nil {
@@ -1346,7 +1346,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				var templ_7745c5c3_Var80 string
 				templ_7745c5c3_Var80, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(i + 1))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 339, Col: 68}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 340, Col: 68}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var80))
 				if templ_7745c5c3_Err != nil {
@@ -1359,7 +1359,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				var templ_7745c5c3_Var81 string
 				templ_7745c5c3_Var81, templ_7745c5c3_Err = templ.JoinStringErrs(step.Problem)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 340, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 341, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var81))
 				if templ_7745c5c3_Err != nil {
@@ -1372,7 +1372,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				var templ_7745c5c3_Var82 string
 				templ_7745c5c3_Var82, templ_7745c5c3_Err = templ.JoinStringErrs(step.Explanation)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 343, Col: 52}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 344, Col: 52}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var82))
 				if templ_7745c5c3_Err != nil {
@@ -1385,7 +1385,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				var templ_7745c5c3_Var83 string
 				templ_7745c5c3_Var83, templ_7745c5c3_Err = templ.JoinStringErrs(step.Chemical)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 347, Col: 24}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 348, Col: 24}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var83))
 				if templ_7745c5c3_Err != nil {
@@ -1398,7 +1398,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				var templ_7745c5c3_Var84 string
 				templ_7745c5c3_Var84, templ_7745c5c3_Err = templ.JoinStringErrs(step.Amount)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 351, Col: 55}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 352, Col: 55}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var84))
 				if templ_7745c5c3_Err != nil {
@@ -1411,7 +1411,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				var templ_7745c5c3_Var85 string
 				templ_7745c5c3_Var85, templ_7745c5c3_Err = templ.JoinStringErrs(step.MaxDose)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 355, Col: 23}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 356, Col: 23}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var85))
 				if templ_7745c5c3_Err != nil {
@@ -1424,7 +1424,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				var templ_7745c5c3_Var86 string
 				templ_7745c5c3_Var86, templ_7745c5c3_Err = templ.JoinStringErrs(step.Instructions)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 359, Col: 24}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/chemistry.templ`, Line: 360, Col: 24}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var86))
 				if templ_7745c5c3_Err != nil {

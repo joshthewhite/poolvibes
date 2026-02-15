@@ -16,6 +16,7 @@ templ ChemistryList(data ChemistryListData) {
 		data-signals:chemOutOfRange__ifmissing="false"
 		data-signals:chemDateFrom__ifmissing="''"
 		data-signals:chemDateTo__ifmissing="''"
+		data-signals:_chemExpandIdx="'none'"
 	>
 		@PageHeader("Water Chemistry Logs", "+ Add Test", "/chemistry/new")
 		@chemistryFilterBar(data)
@@ -144,11 +145,11 @@ templ chemistryRow(l entities.ChemistryLog, idx int) {
 		<td class="has-text-right">
 			<div class="buttons is-right are-small" style="flex-wrap: nowrap;">
 				<button
-					data-on:click={ fmt.Sprintf("$_chemExpand%d = !$_chemExpand%d", idx, idx) }
+					data-on:click={ fmt.Sprintf("$_chemExpandIdx = $_chemExpandIdx === '%d' ? 'none' : '%d'", idx, idx) }
 					class="button is-small pv-expand-btn"
 				>
-					<span data-show={ fmt.Sprintf("!$_chemExpand%d", idx) }>&#9660;</span>
-					<span data-show={ fmt.Sprintf("$_chemExpand%d", idx) }>&#9650;</span>
+					<span data-class:is-hidden={ fmt.Sprintf("$_chemExpandIdx === '%d'", idx) }>&#9660;</span>
+					<span class="is-hidden" data-class:is-hidden={ fmt.Sprintf("$_chemExpandIdx !== '%d'", idx) }>&#9650;</span>
 				</button>
 				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/plan')" } class="button is-info is-outlined is-small">Plan</button>
 				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/edit')" } class="button is-primary is-outlined is-small">Edit</button>
@@ -156,7 +157,7 @@ templ chemistryRow(l entities.ChemistryLog, idx int) {
 			</div>
 		</td>
 	</tr>
-	<tr class="pv-detail-row" data-show={ fmt.Sprintf("$_chemExpand%d", idx) }>
+	<tr class="pv-detail-row is-hidden" data-class:is-hidden={ fmt.Sprintf("$_chemExpandIdx !== '%d'", idx) }>
 		<td colspan="4">
 			<div class="columns is-mobile is-multiline is-size-7 mb-0">
 				<div class="column is-half">
