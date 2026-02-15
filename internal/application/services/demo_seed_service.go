@@ -14,6 +14,7 @@ import (
 )
 
 type DemoSeedService struct {
+	userRepo    repositories.UserRepository
 	chemLogRepo repositories.ChemistryLogRepository
 	taskRepo    repositories.TaskRepository
 	equipRepo   repositories.EquipmentRepository
@@ -22,6 +23,7 @@ type DemoSeedService struct {
 }
 
 func NewDemoSeedService(
+	userRepo repositories.UserRepository,
 	chemLogRepo repositories.ChemistryLogRepository,
 	taskRepo repositories.TaskRepository,
 	equipRepo repositories.EquipmentRepository,
@@ -29,6 +31,7 @@ func NewDemoSeedService(
 	chemRepo repositories.ChemicalRepository,
 ) *DemoSeedService {
 	return &DemoSeedService{
+		userRepo:    userRepo,
 		chemLogRepo: chemLogRepo,
 		taskRepo:    taskRepo,
 		equipRepo:   equipRepo,
@@ -38,6 +41,9 @@ func NewDemoSeedService(
 }
 
 func (s *DemoSeedService) Seed(ctx context.Context, userID uuid.UUID) error {
+	if err := s.seedPoolCapacity(ctx, userID); err != nil {
+		return fmt.Errorf("seeding pool capacity: %w", err)
+	}
 	if err := s.seedChemistryLogs(ctx, userID); err != nil {
 		return fmt.Errorf("seeding chemistry logs: %w", err)
 	}
@@ -53,6 +59,18 @@ func (s *DemoSeedService) Seed(ctx context.Context, userID uuid.UUID) error {
 	}
 	if err := s.seedChemicals(ctx, userID); err != nil {
 		return fmt.Errorf("seeding chemicals: %w", err)
+	}
+	return nil
+}
+
+func (s *DemoSeedService) seedPoolCapacity(ctx context.Context, userID uuid.UUID) error {
+	user, err := s.userRepo.FindByID(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("finding user: %w", err)
+	}
+	user.PoolGallons = 15000
+	if err := s.userRepo.Update(ctx, user); err != nil {
+		return fmt.Errorf("updating pool gallons: %w", err)
 	}
 	return nil
 }

@@ -101,7 +101,7 @@ var serveCmd = &cobra.Command{
 
 		var demoSeedSvc *services.DemoSeedService
 		if demoMode {
-			demoSeedSvc = services.NewDemoSeedService(chemLogRepo, taskRepo, equipRepo, srRepo, chemRepo)
+			demoSeedSvc = services.NewDemoSeedService(userRepo, chemLogRepo, taskRepo, equipRepo, srRepo, chemRepo)
 			log.Printf("Demo mode enabled (max %d concurrent demo users)", maxDemoUsers)
 		}
 
