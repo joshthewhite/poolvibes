@@ -1,0 +1,302 @@
+package templates
+
+import (
+	"fmt"
+	"github.com/joshthewhite/poolvibes/internal/domain/entities"
+)
+
+templ Dashboard(data DashboardData) {
+	<div id="tab-content">
+		<h2 class="title is-4">Dashboard</h2>
+		<!-- Summary Cards -->
+		<div class="columns is-multiline">
+			<!-- Water Quality Card -->
+			<div class="column is-3-desktop is-6-tablet">
+				<div class="box">
+					<p class="heading">Water Quality</p>
+					if data.WaterQuality.HasData {
+						<p class="is-size-4 has-text-weight-bold">
+							<span class={ statusColor(data.WaterQuality.Status) }>
+								{ fmt.Sprintf("%d/%d", data.WaterQuality.InRange, data.WaterQuality.Total) }
+							</span>
+						</p>
+						<p class="is-size-7 has-text-grey">readings in range</p>
+					} else {
+						<p class="has-text-grey-light is-size-7">No test data yet</p>
+					}
+				</div>
+			</div>
+			<!-- Last Tested Card -->
+			<div class="column is-3-desktop is-6-tablet">
+				<div class="box">
+					<p class="heading">Last Tested</p>
+					if data.LastTested.HasData {
+						<p class="is-size-4 has-text-weight-bold">
+							<span class={ statusColor(data.LastTested.Status) }>
+								{ data.LastTested.Text }
+							</span>
+						</p>
+						<p class="is-size-7 has-text-grey">last water test</p>
+					} else {
+						<p class="has-text-grey-light is-size-7">No tests recorded</p>
+					}
+				</div>
+			</div>
+			<!-- Tasks Card -->
+			<div class="column is-3-desktop is-6-tablet">
+				<div class="box">
+					<p class="heading">Tasks</p>
+					if data.Tasks.HasData {
+						<p class="is-size-4 has-text-weight-bold">
+							if data.Tasks.OverdueCount > 0 {
+								<span class="has-text-danger">{ fmt.Sprintf("%d overdue", data.Tasks.OverdueCount) }</span>
+							} else if data.Tasks.DueTodayCount > 0 {
+								<span class="has-text-warning">{ fmt.Sprintf("%d due today", data.Tasks.DueTodayCount) }</span>
+							} else {
+								<span class="has-text-success">All on track</span>
+							}
+						</p>
+						<p class="is-size-7 has-text-grey">maintenance tasks</p>
+					} else {
+						<p class="has-text-grey-light is-size-7">No tasks yet</p>
+					}
+				</div>
+			</div>
+			<!-- Low Stock Card -->
+			<div class="column is-3-desktop is-6-tablet">
+				<div class="box">
+					<p class="heading">Low Stock</p>
+					if data.LowStock.HasData {
+						<p class="is-size-4 has-text-weight-bold">
+							if data.LowStock.Count > 0 {
+								<span class={ statusColor(data.LowStock.Status) }>
+									{ fmt.Sprintf("%d low", data.LowStock.Count) }
+								</span>
+							} else {
+								<span class="has-text-success">Stocked up</span>
+							}
+						</p>
+						<p class="is-size-7 has-text-grey">chemical inventory</p>
+					} else {
+						<p class="has-text-grey-light is-size-7">No chemicals tracked</p>
+					}
+				</div>
+			</div>
+		</div>
+		<!-- Chemistry Trend Charts -->
+		if data.Chart.HasData && !data.Chart.SinglePoint {
+			<div class="columns mt-4">
+				<div class="column is-half">
+					<div class="box">
+						<p class="heading mb-3">pH Trend</p>
+						<div style="position: relative; height: 200px;">
+							<canvas id="ph-chart"></canvas>
+						</div>
+					</div>
+				</div>
+				<div class="column is-half">
+					<div class="box">
+						<p class="heading mb-3">Free Chlorine Trend</p>
+						<div style="position: relative; height: 200px;">
+							<canvas id="fc-chart"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+			@templ.JSONScript("dashboard-chart-data", data.Chart)
+			@dashboardChartScript()
+		} else if data.Chart.HasData && data.Chart.SinglePoint {
+			<div class="notification is-info is-light mt-4">
+				Add more water tests to see chemistry trend charts.
+			</div>
+		}
+		<!-- Quick Lists -->
+		<div class="columns mt-4">
+			<!-- Upcoming Tasks -->
+			<div class="column is-half">
+				<div class="box">
+					<p class="heading mb-3">Upcoming Tasks</p>
+					if len(data.UpcomingTasks) == 0 {
+						<p class="has-text-grey-light is-size-7">No upcoming tasks</p>
+					} else {
+						for _, t := range data.UpcomingTasks {
+							@dashboardTaskRow(t)
+						}
+					}
+				</div>
+			</div>
+			<!-- Low Stock Alerts -->
+			<div class="column is-half">
+				<div class="box">
+					<p class="heading mb-3">Low Stock Alerts</p>
+					if len(data.LowStockChemicals) == 0 {
+						<p class="has-text-grey-light is-size-7">All chemicals stocked up</p>
+					} else {
+						for _, c := range data.LowStockChemicals {
+							@dashboardChemicalRow(c)
+						}
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ dashboardTaskRow(t entities.Task) {
+	<div class="level is-mobile mb-2" style="border-bottom: 1px solid var(--pv-border); padding-bottom: 0.5rem;">
+		<div class="level-left">
+			<div class="level-item">
+				<span class="has-text-weight-medium is-size-7">{ t.Name }</span>
+			</div>
+		</div>
+		<div class="level-right">
+			<div class="level-item">
+				<span class={ dueInClass(t.DueDate) + " is-size-7" }>{ dueInText(t.DueDate) }</span>
+			</div>
+		</div>
+	</div>
+}
+
+templ dashboardChemicalRow(c entities.Chemical) {
+	<div class="level is-mobile mb-2" style="border-bottom: 1px solid var(--pv-border); padding-bottom: 0.5rem;">
+		<div class="level-left">
+			<div class="level-item">
+				<span class="has-text-weight-medium is-size-7">{ c.Name }</span>
+			</div>
+		</div>
+		<div class="level-right">
+			<div class="level-item">
+				<span class="tag is-danger is-light is-size-7">
+					{ fmt.Sprintf("%g %s", c.Stock.Amount, string(c.Stock.Unit)) }
+				</span>
+			</div>
+		</div>
+	</div>
+}
+
+templ dashboardChartScript() {
+	<script>
+		(function() {
+			// Destroy existing chart instances to prevent duplicates on tab re-entry
+			if (window._pvPhChart) { window._pvPhChart.destroy(); window._pvPhChart = null; }
+			if (window._pvFcChart) { window._pvFcChart.destroy(); window._pvFcChart = null; }
+
+			var el = document.getElementById('dashboard-chart-data');
+			if (!el) return;
+			var data = JSON.parse(el.textContent);
+			if (!data.hasData) return;
+
+			// Read CSS variables for dark mode support
+			var style = getComputedStyle(document.documentElement);
+			var textColor = style.getPropertyValue('--pv-text-secondary').trim() || '#6e6a80';
+			var borderColor = style.getPropertyValue('--pv-border').trim() || '#e0dce8';
+			var successColor = style.getPropertyValue('--pv-success').trim() || '#10b981';
+			var primaryColor = style.getPropertyValue('--pv-primary').trim() || '#0d9488';
+
+			var commonOptions = {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: { display: false },
+					tooltip: { mode: 'index', intersect: false }
+				},
+				scales: {
+					x: {
+						ticks: { color: textColor, font: { size: 11 } },
+						grid: { color: borderColor }
+					},
+					y: {
+						ticks: { color: textColor, font: { size: 11 } },
+						grid: { color: borderColor }
+					}
+				}
+			};
+
+			// pH Chart
+			var phCtx = document.getElementById('ph-chart');
+			if (phCtx) {
+				window._pvPhChart = new Chart(phCtx, {
+					type: 'line',
+					data: {
+						labels: data.labels,
+						datasets: [
+							{
+								label: 'pH',
+								data: data.ph,
+								borderColor: primaryColor,
+								backgroundColor: primaryColor + '33',
+								borderWidth: 2,
+								tension: 0.3,
+								pointRadius: 3,
+								fill: false
+							},
+							{
+								label: 'Ideal Max',
+								data: data.labels.map(function() { return data.phMax; }),
+								borderColor: successColor + '44',
+								backgroundColor: successColor + '11',
+								borderWidth: 1,
+								borderDash: [4, 4],
+								pointRadius: 0,
+								fill: '+1'
+							},
+							{
+								label: 'Ideal Min',
+								data: data.labels.map(function() { return data.phMin; }),
+								borderColor: successColor + '44',
+								borderWidth: 1,
+								borderDash: [4, 4],
+								pointRadius: 0,
+								fill: false
+							}
+						]
+					},
+					options: commonOptions
+				});
+			}
+
+			// Free Chlorine Chart
+			var fcCtx = document.getElementById('fc-chart');
+			if (fcCtx) {
+				window._pvFcChart = new Chart(fcCtx, {
+					type: 'line',
+					data: {
+						labels: data.labels,
+						datasets: [
+							{
+								label: 'Free Chlorine',
+								data: data.fc,
+								borderColor: primaryColor,
+								backgroundColor: primaryColor + '33',
+								borderWidth: 2,
+								tension: 0.3,
+								pointRadius: 3,
+								fill: false
+							},
+							{
+								label: 'Ideal Max',
+								data: data.labels.map(function() { return data.fcMax; }),
+								borderColor: successColor + '44',
+								backgroundColor: successColor + '11',
+								borderWidth: 1,
+								borderDash: [4, 4],
+								pointRadius: 0,
+								fill: '+1'
+							},
+							{
+								label: 'Ideal Min',
+								data: data.labels.map(function() { return data.fcMin; }),
+								borderColor: successColor + '44',
+								borderWidth: 1,
+								borderDash: [4, 4],
+								pointRadius: 0,
+								fill: false
+							}
+						]
+					},
+					options: commonOptions
+				});
+			}
+		})();
+	</script>
+}

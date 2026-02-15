@@ -103,6 +103,17 @@ func dueInText(dueDate time.Time) string {
 	}
 }
 
+func statusColor(status string) string {
+	switch status {
+	case "danger":
+		return "has-text-danger"
+	case "warning":
+		return "has-text-warning"
+	default:
+		return "has-text-success"
+	}
+}
+
 func dueInClass(dueDate time.Time) string {
 	now := time.Now()
 	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())

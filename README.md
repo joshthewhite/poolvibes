@@ -4,6 +4,7 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 
 ## Features
 
+- **Dashboard** — At-a-glance overview with water quality summary, task status, low stock alerts, and pH/chlorine trend charts (Chart.js).
 - **Authentication** — Email/password sign-up and sign-in with cookie-based sessions. Per-user data isolation (multi-tenancy).
 - **Admin Panel** — Admin users can manage accounts (enable/disable users, grant admin access).
 - **Water Chemistry** — Log pH, free/combined chlorine, total alkalinity, CYA, calcium hardness, and temperature. Out-of-range values are highlighted automatically. Generate treatment plans with chemical dosages based on your pool size.

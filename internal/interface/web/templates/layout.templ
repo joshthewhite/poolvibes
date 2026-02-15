@@ -12,6 +12,7 @@ templ Layout(email string, isAdmin bool) {
 			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap" rel="stylesheet"/>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"/>
 			<script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 			<style>
 				/* PoolVibes Design System */
 				:root {
@@ -468,7 +469,7 @@ templ Layout(email string, isAdmin bool) {
 			</style>
 		</head>
 		<body>
-			<script>window._savedTab = localStorage.getItem('poolvibes_tab') || 'chemistry';</script>
+			<script>window._savedTab = localStorage.getItem('poolvibes_tab') || 'dashboard';</script>
 			<div data-signals:tab="window._savedTab" data-signals:_loading="false" data-effect="localStorage.setItem('poolvibes_tab', $tab)">
 				<!-- Navbar -->
 				<nav class="navbar pv-navbar" role="navigation">
@@ -493,6 +494,9 @@ templ Layout(email string, isAdmin bool) {
 					<div class="container">
 						<div class="tabs pv-tabs">
 							<ul>
+								<li data-class:is-active="$tab === 'dashboard'">
+									<a data-on:click="$tab = 'dashboard'; @get('/dashboard')">Dashboard</a>
+								</li>
 								<li data-class:is-active="$tab === 'chemistry'">
 									<a data-on:click="$tab = 'chemistry'; @get('/chemistry')">Water Chemistry</a>
 								</li>

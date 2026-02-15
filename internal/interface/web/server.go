@@ -59,6 +59,10 @@ func (s *Server) setupRoutes() {
 	// Page (auth required)
 	s.mux.HandleFunc("GET /{$}", auth(pageHandler.Index))
 
+	// Dashboard (auth required)
+	dashHandler := handlers.NewDashboardHandler(s.chemSvc, s.taskSvc, s.chemicSvc)
+	s.mux.HandleFunc("GET /dashboard", auth(dashHandler.Page))
+
 	// Chemistry (auth required)
 	s.mux.HandleFunc("GET /chemistry", auth(chemHandler.List))
 	s.mux.HandleFunc("GET /chemistry/new", auth(chemHandler.NewForm))

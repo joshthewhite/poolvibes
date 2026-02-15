@@ -202,6 +202,7 @@ erDiagram
 | Router | `http.ServeMux` | Go 1.22+ method routing, no external dependency |
 | Frontend | Datastar | SSE-driven reactive UI, no JavaScript framework |
 | Templates | templ | Type-safe HTML templates compiled to Go |
+| Charts | Chart.js 4.4.7 | CDN-hosted, used for dashboard trend charts |
 | CSS | Bulma 1.0.4 | Lightweight, CDN-hosted |
 | Database | modernc.org/sqlite (default), pgx (PostgreSQL) | SQLite: pure Go, no CGO; PostgreSQL: for hosted deployments |
 | Migrations | golang-migrate | Embedded SQL files, auto-run on startup |
