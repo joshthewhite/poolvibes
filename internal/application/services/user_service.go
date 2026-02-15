@@ -45,6 +45,10 @@ func (s *UserService) Update(ctx context.Context, cmd command.UpdateUser) (*enti
 	}
 	user.IsAdmin = cmd.IsAdmin
 	user.IsDisabled = cmd.IsDisabled
+	if !cmd.IsDemo && user.IsDemo {
+		user.IsDemo = false
+		user.DemoExpiresAt = nil
+	}
 	if err := s.repo.Update(ctx, user); err != nil {
 		return nil, err
 	}

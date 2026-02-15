@@ -20,6 +20,7 @@ func NewAdminHandler(svc *services.UserService) *AdminHandler {
 type adminUserSignals struct {
 	IsAdmin    bool `json:"isAdmin"`
 	IsDisabled bool `json:"isDisabled"`
+	IsDemo     bool `json:"isDemo"`
 }
 
 func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +63,7 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		ID:         id,
 		IsAdmin:    signals.IsAdmin,
 		IsDisabled: signals.IsDisabled,
+		IsDemo:     signals.IsDemo,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

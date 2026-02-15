@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/joshthewhite/poolvibes/internal/domain/entities"
@@ -14,4 +15,5 @@ type UserRepository interface {
 	Create(ctx context.Context, user *entities.User) error
 	Update(ctx context.Context, user *entities.User) error
 	Delete(ctx context.Context, id uuid.UUID) error
+	FindExpiredDemo(ctx context.Context, now time.Time) ([]entities.User, error)
 }

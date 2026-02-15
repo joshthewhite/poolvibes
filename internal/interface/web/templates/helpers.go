@@ -114,6 +114,22 @@ func statusColor(status string) string {
 	}
 }
 
+func demoExpiryText(expiresAt *time.Time) string {
+	if expiresAt == nil {
+		return ""
+	}
+	remaining := time.Until(*expiresAt)
+	if remaining <= 0 {
+		return "expired"
+	}
+	hours := int(remaining.Hours())
+	if hours >= 1 {
+		return fmt.Sprintf("expires in %dh", hours)
+	}
+	minutes := int(remaining.Minutes())
+	return fmt.Sprintf("expires in %dm", minutes)
+}
+
 func dueInClass(dueDate time.Time) string {
 	now := time.Now()
 	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())

@@ -9,17 +9,19 @@ import (
 )
 
 type User struct {
-	ID           uuid.UUID
-	Email        string
-	PasswordHash string
-	IsAdmin      bool
-	IsDisabled   bool
-	Phone        string
-	NotifyEmail  bool
-	NotifySMS    bool
-	PoolGallons  int
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID            uuid.UUID
+	Email         string
+	PasswordHash  string
+	IsAdmin       bool
+	IsDisabled    bool
+	IsDemo        bool
+	DemoExpiresAt *time.Time
+	Phone         string
+	NotifyEmail   bool
+	NotifySMS     bool
+	PoolGallons   int
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 func NewUser(email, passwordHash string) *User {
@@ -35,6 +37,10 @@ func NewUser(email, passwordHash string) *User {
 		CreatedAt:    now,
 		UpdatedAt:    now,
 	}
+}
+
+func (u *User) IsDemoExpired() bool {
+	return u.IsDemo && u.DemoExpiresAt != nil && time.Now().After(*u.DemoExpiresAt)
 }
 
 func (u *User) Validate() error {

@@ -68,6 +68,16 @@ func (m *mockUserRepo) Delete(_ context.Context, id uuid.UUID) error {
 	return nil
 }
 
+func (m *mockUserRepo) FindExpiredDemo(_ context.Context, now time.Time) ([]entities.User, error) {
+	var result []entities.User
+	for _, u := range m.users {
+		if u.IsDemo && u.DemoExpiresAt != nil && now.After(*u.DemoExpiresAt) {
+			result = append(result, *u)
+		}
+	}
+	return result, nil
+}
+
 type mockSessionRepo struct {
 	sessions []*entities.Session
 }
@@ -161,7 +171,7 @@ func TestAuthService_SignUp(t *testing.T) {
 					PasswordHash: "hash",
 				})
 			}
-			svc := NewAuthService(userRepo, sessionRepo)
+			svc := NewAuthService(userRepo, sessionRepo, false, nil)
 
 			user, session, err := svc.SignUp(context.Background(), tt.cmd)
 			if tt.wantErr != "" {
@@ -199,7 +209,7 @@ func TestAuthService_SignUp_DuplicateEmail(t *testing.T) {
 	userRepo := &mockUserRepo{
 		users: []*entities.User{{ID: uuid.New(), Email: "dup@pool.com", PasswordHash: "hash"}},
 	}
-	svc := NewAuthService(userRepo, &mockSessionRepo{})
+	svc := NewAuthService(userRepo, &mockSessionRepo{}, false, nil)
 
 	_, _, err := svc.SignUp(context.Background(), command.SignUp{
 		Email:    "dup@pool.com",
@@ -258,7 +268,7 @@ func TestAuthService_SignIn(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			userRepo := &mockUserRepo{users: []*entities.User{activeUser, disabledUser}}
 			sessionRepo := &mockSessionRepo{}
-			svc := NewAuthService(userRepo, sessionRepo)
+			svc := NewAuthService(userRepo, sessionRepo, false, nil)
 
 			user, session, err := svc.SignIn(context.Background(), tt.cmd)
 			if tt.wantErr != "" {
@@ -290,7 +300,7 @@ func TestAuthService_SignOut(t *testing.T) {
 	sessionRepo := &mockSessionRepo{
 		sessions: []*entities.Session{{ID: sessionID, UserID: uuid.New(), ExpiresAt: time.Now().Add(time.Hour)}},
 	}
-	svc := NewAuthService(&mockUserRepo{}, sessionRepo)
+	svc := NewAuthService(&mockUserRepo{}, sessionRepo, false, nil)
 
 	if err := svc.SignOut(context.Background(), sessionID.String()); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -301,7 +311,7 @@ func TestAuthService_SignOut(t *testing.T) {
 }
 
 func TestAuthService_SignOut_InvalidID(t *testing.T) {
-	svc := NewAuthService(&mockUserRepo{}, &mockSessionRepo{})
+	svc := NewAuthService(&mockUserRepo{}, &mockSessionRepo{}, false, nil)
 	if err := svc.SignOut(context.Background(), "not-a-uuid"); err == nil {
 		t.Fatal("expected error for invalid session ID")
 	}
@@ -334,7 +344,7 @@ func TestAuthService_GetUserBySession(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			userRepo := &mockUserRepo{users: []*entities.User{user, disabledUser}}
 			sessionRepo := &mockSessionRepo{sessions: []*entities.Session{validSession, expiredSession, disabledSession}}
-			svc := NewAuthService(userRepo, sessionRepo)
+			svc := NewAuthService(userRepo, sessionRepo, false, nil)
 
 			u, err := svc.GetUserBySession(context.Background(), tt.sid)
 			if tt.wantErr {

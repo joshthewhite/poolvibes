@@ -12,6 +12,7 @@ PoolVibes can be configured through CLI flags, a config file, or environment var
 | `--db` | `~/.poolvibes.db` | Database connection string |
 | `--db-driver` | `sqlite` | Database driver (`sqlite` or `postgres`) |
 | `--notify-check-interval` | `1h` | How often to check for due task notifications |
+| `--demo` | `false` | Enable demo mode (new non-admin signups get seeded data, auto-expire in 24h) |
 
 ### Global Flags
 

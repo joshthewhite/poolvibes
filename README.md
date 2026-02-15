@@ -12,6 +12,7 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 - **Equipment Tracking** — Track pool equipment with categories, manufacturer info, warranty status, and service history.
 - **Chemical Inventory** — Monitor chemical stock levels with low-stock alerts and quick-adjust buttons.
 - **Notifications** — Email (Resend) and SMS (Twilio) alerts when tasks are due. Per-user preferences via Settings tab.
+- **Demo Mode** — Enable `--demo` to let potential customers sign up and see the app pre-populated with a year of realistic data. Demo users auto-expire after 24 hours. Admins can convert demo users to regular accounts.
 
 ## Tech Stack
 
@@ -40,6 +41,7 @@ Open http://localhost:8080 — you'll be redirected to sign up on first visit.
 --db string                    database connection string (default "~/.poolvibes.db")
 --db-driver string             database driver: sqlite or postgres (default "sqlite")
 --notify-check-interval string how often to check for due task notifications (default "1h")
+--demo                         enable demo mode (default false)
 ```
 
 Database migrations run automatically on startup.

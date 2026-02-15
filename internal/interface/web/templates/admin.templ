@@ -15,6 +15,7 @@ templ AdminUserList(users []entities.User) {
 					<th>Email</th>
 					<th>Admin</th>
 					<th>Disabled</th>
+					<th>Demo</th>
 					<th>Created</th>
 					<th></th>
 				</tr>
@@ -31,6 +32,14 @@ templ AdminUserList(users []entities.User) {
 						<td>
 							if u.IsDisabled {
 								Yes
+							}
+						</td>
+						<td>
+							if u.IsDemo {
+								<span class="tag is-warning">Demo</span>
+								if u.DemoExpiresAt != nil {
+									<span class="is-size-7 has-text-grey ml-1">{ demoExpiryText(u.DemoExpiresAt) }</span>
+								}
 							}
 						</td>
 						<td>{ u.CreatedAt.Format("2006-01-02") }</td>
@@ -52,6 +61,7 @@ templ adminEditUserForm(user *entities.User) {
 	<div
 		data-signals:isAdmin={ boolStr(user.IsAdmin) }
 		data-signals:isDisabled={ boolStr(user.IsDisabled) }
+		data-signals:isDemo={ boolStr(user.IsDemo) }
 	>
 		<div class="field">
 			<label class="label">Email</label>
@@ -68,6 +78,14 @@ templ adminEditUserForm(user *entities.User) {
 			<label class="checkbox">
 				<input data-bind:isDisabled type="checkbox"/> Disabled
 			</label>
+		</div>
+		<div class="field">
+			<label class="checkbox">
+				<input data-bind:isDemo type="checkbox"/> Demo
+			</label>
+			if user.IsDemo && user.DemoExpiresAt != nil {
+				<p class="help">{ "Expires: " + demoExpiryText(user.DemoExpiresAt) }. Uncheck to convert to regular user.</p>
+			}
 		</div>
 		<div class="field">
 			<div class="control">

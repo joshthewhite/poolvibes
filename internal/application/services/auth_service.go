@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,10 +18,17 @@ const sessionDuration = 7 * 24 * time.Hour
 type AuthService struct {
 	userRepo    repositories.UserRepository
 	sessionRepo repositories.SessionRepository
+	demoMode    bool
+	demoSeedSvc *DemoSeedService
 }
 
-func NewAuthService(userRepo repositories.UserRepository, sessionRepo repositories.SessionRepository) *AuthService {
-	return &AuthService{userRepo: userRepo, sessionRepo: sessionRepo}
+func NewAuthService(userRepo repositories.UserRepository, sessionRepo repositories.SessionRepository, demoMode bool, demoSeedSvc *DemoSeedService) *AuthService {
+	return &AuthService{
+		userRepo:    userRepo,
+		sessionRepo: sessionRepo,
+		demoMode:    demoMode,
+		demoSeedSvc: demoSeedSvc,
+	}
 }
 
 func (s *AuthService) SignUp(ctx context.Context, cmd command.SignUp) (*entities.User, *entities.Session, error) {
@@ -55,11 +63,25 @@ func (s *AuthService) SignUp(ctx context.Context, cmd command.SignUp) (*entities
 		user.IsAdmin = true
 	}
 
+	// Non-admin users in demo mode get flagged as demo with 24h expiry
+	if s.demoMode && !user.IsAdmin {
+		user.IsDemo = true
+		expires := time.Now().Add(24 * time.Hour)
+		user.DemoExpiresAt = &expires
+	}
+
 	if err := user.Validate(); err != nil {
 		return nil, nil, fmt.Errorf("validation: %w", err)
 	}
 	if err := s.userRepo.Create(ctx, user); err != nil {
 		return nil, nil, fmt.Errorf("creating user: %w", err)
+	}
+
+	// Seed demo data for demo users
+	if user.IsDemo && s.demoSeedSvc != nil {
+		if err := s.demoSeedSvc.Seed(ctx, user.ID); err != nil {
+			log.Printf("Warning: failed to seed demo data for user %s: %v", user.ID, err)
+		}
 	}
 
 	session := entities.NewSession(user.ID, sessionDuration)

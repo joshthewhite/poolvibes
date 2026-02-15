@@ -4,6 +4,7 @@ type UpdateUser struct {
 	ID         string
 	IsAdmin    bool
 	IsDisabled bool
+	IsDemo     bool
 }
 
 type UpdateNotificationPreferences struct {

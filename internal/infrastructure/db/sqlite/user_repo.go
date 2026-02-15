@@ -21,6 +21,7 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 func (r *UserRepo) FindAll(ctx context.Context) ([]entities.User, error) {
 	rows, err := r.db.QueryContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
+			is_demo, demo_expires_at,
 			phone, notify_email, notify_sms, pool_gallons,
 			created_at, updated_at
 		FROM users
@@ -44,6 +45,7 @@ func (r *UserRepo) FindAll(ctx context.Context) ([]entities.User, error) {
 func (r *UserRepo) FindByID(ctx context.Context, id uuid.UUID) (*entities.User, error) {
 	row := r.db.QueryRowContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
+			is_demo, demo_expires_at,
 			phone, notify_email, notify_sms, pool_gallons,
 			created_at, updated_at
 		FROM users
@@ -61,6 +63,7 @@ func (r *UserRepo) FindByID(ctx context.Context, id uuid.UUID) (*entities.User, 
 func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*entities.User, error) {
 	row := r.db.QueryRowContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
+			is_demo, demo_expires_at,
 			phone, notify_email, notify_sms, pool_gallons,
 			created_at, updated_at
 		FROM users
@@ -76,12 +79,19 @@ func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*entities.Use
 }
 
 func (r *UserRepo) Create(ctx context.Context, u *entities.User) error {
+	var demoExpiresAt *string
+	if u.DemoExpiresAt != nil {
+		s := u.DemoExpiresAt.Format(time.RFC3339)
+		demoExpiresAt = &s
+	}
 	_, err := r.db.ExecContext(ctx, `
 		INSERT INTO users (id, email, password_hash, is_admin,
-			is_disabled, phone, notify_email, notify_sms, pool_gallons,
+			is_disabled, is_demo, demo_expires_at,
+			phone, notify_email, notify_sms, pool_gallons,
 			created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		u.ID.String(), u.Email, u.PasswordHash, boolToInt(u.IsAdmin), boolToInt(u.IsDisabled),
+		boolToInt(u.IsDemo), demoExpiresAt,
 		u.Phone, boolToInt(u.NotifyEmail), boolToInt(u.NotifySMS), u.PoolGallons,
 		u.CreatedAt.Format(time.RFC3339), u.UpdatedAt.Format(time.RFC3339))
 	if err != nil {
@@ -92,14 +102,21 @@ func (r *UserRepo) Create(ctx context.Context, u *entities.User) error {
 
 func (r *UserRepo) Update(ctx context.Context, u *entities.User) error {
 	u.UpdatedAt = time.Now()
+	var demoExpiresAt *string
+	if u.DemoExpiresAt != nil {
+		s := u.DemoExpiresAt.Format(time.RFC3339)
+		demoExpiresAt = &s
+	}
 	_, err := r.db.ExecContext(ctx, `
 		UPDATE users
 		SET email = ?, password_hash = ?,
 			is_admin = ?, is_disabled = ?,
+			is_demo = ?, demo_expires_at = ?,
 			phone = ?, notify_email = ?, notify_sms = ?,
 			pool_gallons = ?, updated_at = ?
 		WHERE id = ?`,
 		u.Email, u.PasswordHash, boolToInt(u.IsAdmin), boolToInt(u.IsDisabled),
+		boolToInt(u.IsDemo), demoExpiresAt,
 		u.Phone, boolToInt(u.NotifyEmail), boolToInt(u.NotifySMS),
 		u.PoolGallons, u.UpdatedAt.Format(time.RFC3339), u.ID.String())
 	if err != nil {
@@ -123,11 +140,37 @@ func boolToInt(b bool) int {
 	return 0
 }
 
+func (r *UserRepo) FindExpiredDemo(ctx context.Context, now time.Time) ([]entities.User, error) {
+	rows, err := r.db.QueryContext(ctx, `
+		SELECT id, email, password_hash, is_admin, is_disabled,
+			is_demo, demo_expires_at,
+			phone, notify_email, notify_sms, pool_gallons,
+			created_at, updated_at
+		FROM users
+		WHERE is_demo = 1 AND demo_expires_at < ?`, now.Format(time.RFC3339))
+	if err != nil {
+		return nil, fmt.Errorf("querying expired demo users: %w", err)
+	}
+	defer rows.Close()
+
+	var users []entities.User
+	for rows.Next() {
+		u, err := scanUser(rows)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, *u)
+	}
+	return users, rows.Err()
+}
+
 func scanUserFromRow(s scanner) (*entities.User, error) {
 	var u entities.User
 	var idStr, createdAt, updatedAt string
-	var isAdmin, isDisabled, notifyEmail, notifySMS int
+	var isAdmin, isDisabled, isDemo, notifyEmail, notifySMS int
+	var demoExpiresAt *string
 	if err := s.Scan(&idStr, &u.Email, &u.PasswordHash, &isAdmin, &isDisabled,
+		&isDemo, &demoExpiresAt,
 		&u.Phone, &notifyEmail, &notifySMS, &u.PoolGallons,
 		&createdAt, &updatedAt); err != nil {
 		return nil, err
@@ -135,6 +178,11 @@ func scanUserFromRow(s scanner) (*entities.User, error) {
 	u.ID = uuid.MustParse(idStr)
 	u.IsAdmin = isAdmin == 1
 	u.IsDisabled = isDisabled == 1
+	u.IsDemo = isDemo == 1
+	if demoExpiresAt != nil {
+		t, _ := time.Parse(time.RFC3339, *demoExpiresAt)
+		u.DemoExpiresAt = &t
+	}
 	u.NotifyEmail = notifyEmail == 1
 	u.NotifySMS = notifySMS == 1
 	u.CreatedAt, _ = time.Parse(time.RFC3339, createdAt)

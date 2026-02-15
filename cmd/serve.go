@@ -96,7 +96,15 @@ var serveCmd = &cobra.Command{
 			return fmt.Errorf("unsupported database driver: %s (use 'sqlite' or 'postgres')", dbDriver)
 		}
 
-		authSvc := services.NewAuthService(userRepo, sessionRepo)
+		demoMode := viper.GetBool("demo")
+
+		var demoSeedSvc *services.DemoSeedService
+		if demoMode {
+			demoSeedSvc = services.NewDemoSeedService(chemLogRepo, taskRepo, equipRepo, srRepo, chemRepo)
+			log.Println("Demo mode enabled")
+		}
+
+		authSvc := services.NewAuthService(userRepo, sessionRepo, demoMode, demoSeedSvc)
 		userSvc := services.NewUserService(userRepo, sessionRepo)
 		chemSvc := services.NewChemistryService(chemLogRepo)
 		taskSvc := services.NewTaskService(taskRepo)
@@ -128,6 +136,15 @@ var serveCmd = &cobra.Command{
 		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 		defer stop()
 
+		if demoMode {
+			cleanupSvc := services.NewDemoCleanupService(
+				userRepo, sessionRepo, chemLogRepo, taskRepo,
+				equipRepo, srRepo, chemRepo, taskNotifRepo,
+				15*time.Minute,
+			)
+			go cleanupSvc.Start(ctx)
+		}
+
 		if emailNotifier != nil || smsNotifier != nil {
 			intervalStr := viper.GetString("notify-check-interval")
 			interval, err := time.ParseDuration(intervalStr)
@@ -148,11 +165,13 @@ func init() {
 	serveCmd.Flags().String("db", defaultDBPath(), "database connection string")
 	serveCmd.Flags().String("db-driver", "sqlite", "database driver (sqlite or postgres)")
 	serveCmd.Flags().String("notify-check-interval", "1h", "how often to check for due task notifications")
+	serveCmd.Flags().Bool("demo", false, "enable demo mode (new non-admin signups get seeded data, auto-expire in 24h)")
 
 	viper.BindPFlag("addr", serveCmd.Flags().Lookup("addr"))
 	viper.BindPFlag("db", serveCmd.Flags().Lookup("db"))
 	viper.BindPFlag("db-driver", serveCmd.Flags().Lookup("db-driver"))
 	viper.BindPFlag("notify-check-interval", serveCmd.Flags().Lookup("notify-check-interval"))
+	viper.BindPFlag("demo", serveCmd.Flags().Lookup("demo"))
 
 	rootCmd.AddCommand(serveCmd)
 }
