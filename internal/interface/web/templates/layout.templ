@@ -87,6 +87,26 @@ templ Layout(email string, isAdmin bool) {
 					border-color: #8b869e;
 				}
 
+				/* Navbar burger */
+				.navbar.pv-navbar .navbar-burger {
+					color: #f1eff8;
+				}
+				@media screen and (max-width: 1023px) {
+					.navbar.pv-navbar .navbar-menu {
+						background: var(--pv-navbar);
+					}
+					.navbar.pv-navbar .navbar-menu .navbar-item {
+						color: #f1eff8;
+					}
+					.navbar.pv-navbar .navbar-menu .navbar-item:hover {
+						background: #2a2640;
+						color: #ffffff;
+					}
+					.navbar.pv-navbar .navbar-divider {
+						background-color: #2a2640;
+					}
+				}
+
 				/* Tabs — underline style */
 				.tabs.pv-tabs {
 					border-bottom-color: var(--pv-border);
@@ -470,27 +490,49 @@ templ Layout(email string, isAdmin bool) {
 		</head>
 		<body>
 			<script>window._savedTab = localStorage.getItem('poolvibes_tab') || 'dashboard';</script>
-			<div data-signals:tab="window._savedTab" data-signals:_loading="false" data-effect="localStorage.setItem('poolvibes_tab', $tab)">
+			<div data-signals:tab="window._savedTab" data-signals:_loading="false" data-signals:_menuOpen="false" data-effect="localStorage.setItem('poolvibes_tab', $tab)">
 				<!-- Navbar -->
-				<nav class="navbar pv-navbar" role="navigation">
+				<nav class="navbar pv-navbar" role="navigation" aria-label="main navigation">
 					<div class="container">
 						<div class="navbar-brand">
 							<a class="navbar-item" href="/">
 								<strong class="is-size-4">PoolVibes</strong>
 							</a>
+							<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+								data-class:is-active="$_menuOpen"
+								data-on:click="$_menuOpen = !$_menuOpen">
+								<span aria-hidden="true"></span>
+								<span aria-hidden="true"></span>
+								<span aria-hidden="true"></span>
+								<span aria-hidden="true"></span>
+							</a>
 						</div>
-						<div class="navbar-end">
-							<span class="navbar-item pv-email">{ email }</span>
-							<div class="navbar-item">
-								<form method="POST" action="/logout">
-									<button type="submit" class="button is-small pv-logout">Logout</button>
-								</form>
+						<div class="navbar-menu" data-class:is-active="$_menuOpen">
+							<div class="navbar-start is-hidden-desktop">
+								<a class="navbar-item" data-on:click="$tab = 'dashboard'; @get('/dashboard'); $_menuOpen = false">Dashboard</a>
+								<a class="navbar-item" data-on:click="$tab = 'chemistry'; @get('/chemistry'); $_menuOpen = false">Water Chemistry</a>
+								<a class="navbar-item" data-on:click="$tab = 'tasks'; @get('/tasks'); $_menuOpen = false">Tasks</a>
+								<a class="navbar-item" data-on:click="$tab = 'equipment'; @get('/equipment'); $_menuOpen = false">Equipment</a>
+								<a class="navbar-item" data-on:click="$tab = 'chemicals'; @get('/chemicals'); $_menuOpen = false">Chemicals</a>
+								<a class="navbar-item" data-on:click="$tab = 'settings'; @get('/settings'); $_menuOpen = false">Settings</a>
+								if isAdmin {
+									<a class="navbar-item" data-on:click="$tab = 'admin'; @get('/admin/users'); $_menuOpen = false">Admin</a>
+								}
+								<hr class="navbar-divider"/>
+							</div>
+							<div class="navbar-end">
+								<span class="navbar-item pv-email">{ email }</span>
+								<div class="navbar-item">
+									<form method="POST" action="/logout">
+										<button type="submit" class="button is-small pv-logout">Logout</button>
+									</form>
+								</div>
 							</div>
 						</div>
 					</div>
 				</nav>
 				<!-- Tab Navigation -->
-				<section class="section" style="padding-bottom: 0;">
+				<section class="section is-hidden-touch" style="padding-bottom: 0;">
 					<div class="container">
 						<div class="tabs pv-tabs">
 							<ul>
