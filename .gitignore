@@ -4,7 +4,7 @@
 *.dll
 *.so
 *.dylib
-poolio
+bin/
 
 # Test binary
 *.test
@@ -15,6 +15,9 @@ poolio
 # Go workspace
 go.work
 go.work.sum
+
+# Task runner
+.task/
 
 # IDE
 .idea/
@@ -32,3 +35,6 @@ e2e/bin/
 
 # OS
 .DS_Store
+
+# Air
+tmp/

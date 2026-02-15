@@ -3,20 +3,29 @@
 ## Prerequisites
 
 - Go 1.25 or later
-- [templ](https://templ.guide) CLI (`go install github.com/a-h/templ/cmd/templ@latest`) — only needed when editing `.templ` files
+- [Task](https://taskfile.dev) — `go install github.com/go-task/task/v3/cmd/task@latest`
+- [templ](https://templ.guide) CLI — `go install github.com/a-h/templ/cmd/templ@latest` (only needed when editing `.templ` files)
+- [air](https://github.com/air-verse/air) — `go install github.com/air-verse/air@latest` (only needed for `task dev`)
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `templ generate` | Regenerate Go code from `.templ` files (generated `*_templ.go` files are committed) |
-| `go build ./...` | Build all packages |
-| `go test ./...` | Run tests |
-| `go test -v ./...` | Run tests with verbose output |
+| `task --list` | Show all available tasks |
+| `task build` | Build binary to `bin/poolvibes` |
+| `task test` | Run tests |
+| `task test:verbose` | Run tests with verbose output |
 | `go test -v -run TestName ./path/to/package` | Run a single test |
-| `go vet ./...` | Lint |
-| `gofmt -w .` | Format code |
-| `go mod tidy` | Tidy dependencies |
+| `task lint` | Lint |
+| `task fmt` | Format code |
+| `task templ` | Regenerate Go code from `.templ` files |
+| `task dev` | Start dev server with live reload (templ + air) |
+| `task run` | Build and run the server |
+| `task clean` | Remove build artifacts |
+| `task tidy` | Tidy dependencies |
+| `task docker:build` | Build Docker image |
+| `task docker:up` | Start Docker services |
+| `task docker:down` | Stop Docker services |
 
 ## Adding a Feature
 

@@ -1,0 +1,84 @@
+version: '3'
+
+vars:
+  BINARY: poolvibes
+  BUILD_DIR: bin
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  build:
+    desc: Build the binary
+    cmds:
+      - go build -o {{.BUILD_DIR}}/{{.BINARY}} .
+    sources:
+      - '**/*.go'
+      - go.mod
+      - go.sum
+    generates:
+      - '{{.BUILD_DIR}}/{{.BINARY}}'
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
+
+  test:verbose:
+    desc: Run tests with verbose output
+    cmds:
+      - go test -v ./...
+
+  lint:
+    desc: Run linter
+    cmds:
+      - go vet ./...
+
+  fmt:
+    desc: Format code
+    cmds:
+      - gofmt -w .
+
+  templ:
+    desc: Generate templ templates
+    cmds:
+      - templ generate
+
+  dev:
+    desc: Start dev server with live reload
+    deps: [templ]
+    cmds:
+      - air
+
+  run:
+    desc: Build and run the server
+    deps: [build]
+    cmds:
+      - ./{{.BUILD_DIR}}/{{.BINARY}} serve
+
+  clean:
+    desc: Remove build artifacts
+    cmds:
+      - rm -rf {{.BUILD_DIR}}
+
+  docker:build:
+    desc: Build Docker image
+    cmds:
+      - docker build -t {{.BINARY}} .
+
+  docker:up:
+    desc: Start all Docker services
+    cmds:
+      - docker-compose up
+
+  docker:down:
+    desc: Stop all Docker services
+    cmds:
+      - docker-compose down
+
+  tidy:
+    desc: Tidy Go module dependencies
+    cmds:
+      - go mod tidy

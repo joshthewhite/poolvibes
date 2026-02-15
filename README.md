@@ -28,8 +28,8 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 ## Getting Started
 
 ```sh
-go build -o poolvibes .
-./poolvibes serve
+task build
+task run
 ```
 
 Open http://localhost:8080 — you'll be redirected to sign up on first visit.
@@ -115,11 +115,20 @@ poolvibes/
 
 ## Development
 
+Uses [Task](https://taskfile.dev) for build automation. Install: `go install github.com/go-task/task/v3/cmd/task@latest`
+
 ```sh
-templ generate          # regenerate templates (after editing .templ files)
-go build ./...          # build
-go vet ./...            # lint
-go test ./...           # test
-gofmt -w .              # format
-go mod tidy             # tidy deps
+task --list             # show all tasks
+task build              # build to bin/poolvibes
+task test               # run tests
+task lint               # lint
+task fmt                # format
+task templ              # regenerate templates
+task dev                # dev server with live reload (air)
+task run                # build and run server
+task tidy               # tidy deps
+task clean              # remove build artifacts
+task docker:build       # build Docker image
+task docker:up          # start Docker services
+task docker:down        # stop Docker services
 ```

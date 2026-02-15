@@ -39,14 +39,19 @@ Pool maintenance management app. Go CLI with DDD architecture and Datastar hyper
 
 ### Commands
 
-- **Generate templates**: `templ generate` (required after editing `.templ` files; generated `*_templ.go` files are committed)
-- **Build**: `go build ./...`
-- **Test**: `go test ./...`
-- **Test (verbose)**: `go test -v ./...`
+Uses [Task](https://taskfile.dev) for build automation. Run `task --list` to see all available tasks.
+
+- **Generate templates**: `task templ` (required after editing `.templ` files; generated `*_templ.go` files are committed)
+- **Build**: `task build` (outputs to `bin/poolvibes`)
+- **Test**: `task test`
+- **Test (verbose)**: `task test:verbose`
 - **Test (single)**: `go test -v -run TestName ./path/to/package`
-- **Lint**: `go vet ./...`
-- **Format**: `gofmt -w .`
-- **Tidy deps**: `go mod tidy`
+- **Lint**: `task lint`
+- **Format**: `task fmt`
+- **Tidy deps**: `task tidy`
+- **Dev server (live reload)**: `task dev` (runs templ generate + air)
+- **Build and run**: `task run`
+- **Clean**: `task clean`
 
 ## Documentation
 
