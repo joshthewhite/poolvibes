@@ -22,10 +22,20 @@ Or via environment variable:
 export DEMO=true
 ```
 
+## Limiting Demo Users
+
+By default, a maximum of 50 concurrent demo users are allowed. Configure with `--demo-max-users`:
+
+```sh
+./poolvibes serve --demo --demo-max-users 100
+```
+
+Set to `0` for unlimited. When the cap is reached, new signups get a "demo slots are full, please try again later" message.
+
 ## How It Works
 
 1. **First user (admin)** is never a demo user -- they sign up normally
-2. **Subsequent signups** are flagged as demo users with a 24-hour expiry
+2. **Subsequent signups** are flagged as demo users with a 24-hour expiry (subject to the demo user cap)
 3. Demo users see **seeded data** across all tabs immediately after signup
 4. A **background cleanup job** runs every 15 minutes and deletes expired demo users along with all their data
 

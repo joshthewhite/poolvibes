@@ -133,6 +133,15 @@ func (r *UserRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
+func (r *UserRepo) CountDemo(ctx context.Context) (int, error) {
+	var count int
+	err := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM users WHERE is_demo = 1`).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("counting demo users: %w", err)
+	}
+	return count, nil
+}
+
 func boolToInt(b bool) int {
 	if b {
 		return 1

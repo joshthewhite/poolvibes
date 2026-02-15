@@ -16,18 +16,20 @@ import (
 const sessionDuration = 7 * 24 * time.Hour
 
 type AuthService struct {
-	userRepo    repositories.UserRepository
-	sessionRepo repositories.SessionRepository
-	demoMode    bool
-	demoSeedSvc *DemoSeedService
+	userRepo     repositories.UserRepository
+	sessionRepo  repositories.SessionRepository
+	demoMode     bool
+	maxDemoUsers int
+	demoSeedSvc  *DemoSeedService
 }
 
-func NewAuthService(userRepo repositories.UserRepository, sessionRepo repositories.SessionRepository, demoMode bool, demoSeedSvc *DemoSeedService) *AuthService {
+func NewAuthService(userRepo repositories.UserRepository, sessionRepo repositories.SessionRepository, demoMode bool, maxDemoUsers int, demoSeedSvc *DemoSeedService) *AuthService {
 	return &AuthService{
-		userRepo:    userRepo,
-		sessionRepo: sessionRepo,
-		demoMode:    demoMode,
-		demoSeedSvc: demoSeedSvc,
+		userRepo:     userRepo,
+		sessionRepo:  sessionRepo,
+		demoMode:     demoMode,
+		maxDemoUsers: maxDemoUsers,
+		demoSeedSvc:  demoSeedSvc,
 	}
 }
 
@@ -65,6 +67,15 @@ func (s *AuthService) SignUp(ctx context.Context, cmd command.SignUp) (*entities
 
 	// Non-admin users in demo mode get flagged as demo with 24h expiry
 	if s.demoMode && !user.IsAdmin {
+		if s.maxDemoUsers > 0 {
+			count, err := s.userRepo.CountDemo(ctx)
+			if err != nil {
+				return nil, nil, fmt.Errorf("checking demo capacity: %w", err)
+			}
+			if count >= s.maxDemoUsers {
+				return nil, nil, fmt.Errorf("demo slots are full, please try again later")
+			}
+		}
 		user.IsDemo = true
 		expires := time.Now().Add(24 * time.Hour)
 		user.DemoExpiresAt = &expires

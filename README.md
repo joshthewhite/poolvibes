@@ -42,6 +42,7 @@ Open http://localhost:8080 — you'll be redirected to sign up on first visit.
 --db-driver string             database driver: sqlite or postgres (default "sqlite")
 --notify-check-interval string how often to check for due task notifications (default "1h")
 --demo                         enable demo mode (default false)
+--demo-max-users int           max concurrent demo users (default 50, 0 = unlimited)
 ```
 
 Database migrations run automatically on startup.

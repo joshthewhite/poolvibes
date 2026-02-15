@@ -97,14 +97,15 @@ var serveCmd = &cobra.Command{
 		}
 
 		demoMode := viper.GetBool("demo")
+		maxDemoUsers := viper.GetInt("demo-max-users")
 
 		var demoSeedSvc *services.DemoSeedService
 		if demoMode {
 			demoSeedSvc = services.NewDemoSeedService(chemLogRepo, taskRepo, equipRepo, srRepo, chemRepo)
-			log.Println("Demo mode enabled")
+			log.Printf("Demo mode enabled (max %d concurrent demo users)", maxDemoUsers)
 		}
 
-		authSvc := services.NewAuthService(userRepo, sessionRepo, demoMode, demoSeedSvc)
+		authSvc := services.NewAuthService(userRepo, sessionRepo, demoMode, maxDemoUsers, demoSeedSvc)
 		userSvc := services.NewUserService(userRepo, sessionRepo)
 		chemSvc := services.NewChemistryService(chemLogRepo)
 		taskSvc := services.NewTaskService(taskRepo)
@@ -166,12 +167,14 @@ func init() {
 	serveCmd.Flags().String("db-driver", "sqlite", "database driver (sqlite or postgres)")
 	serveCmd.Flags().String("notify-check-interval", "1h", "how often to check for due task notifications")
 	serveCmd.Flags().Bool("demo", false, "enable demo mode (new non-admin signups get seeded data, auto-expire in 24h)")
+	serveCmd.Flags().Int("demo-max-users", 50, "maximum number of concurrent demo users (0 = unlimited)")
 
 	viper.BindPFlag("addr", serveCmd.Flags().Lookup("addr"))
 	viper.BindPFlag("db", serveCmd.Flags().Lookup("db"))
 	viper.BindPFlag("db-driver", serveCmd.Flags().Lookup("db-driver"))
 	viper.BindPFlag("notify-check-interval", serveCmd.Flags().Lookup("notify-check-interval"))
 	viper.BindPFlag("demo", serveCmd.Flags().Lookup("demo"))
+	viper.BindPFlag("demo-max-users", serveCmd.Flags().Lookup("demo-max-users"))
 
 	rootCmd.AddCommand(serveCmd)
 }
