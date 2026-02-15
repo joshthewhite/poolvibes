@@ -62,7 +62,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Value:    session.ID.String(),
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   isSecure(r),
 		SameSite: http.SameSiteStrictMode,
 	})
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -110,7 +110,7 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		Value:    session.ID.String(),
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   isSecure(r),
 		SameSite: http.SameSiteStrictMode,
 	})
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -127,7 +127,7 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   isSecure(r),
 		SameSite: http.SameSiteStrictMode,
 	})
 	http.Redirect(w, r, "/login", http.StatusSeeOther)

@@ -11,6 +11,15 @@ const csrfCookieName = "_csrf"
 const csrfFieldName = "csrf_token"
 const csrfTokenLength = 32
 
+// isSecure returns true if the request arrived over HTTPS,
+// either directly (TLS) or via a reverse proxy (X-Forwarded-Proto).
+func isSecure(r *http.Request) bool {
+	if r.TLS != nil {
+		return true
+	}
+	return r.Header.Get("X-Forwarded-Proto") == "https"
+}
+
 func generateCSRFToken() (string, error) {
 	b := make([]byte, csrfTokenLength)
 	if _, err := rand.Read(b); err != nil {
@@ -34,7 +43,7 @@ func ensureCSRFToken(w http.ResponseWriter, r *http.Request) string {
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   isSecure(r),
 		SameSite: http.SameSiteStrictMode,
 	})
 	return token
