@@ -7,6 +7,7 @@ import (
 	"github.com/joshthewhite/poolvibes/internal/application/command"
 	"github.com/joshthewhite/poolvibes/internal/application/services"
 	"github.com/joshthewhite/poolvibes/internal/domain/entities"
+	"github.com/joshthewhite/poolvibes/internal/domain/repositories"
 	"github.com/joshthewhite/poolvibes/internal/interface/web/templates"
 	"github.com/starfederation/datastar-go/datastar"
 )
@@ -32,16 +33,74 @@ type chemistrySignals struct {
 	TestedAt         string  `json:"testedAt"`
 }
 
-func (h *ChemistryHandler) List(w http.ResponseWriter, r *http.Request) {
-	logs, err := h.svc.List(r.Context())
+type chemistryListSignals struct {
+	ChemPage       int    `json:"chemPage"`
+	ChemSortBy     string `json:"chemSortBy"`
+	ChemSortDir    string `json:"chemSortDir"`
+	ChemOutOfRange bool   `json:"chemOutOfRange"`
+	ChemDateFrom   string `json:"chemDateFrom"`
+	ChemDateTo     string `json:"chemDateTo"`
+}
+
+func (s *chemistryListSignals) buildQuery() repositories.ChemistryLogQuery {
+	q := repositories.ChemistryLogQuery{
+		Page:       s.ChemPage,
+		SortBy:     s.ChemSortBy,
+		OutOfRange: s.ChemOutOfRange,
+	}
+	if s.ChemSortDir == "asc" {
+		q.SortDir = repositories.SortAsc
+	} else {
+		q.SortDir = repositories.SortDesc
+	}
+	if s.ChemDateFrom != "" {
+		if t, err := time.Parse("2006-01-02", s.ChemDateFrom); err == nil {
+			q.DateFrom = &t
+		}
+	}
+	if s.ChemDateTo != "" {
+		if t, err := time.Parse("2006-01-02", s.ChemDateTo); err == nil {
+			endOfDay := t.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+			q.DateTo = &endOfDay
+		}
+	}
+	return q
+}
+
+func readListSignals(r *http.Request) *chemistryListSignals {
+	signals := &chemistryListSignals{}
+	_ = datastar.ReadSignals(r, signals)
+	return signals
+}
+
+func (h *ChemistryHandler) listAndPatch(w http.ResponseWriter, r *http.Request, listSignals *chemistryListSignals) {
+	query := listSignals.buildQuery()
+	result, err := h.svc.ListPaged(r.Context(), query)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	data := templates.ChemistryListData{
+		Result:     result,
+		SortBy:     listSignals.ChemSortBy,
+		SortDir:    listSignals.ChemSortDir,
+		OutOfRange: listSignals.ChemOutOfRange,
+		DateFrom:   listSignals.ChemDateFrom,
+		DateTo:     listSignals.ChemDateTo,
+	}
+	if data.SortBy == "" {
+		data.SortBy = "tested_at"
+	}
+	if data.SortDir == "" {
+		data.SortDir = "desc"
+	}
 	sse := datastar.NewSSE(w, r)
-	sse.PatchElementTempl(templates.ChemistryList(logs))
+	sse.PatchElementTempl(templates.ChemistryList(data))
 	sse.PatchElementTempl(templates.EmptyModal())
+}
+
+func (h *ChemistryHandler) List(w http.ResponseWriter, r *http.Request) {
+	h.listAndPatch(w, r, readListSignals(r))
 }
 
 func (h *ChemistryHandler) NewForm(w http.ResponseWriter, r *http.Request) {
@@ -74,10 +133,7 @@ func (h *ChemistryHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logs, _ := h.svc.List(r.Context())
-	sse := datastar.NewSSE(w, r)
-	sse.PatchElementTempl(templates.ChemistryList(logs))
-	sse.PatchElementTempl(templates.EmptyModal())
+	h.listAndPatch(w, r, readListSignals(r))
 }
 
 func (h *ChemistryHandler) EditForm(w http.ResponseWriter, r *http.Request) {
@@ -119,10 +175,7 @@ func (h *ChemistryHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logs, _ := h.svc.List(r.Context())
-	sse := datastar.NewSSE(w, r)
-	sse.PatchElementTempl(templates.ChemistryList(logs))
-	sse.PatchElementTempl(templates.EmptyModal())
+	h.listAndPatch(w, r, readListSignals(r))
 }
 
 func (h *ChemistryHandler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -132,9 +185,7 @@ func (h *ChemistryHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logs, _ := h.svc.List(r.Context())
-	sse := datastar.NewSSE(w, r)
-	sse.PatchElementTempl(templates.ChemistryList(logs))
+	h.listAndPatch(w, r, readListSignals(r))
 }
 
 func (h *ChemistryHandler) Plan(w http.ResponseWriter, r *http.Request) {

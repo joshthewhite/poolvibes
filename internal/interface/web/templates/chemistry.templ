@@ -7,36 +7,122 @@ import (
 	"github.com/joshthewhite/poolvibes/internal/domain/entities"
 )
 
-templ ChemistryList(logs []entities.ChemistryLog) {
-	<div id="tab-content">
+templ ChemistryList(data ChemistryListData) {
+	<div
+		id="tab-content"
+		data-signals__ifmissing:chemPage="1"
+		data-signals__ifmissing:chemSortBy="'tested_at'"
+		data-signals__ifmissing:chemSortDir="'desc'"
+		data-signals__ifmissing:chemOutOfRange="false"
+		data-signals__ifmissing:chemDateFrom="''"
+		data-signals__ifmissing:chemDateTo="''"
+	>
 		@PageHeader("Water Chemistry Logs", "+ Add Test", "/chemistry/new")
-		if len(logs) == 0 {
-			@EmptyState("No chemistry logs yet", "Add your first water test to get started")
+		@chemistryFilterBar(data)
+		if data.Result.TotalItems == 0 {
+			@EmptyState("No chemistry logs found", "Try adjusting your filters or add a new test")
 		} else {
 			<div class="table-container">
 				<table class="table is-fullwidth is-hoverable is-striped">
 					<thead>
 						<tr>
-							<th>Date</th>
-							<th>pH</th>
-							<th>FC</th>
+							@sortableHeader("Date", "tested_at", data.SortBy, data.SortDir)
+							@sortableHeader("pH", "ph", data.SortBy, data.SortDir)
+							@sortableHeader("FC", "free_chlorine", data.SortBy, data.SortDir)
 							<th>CC</th>
-							<th>TA</th>
-							<th>CYA</th>
+							@sortableHeader("TA", "total_alkalinity", data.SortBy, data.SortDir)
+							@sortableHeader("CYA", "cya", data.SortBy, data.SortDir)
 							<th>CH</th>
 							<th>Temp</th>
 							<th class="has-text-right">Actions</th>
 						</tr>
 					</thead>
 					<tbody>
-						for _, l := range logs {
+						for _, l := range data.Result.Items {
 							@chemistryRow(l)
 						}
 					</tbody>
 				</table>
 			</div>
+			@chemistryPagination(data)
 		}
 	</div>
+}
+
+templ chemistryFilterBar(data ChemistryListData) {
+	<div class="box py-3 px-4 mb-4">
+		<div class="columns is-vcentered is-multiline is-variable is-2">
+			<div class="column is-narrow">
+				<div class="field">
+					<label class="label is-small mb-1">From</label>
+					<div class="control">
+						<input data-bind:chemDateFrom type="date" class="input is-small" value={ data.DateFrom }/>
+					</div>
+				</div>
+			</div>
+			<div class="column is-narrow">
+				<div class="field">
+					<label class="label is-small mb-1">To</label>
+					<div class="control">
+						<input data-bind:chemDateTo type="date" class="input is-small" value={ data.DateTo }/>
+					</div>
+				</div>
+			</div>
+			<div class="column is-narrow">
+				<div class="field">
+					<label class="label is-small mb-1">&nbsp;</label>
+					<div class="control">
+						<label class="checkbox is-size-7">
+							<input data-bind:chemOutOfRange type="checkbox"/>
+							Out of range only
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="column is-narrow">
+				<div class="field">
+					<label class="label is-small mb-1">&nbsp;</label>
+					<div class="buttons">
+						<button data-on:click="chemPage.value=1; @get('/chemistry')" class="button is-small is-primary">Apply</button>
+						<button data-on:click="chemDateFrom.value=''; chemDateTo.value=''; chemOutOfRange.value=false; chemPage.value=1; @get('/chemistry')" class="button is-small">Clear</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ sortableHeader(label, col, currentSortBy, currentSortDir string) {
+	<th style="cursor: pointer; user-select: none;" data-on:click={ sortAction(col, currentSortBy, currentSortDir) }>
+		{ label }{ sortIndicator(col, currentSortBy, currentSortDir) }
+	</th>
+}
+
+templ chemistryPagination(data ChemistryListData) {
+	<nav class="pagination is-small is-centered mt-4" role="navigation" aria-label="pagination">
+		if data.Result.Page > 1 {
+			<a class="pagination-previous" data-on:click={ fmt.Sprintf("chemPage.value=%d; @get('/chemistry')", data.Result.Page-1) }>Previous</a>
+		} else {
+			<a class="pagination-previous" disabled>Previous</a>
+		}
+		if data.Result.Page < data.Result.TotalPages {
+			<a class="pagination-next" data-on:click={ fmt.Sprintf("chemPage.value=%d; @get('/chemistry')", data.Result.Page+1) }>Next</a>
+		} else {
+			<a class="pagination-next" disabled>Next</a>
+		}
+		<ul class="pagination-list">
+			for _, p := range paginationPages(data.Result.Page, data.Result.TotalPages) {
+				if p == 0 {
+					<li><span class="pagination-ellipsis">&hellip;</span></li>
+				} else if p == data.Result.Page {
+					<li><a class="pagination-link is-current" aria-current="page">{ strconv.Itoa(p) }</a></li>
+				} else {
+					<li><a class="pagination-link" data-on:click={ fmt.Sprintf("chemPage.value=%d; @get('/chemistry')", p) }>{ strconv.Itoa(p) }</a></li>
+				}
+			}
+		</ul>
+	</nav>
+	<p class="has-text-centered has-text-grey is-size-7 mt-2">{ showingRange(data.Result.Page, data.Result.PageSize, data.Result.TotalItems) }</p>
 }
 
 templ chemistryRow(l entities.ChemistryLog) {

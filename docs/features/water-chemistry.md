@@ -30,10 +30,20 @@ Treatment plans use generic chemical names (muriatic acid, cal-hypo, baking soda
 
 To get accurate dosages, set your pool's gallon size in **Settings** under "Pool Details."
 
+## Pagination, Sorting & Filtering
+
+The chemistry log table uses server-side pagination to handle large numbers of entries efficiently.
+
+- **Pagination** — 25 rows per page with previous/next and numbered page controls
+- **Sortable columns** — Click column headers (Date, pH, FC, TA, CYA) to sort ascending or descending
+- **Date range filter** — Filter logs to a specific date range using From/To date inputs
+- **Out of range filter** — Toggle to show only entries with at least one parameter outside its ideal range
+- **Persistent state** — Sorting, filtering, and page position are preserved across create, edit, and delete operations
+
 ## Operations
 
 - **Create** — Log a new water test with any combination of parameters
 - **Edit** — Update a previously recorded test
 - **Delete** — Remove a log entry
 - **Plan** — Generate a treatment plan with chemical dosages
-- **List** — View all chemistry logs sorted by test date
+- **List** — View paginated chemistry logs with sorting and filtering

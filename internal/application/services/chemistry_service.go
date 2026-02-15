@@ -26,6 +26,14 @@ func (s *ChemistryService) List(ctx context.Context) ([]entities.ChemistryLog, e
 	return s.repo.FindAll(ctx, userID)
 }
 
+func (s *ChemistryService) ListPaged(ctx context.Context, query repositories.ChemistryLogQuery) (*repositories.PagedResult[entities.ChemistryLog], error) {
+	userID, err := UserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return s.repo.FindPaged(ctx, userID, query)
+}
+
 func (s *ChemistryService) Get(ctx context.Context, id string) (*entities.ChemistryLog, error) {
 	userID, err := UserIDFromContext(ctx)
 	if err != nil {

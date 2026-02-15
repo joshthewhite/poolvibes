@@ -130,6 +130,67 @@ func demoExpiryText(expiresAt *time.Time) string {
 	return fmt.Sprintf("expires in %dm", minutes)
 }
 
+// sortAction returns the Datastar action string for a sortable column header click.
+// It toggles direction if already sorting by this column, otherwise sorts desc.
+func sortAction(col, currentSortBy, currentSortDir string) string {
+	newDir := "desc"
+	if col == currentSortBy && currentSortDir == "desc" {
+		newDir = "asc"
+	}
+	return fmt.Sprintf("chemSortBy.value='%s'; chemSortDir.value='%s'; chemPage.value=1; @get('/chemistry')", col, newDir)
+}
+
+// sortIndicator returns an arrow character for the active sort column.
+func sortIndicator(col, currentSortBy, currentSortDir string) string {
+	if col != currentSortBy {
+		return ""
+	}
+	if currentSortDir == "asc" {
+		return " \u2191"
+	}
+	return " \u2193"
+}
+
+// paginationPages returns page numbers to display with ellipsis gaps.
+// Returns numbers 1-based; 0 represents an ellipsis.
+func paginationPages(current, total int) []int {
+	if total <= 7 {
+		pages := make([]int, total)
+		for i := range pages {
+			pages[i] = i + 1
+		}
+		return pages
+	}
+	var pages []int
+	pages = append(pages, 1)
+	if current > 3 {
+		pages = append(pages, 0) // ellipsis
+	}
+	for p := current - 1; p <= current+1; p++ {
+		if p > 1 && p < total {
+			pages = append(pages, p)
+		}
+	}
+	if current < total-2 {
+		pages = append(pages, 0) // ellipsis
+	}
+	pages = append(pages, total)
+	return pages
+}
+
+// showingRange returns "Showing X-Y of Z" text.
+func showingRange(page, pageSize, totalItems int) string {
+	if totalItems == 0 {
+		return "No results"
+	}
+	start := (page-1)*pageSize + 1
+	end := start + pageSize - 1
+	if end > totalItems {
+		end = totalItems
+	}
+	return fmt.Sprintf("Showing %d\u2013%d of %d", start, end, totalItems)
+}
+
 func dueInClass(dueDate time.Time) string {
 	now := time.Now()
 	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
