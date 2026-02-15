@@ -78,6 +78,16 @@ func (m *mockUserRepo) CountDemo(_ context.Context) (int, error) {
 	return count, nil
 }
 
+func (m *mockUserRepo) CountAdmins(_ context.Context) (int, error) {
+	count := 0
+	for _, u := range m.users {
+		if u.IsAdmin && !u.IsDisabled {
+			count++
+		}
+	}
+	return count, nil
+}
+
 func (m *mockUserRepo) FindExpiredDemo(_ context.Context, now time.Time) ([]entities.User, error) {
 	var result []entities.User
 	for _, u := range m.users {
@@ -156,16 +166,16 @@ func TestAuthService_SignUp(t *testing.T) {
 		{
 			name:    "short password",
 			cmd:     command.SignUp{Email: "a@b.com", Password: "short"},
-			wantErr: "password must be at least 8 characters",
+			wantErr: "password must be at least 12 characters",
 		},
 		{
 			name:      "first user becomes admin",
-			cmd:       command.SignUp{Email: "admin@pool.com", Password: "password123"},
+			cmd:       command.SignUp{Email: "admin@pool.com", Password: "myStr0ngP@ss!"},
 			wantAdmin: true,
 		},
 		{
 			name:        "second user is not admin",
-			cmd:         command.SignUp{Email: "user@pool.com", Password: "password123"},
+			cmd:         command.SignUp{Email: "user@pool.com", Password: "myStr0ngP@ss!"},
 			existingCnt: 1,
 			wantAdmin:   false,
 		},
@@ -223,13 +233,13 @@ func TestAuthService_SignUp_DuplicateEmail(t *testing.T) {
 
 	_, _, err := svc.SignUp(context.Background(), command.SignUp{
 		Email:    "dup@pool.com",
-		Password: "password123",
+		Password: "myStr0ngP@ss!",
 	})
 	if err == nil {
 		t.Fatal("expected error for duplicate email")
 	}
-	if err.Error() != "email already registered" {
-		t.Errorf("error = %q, want %q", err.Error(), "email already registered")
+	if err.Error() != "unable to create account" {
+		t.Errorf("error = %q, want %q", err.Error(), "unable to create account")
 	}
 }
 
@@ -271,7 +281,7 @@ func TestAuthService_SignIn(t *testing.T) {
 		{
 			name:    "disabled account",
 			cmd:     command.SignIn{Email: "disabled@pool.com", Password: "password123"},
-			wantErr: "account is disabled",
+			wantErr: "invalid email or password",
 		},
 	}
 	for _, tt := range tests {

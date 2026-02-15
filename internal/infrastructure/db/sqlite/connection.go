@@ -19,6 +19,9 @@ func Open(dbPath string) (*sql.DB, error) {
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("pinging database: %w", err)
 	}
+	db.SetMaxOpenConns(1)
+	db.SetMaxIdleConns(1)
+	db.SetConnMaxLifetime(0)
 	return db, nil
 }
 

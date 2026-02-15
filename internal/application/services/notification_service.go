@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/joshthewhite/poolvibes/internal/domain/entities"
@@ -38,7 +38,7 @@ func NewNotificationService(
 }
 
 func (s *NotificationService) Start(ctx context.Context) {
-	log.Printf("Notification scheduler started (interval: %s)", s.interval)
+	slog.Info("Notification scheduler started", "interval", s.interval)
 	ticker := time.NewTicker(s.interval)
 	defer ticker.Stop()
 
@@ -48,7 +48,7 @@ func (s *NotificationService) Start(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			log.Println("Notification scheduler stopped")
+			slog.Info("Notification scheduler stopped")
 			return
 		case <-ticker.C:
 			s.checkAndNotify(ctx)
@@ -60,7 +60,7 @@ func (s *NotificationService) checkAndNotify(ctx context.Context) {
 	today := time.Now()
 	tasks, err := s.taskRepo.FindDueOnDate(ctx, today)
 	if err != nil {
-		log.Printf("Notification check error: %v", err)
+		slog.Error("Notification check error", "error", err)
 		return
 	}
 
@@ -81,7 +81,7 @@ func (s *NotificationService) checkAndNotify(ctx context.Context) {
 		}
 		user, err := s.userRepo.FindByID(ctx, userTasks[0].UserID)
 		if err != nil || user == nil {
-			log.Printf("Notification: could not find user %s: %v", userTasks[0].UserID, err)
+			slog.Error("Notification: could not find user", "userID", userTasks[0].UserID, "error", err)
 			continue
 		}
 
@@ -104,16 +104,16 @@ func (s *NotificationService) notifyForTask(ctx context.Context, user *entities.
 		notif := entities.NewTaskNotification(task.ID, user.ID, "email", dueDate)
 		claimed, err := s.notifRepo.Claim(ctx, notif)
 		if err != nil {
-			log.Printf("Email claim error for task %s: %v", task.ID, err)
+			slog.Error("Email claim error", "taskID", task.ID, "error", err)
 		} else if claimed {
 			if err := s.emailNotifier.Send(ctx, user.Email, subject, body); err != nil {
-				log.Printf("Email send error for task %s to %s: %v", task.ID, user.Email, err)
+				slog.Error("Email send error", "taskID", task.ID, "email", user.Email, "error", err)
 				// Release claim so another tick can retry
 				if delErr := s.notifRepo.Delete(ctx, notif.ID); delErr != nil {
-					log.Printf("Error releasing email claim: %v", delErr)
+					slog.Error("Error releasing email claim", "error", delErr)
 				}
 			} else {
-				log.Printf("Email notification sent for task %s to %s", task.Name, user.Email)
+				slog.Info("Email notification sent", "task", task.Name, "email", user.Email)
 			}
 		}
 	}
@@ -123,16 +123,16 @@ func (s *NotificationService) notifyForTask(ctx context.Context, user *entities.
 		notif := entities.NewTaskNotification(task.ID, user.ID, "sms", dueDate)
 		claimed, err := s.notifRepo.Claim(ctx, notif)
 		if err != nil {
-			log.Printf("SMS claim error for task %s: %v", task.ID, err)
+			slog.Error("SMS claim error", "taskID", task.ID, "error", err)
 		} else if claimed {
 			if err := s.smsNotifier.Send(ctx, user.Phone, subject, body); err != nil {
-				log.Printf("SMS send error for task %s to %s: %v", task.ID, user.Phone, err)
+				slog.Error("SMS send error", "taskID", task.ID, "phone", user.Phone, "error", err)
 				// Release claim so another tick can retry
 				if delErr := s.notifRepo.Delete(ctx, notif.ID); delErr != nil {
-					log.Printf("Error releasing SMS claim: %v", delErr)
+					slog.Error("Error releasing SMS claim", "error", delErr)
 				}
 			} else {
-				log.Printf("SMS notification sent for task %s to %s", task.Name, user.Phone)
+				slog.Info("SMS notification sent", "task", task.Name, "phone", user.Phone)
 			}
 		}
 	}

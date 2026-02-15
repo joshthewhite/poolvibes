@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/joshthewhite/poolvibes/internal/application/command"
@@ -27,7 +28,7 @@ type settingsSignals struct {
 func (h *SettingsHandler) Page(w http.ResponseWriter, r *http.Request) {
 	user, err := services.UserFromContext(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -38,7 +39,7 @@ func (h *SettingsHandler) Page(w http.ResponseWriter, r *http.Request) {
 func (h *SettingsHandler) Update(w http.ResponseWriter, r *http.Request) {
 	var signals settingsSignals
 	if err := datastar.ReadSignals(r, &signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -49,8 +50,9 @@ func (h *SettingsHandler) Update(w http.ResponseWriter, r *http.Request) {
 		PoolGallons: signals.PoolGallons,
 	})
 	if err != nil {
+		slog.Error("Error saving settings", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.SettingsMessage("is-danger is-light", err.Error()))
+		sse.PatchElementTempl(templates.SettingsMessage("is-danger is-light", "Failed to save settings"))
 		return
 	}
 

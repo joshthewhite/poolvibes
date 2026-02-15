@@ -13,6 +13,7 @@ require (
 	github.com/starfederation/datastar-go v1.1.0
 	github.com/twilio/twilio-go v1.30.1
 	golang.org/x/crypto v0.48.0
+	golang.org/x/time v0.12.0
 	modernc.org/sqlite v1.45.0
 )
 

@@ -36,6 +36,13 @@ func (s *UserService) Update(ctx context.Context, cmd command.UpdateUser) (*enti
 	if err != nil {
 		return nil, fmt.Errorf("invalid ID: %w", err)
 	}
+
+	// Prevent admins from modifying their own admin/disabled status
+	callerID, callerErr := UserIDFromContext(ctx)
+	if callerErr == nil && callerID == uid {
+		return nil, fmt.Errorf("cannot modify your own account")
+	}
+
 	user, err := s.repo.FindByID(ctx, uid)
 	if err != nil {
 		return nil, err
@@ -43,6 +50,18 @@ func (s *UserService) Update(ctx context.Context, cmd command.UpdateUser) (*enti
 	if user == nil {
 		return nil, fmt.Errorf("user not found")
 	}
+
+	// Prevent removing the last admin
+	if user.IsAdmin && (!cmd.IsAdmin || cmd.IsDisabled) {
+		count, err := s.repo.CountAdmins(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("checking admin count: %w", err)
+		}
+		if count <= 1 {
+			return nil, fmt.Errorf("cannot remove the last admin")
+		}
+	}
+
 	user.IsAdmin = cmd.IsAdmin
 	user.IsDisabled = cmd.IsDisabled
 	if !cmd.IsDemo && user.IsDemo {

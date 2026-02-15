@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -38,7 +39,8 @@ type serviceRecordSignals struct {
 func (h *EquipmentHandler) List(w http.ResponseWriter, r *http.Request) {
 	items, err := h.svc.List(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error listing equipment", "error", err)
+		http.Error(w, "failed to load equipment", http.StatusInternalServerError)
 		return
 	}
 
@@ -55,7 +57,7 @@ func (h *EquipmentHandler) NewForm(w http.ResponseWriter, r *http.Request) {
 func (h *EquipmentHandler) Create(w http.ResponseWriter, r *http.Request) {
 	signals := &equipmentSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -71,8 +73,9 @@ func (h *EquipmentHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	_, err := h.svc.Create(r.Context(), cmd)
 	if err != nil {
+		slog.Error("Error creating equipment", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.ModalError(err.Error()))
+		sse.PatchElementTempl(templates.ModalError("Failed to create equipment"))
 		return
 	}
 
@@ -98,7 +101,7 @@ func (h *EquipmentHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	signals := &equipmentSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -115,8 +118,9 @@ func (h *EquipmentHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	_, err := h.svc.Update(r.Context(), cmd)
 	if err != nil {
+		slog.Error("Error updating equipment", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.ModalError(err.Error()))
+		sse.PatchElementTempl(templates.ModalError("Failed to update equipment"))
 		return
 	}
 
@@ -129,7 +133,8 @@ func (h *EquipmentHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (h *EquipmentHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if err := h.svc.Delete(r.Context(), id); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error deleting equipment", "error", err)
+		http.Error(w, "failed to delete equipment", http.StatusInternalServerError)
 		return
 	}
 
@@ -150,7 +155,7 @@ func (h *EquipmentHandler) CreateServiceRecord(w http.ResponseWriter, r *http.Re
 	eqID := r.PathValue("id")
 	signals := &serviceRecordSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -163,8 +168,9 @@ func (h *EquipmentHandler) CreateServiceRecord(w http.ResponseWriter, r *http.Re
 		Technician:  signals.Technician,
 	})
 	if err != nil {
+		slog.Error("Error creating service record", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.ModalError(err.Error()))
+		sse.PatchElementTempl(templates.ModalError("Failed to create service record"))
 		return
 	}
 
@@ -177,7 +183,8 @@ func (h *EquipmentHandler) CreateServiceRecord(w http.ResponseWriter, r *http.Re
 func (h *EquipmentHandler) DeleteServiceRecord(w http.ResponseWriter, r *http.Request) {
 	recordID := r.PathValue("recordId")
 	if err := h.svc.DeleteServiceRecord(r.Context(), recordID); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error deleting service record", "error", err)
+		http.Error(w, "failed to delete service record", http.StatusInternalServerError)
 		return
 	}
 

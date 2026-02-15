@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/joshthewhite/poolvibes/internal/application/command"
@@ -26,7 +27,8 @@ type adminUserSignals struct {
 func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := h.svc.List(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error listing users", "error", err)
+		http.Error(w, "failed to load users", http.StatusInternalServerError)
 		return
 	}
 
@@ -39,7 +41,8 @@ func (h *AdminHandler) EditUser(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	user, err := h.svc.Get(r.Context(), id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		slog.Error("Error loading user", "userID", id, "error", err)
+		http.Error(w, "failed to load user", http.StatusBadRequest)
 		return
 	}
 	if user == nil {
@@ -55,7 +58,7 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	var signals adminUserSignals
 	if err := datastar.ReadSignals(r, &signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -66,13 +69,19 @@ func (h *AdminHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		IsDemo:     signals.IsDemo,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		msg := err.Error()
+		if msg != "cannot modify your own account" && msg != "cannot remove the last admin" {
+			slog.Error("Error updating user", "userID", id, "error", err)
+			msg = "failed to update user"
+		}
+		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
 
 	users, err := h.svc.List(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error listing users", "error", err)
+		http.Error(w, "failed to load users", http.StatusInternalServerError)
 		return
 	}
 

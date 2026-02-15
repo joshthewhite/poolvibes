@@ -132,6 +132,15 @@ func (r *UserRepo) CountDemo(ctx context.Context) (int, error) {
 	return count, nil
 }
 
+func (r *UserRepo) CountAdmins(ctx context.Context) (int, error) {
+	var count int
+	err := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM users WHERE is_admin = TRUE AND is_disabled = FALSE`).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("counting admins: %w", err)
+	}
+	return count, nil
+}
+
 type scanner interface {
 	Scan(dest ...any) error
 }

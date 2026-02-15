@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/joshthewhite/poolvibes/internal/application/services"
 	"github.com/joshthewhite/poolvibes/internal/interface/web/handlers"
+	"golang.org/x/time/rate"
 )
 
 type Server struct {
@@ -49,11 +50,15 @@ func (s *Server) setupRoutes() {
 	auth := func(h http.HandlerFunc) http.HandlerFunc { return requireAuth(s.authSvc, h) }
 	admin := func(h http.HandlerFunc) http.HandlerFunc { return requireAdmin(s.authSvc, h) }
 
+	// Rate limiters for auth endpoints
+	loginLimiter := newIPLimiter(rate.Every(12*time.Second), 5)  // 5 per minute
+	signupLimiter := newIPLimiter(rate.Every(20*time.Second), 3) // 3 per minute
+
 	// Auth routes (no auth required)
 	s.mux.HandleFunc("GET /login", authHandler.LoginPage)
-	s.mux.HandleFunc("POST /login", authHandler.Login)
+	s.mux.HandleFunc("POST /login", rateLimit(loginLimiter, authHandler.Login))
 	s.mux.HandleFunc("GET /signup", authHandler.SignupPage)
-	s.mux.HandleFunc("POST /signup", authHandler.Signup)
+	s.mux.HandleFunc("POST /signup", rateLimit(signupLimiter, authHandler.Signup))
 	s.mux.HandleFunc("POST /logout", authHandler.Logout)
 
 	// Page (auth required)
@@ -114,7 +119,7 @@ func (s *Server) setupRoutes() {
 func (s *Server) Start(ctx context.Context, addr string) error {
 	srv := &http.Server{
 		Addr:    addr,
-		Handler: logRequests(s.mux),
+		Handler: securityHeaders(logRequests(s.mux)),
 	}
 
 	errCh := make(chan error, 1)
@@ -129,7 +134,7 @@ func (s *Server) Start(ctx context.Context, addr string) error {
 	case <-ctx.Done():
 	}
 
-	log.Println("Shutting down server...")
+	slog.Info("Shutting down server")
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -142,13 +147,30 @@ func (s *Server) Start(ctx context.Context, addr string) error {
 		return fmt.Errorf("server error: %w", err)
 	}
 
-	log.Println("Server stopped gracefully")
+	slog.Info("Server stopped gracefully")
 	return nil
+}
+
+func securityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Security-Policy",
+			"default-src 'self'; "+
+				"script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "+
+				"style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "+
+				"font-src https://fonts.gstatic.com; "+
+				"img-src 'self' data:; "+
+				"connect-src 'self'; "+
+				"frame-ancestors 'none'")
+		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		next.ServeHTTP(w, r)
+	})
 }
 
 func logRequests(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("%s %s", r.Method, r.URL.Path)
+		slog.Info("Request", "method", r.Method, "path", r.URL.Path)
 		next.ServeHTTP(w, r)
 	})
 }

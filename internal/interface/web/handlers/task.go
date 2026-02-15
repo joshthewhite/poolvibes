@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -30,7 +31,8 @@ type taskSignals struct {
 func (h *TaskHandler) List(w http.ResponseWriter, r *http.Request) {
 	tasks, err := h.svc.List(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error listing tasks", "error", err)
+		http.Error(w, "failed to load tasks", http.StatusInternalServerError)
 		return
 	}
 
@@ -49,7 +51,7 @@ func (h *TaskHandler) NewForm(w http.ResponseWriter, r *http.Request) {
 func (h *TaskHandler) Create(w http.ResponseWriter, r *http.Request) {
 	signals := &taskSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -62,8 +64,9 @@ func (h *TaskHandler) Create(w http.ResponseWriter, r *http.Request) {
 		DueDate:             dueDate,
 	})
 	if err != nil {
+		slog.Error("Error creating task", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.ModalError(err.Error()))
+		sse.PatchElementTempl(templates.ModalError("Failed to create task"))
 		return
 	}
 
@@ -90,7 +93,7 @@ func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	signals := &taskSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -104,8 +107,9 @@ func (h *TaskHandler) Update(w http.ResponseWriter, r *http.Request) {
 		DueDate:             dueDate,
 	})
 	if err != nil {
+		slog.Error("Error updating task", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.ModalError(err.Error()))
+		sse.PatchElementTempl(templates.ModalError("Failed to update task"))
 		return
 	}
 
@@ -120,7 +124,8 @@ func (h *TaskHandler) Complete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	_, err := h.svc.Complete(r.Context(), id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error completing task", "error", err)
+		http.Error(w, "failed to complete task", http.StatusInternalServerError)
 		return
 	}
 
@@ -133,7 +138,8 @@ func (h *TaskHandler) Complete(w http.ResponseWriter, r *http.Request) {
 func (h *TaskHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if err := h.svc.Delete(r.Context(), id); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error deleting task", "error", err)
+		http.Error(w, "failed to delete task", http.StatusInternalServerError)
 		return
 	}
 

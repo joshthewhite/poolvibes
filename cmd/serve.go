@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -102,7 +102,7 @@ var serveCmd = &cobra.Command{
 		var demoSeedSvc *services.DemoSeedService
 		if demoMode {
 			demoSeedSvc = services.NewDemoSeedService(userRepo, chemLogRepo, taskRepo, equipRepo, srRepo, chemRepo)
-			log.Printf("Demo mode enabled (max %d concurrent demo users)", maxDemoUsers)
+			slog.Info("Demo mode enabled", "maxDemoUsers", maxDemoUsers)
 		}
 
 		authSvc := services.NewAuthService(userRepo, sessionRepo, demoMode, maxDemoUsers, demoSeedSvc)
@@ -122,7 +122,7 @@ var serveCmd = &cobra.Command{
 				from = "notifications@poolvibes.app"
 			}
 			emailNotifier = notify.NewResendNotifier(apiKey, from)
-			log.Println("Email notifications enabled (Resend)")
+			slog.Info("Email notifications enabled", "provider", "Resend")
 		}
 
 		if sid := viper.GetString("twilio_account_sid"); sid != "" {
@@ -130,7 +130,7 @@ var serveCmd = &cobra.Command{
 			fromNum := viper.GetString("twilio_from_number")
 			if token != "" && fromNum != "" {
 				smsNotifier = notify.NewTwilioNotifier(sid, token, fromNum)
-				log.Println("SMS notifications enabled (Twilio)")
+				slog.Info("SMS notifications enabled", "provider", "Twilio")
 			}
 		}
 
@@ -145,6 +145,22 @@ var serveCmd = &cobra.Command{
 			)
 			go cleanupSvc.Start(ctx)
 		}
+
+		// Periodically clean up expired sessions
+		go func() {
+			ticker := time.NewTicker(1 * time.Hour)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-ticker.C:
+					if err := sessionRepo.DeleteExpired(ctx); err != nil {
+						slog.Error("Failed to clean up expired sessions", "error", err)
+					}
+				}
+			}
+		}()
 
 		if emailNotifier != nil || smsNotifier != nil {
 			intervalStr := viper.GetString("notify-check-interval")

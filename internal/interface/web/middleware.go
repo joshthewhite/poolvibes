@@ -16,10 +16,13 @@ func requireAuth(authSvc *services.AuthService, next http.HandlerFunc) http.Hand
 		user, err := authSvc.GetUserBySession(r.Context(), cookie.Value)
 		if err != nil || user == nil {
 			http.SetCookie(w, &http.Cookie{
-				Name:   "session_id",
-				Value:  "",
-				Path:   "/",
-				MaxAge: -1,
+				Name:     "session_id",
+				Value:    "",
+				Path:     "/",
+				MaxAge:   -1,
+				HttpOnly: true,
+				Secure:   true,
+				SameSite: http.SameSiteStrictMode,
 			})
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return

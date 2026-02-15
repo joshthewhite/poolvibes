@@ -17,4 +17,5 @@ type UserRepository interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 	FindExpiredDemo(ctx context.Context, now time.Time) ([]entities.User, error)
 	CountDemo(ctx context.Context) (int, error)
+	CountAdmins(ctx context.Context) (int, error)
 }

@@ -1,6 +1,6 @@
 package templates
 
-templ AuthPage(title, action, buttonText, altURL, altText, errMsg string, isSignup bool) {
+templ AuthPage(title, action, buttonText, altURL, altText, errMsg, csrfToken string, isSignup bool) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -142,6 +142,7 @@ templ AuthPage(title, action, buttonText, altURL, altText, errMsg string, isSign
 									<div class="notification is-danger is-light">{ errMsg }</div>
 								}
 								<form method="POST" action={ templ.SafeURL(action) }>
+									<input type="hidden" name="csrf_token" value={ csrfToken }/>
 									<div class="field">
 										<label class="label">Email</label>
 										<div class="control">

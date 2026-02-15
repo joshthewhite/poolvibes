@@ -3,7 +3,8 @@ package services
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -37,8 +38,11 @@ func (s *AuthService) SignUp(ctx context.Context, cmd command.SignUp) (*entities
 	if cmd.Password == "" {
 		return nil, nil, fmt.Errorf("password is required")
 	}
-	if len(cmd.Password) < 8 {
-		return nil, nil, fmt.Errorf("password must be at least 8 characters")
+	if len(cmd.Password) < 12 {
+		return nil, nil, fmt.Errorf("password must be at least 12 characters")
+	}
+	if isCommonPassword(cmd.Password) {
+		return nil, nil, fmt.Errorf("password is too common, please choose a stronger one")
 	}
 
 	existing, err := s.userRepo.FindByEmail(ctx, cmd.Email)
@@ -46,7 +50,7 @@ func (s *AuthService) SignUp(ctx context.Context, cmd command.SignUp) (*entities
 		return nil, nil, fmt.Errorf("checking email: %w", err)
 	}
 	if existing != nil {
-		return nil, nil, fmt.Errorf("email already registered")
+		return nil, nil, fmt.Errorf("unable to create account")
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(cmd.Password), bcrypt.DefaultCost)
@@ -91,7 +95,7 @@ func (s *AuthService) SignUp(ctx context.Context, cmd command.SignUp) (*entities
 	// Seed demo data for demo users
 	if user.IsDemo && s.demoSeedSvc != nil {
 		if err := s.demoSeedSvc.Seed(ctx, user.ID); err != nil {
-			log.Printf("Warning: failed to seed demo data for user %s: %v", user.ID, err)
+			slog.Warn("Failed to seed demo data", "userID", user.ID, "error", err)
 		}
 	}
 
@@ -104,15 +108,20 @@ func (s *AuthService) SignUp(ctx context.Context, cmd command.SignUp) (*entities
 }
 
 func (s *AuthService) SignIn(ctx context.Context, cmd command.SignIn) (*entities.User, *entities.Session, error) {
+	// Use a dummy hash to compare against when user is not found,
+	// so the timing is consistent regardless of whether the user exists.
+	const dummyHash = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"
+
 	user, err := s.userRepo.FindByEmail(ctx, cmd.Email)
 	if err != nil {
 		return nil, nil, fmt.Errorf("finding user: %w", err)
 	}
 	if user == nil {
+		bcrypt.CompareHashAndPassword([]byte(dummyHash), []byte(cmd.Password))
 		return nil, nil, fmt.Errorf("invalid email or password")
 	}
 	if user.IsDisabled {
-		return nil, nil, fmt.Errorf("account is disabled")
+		return nil, nil, fmt.Errorf("invalid email or password")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(cmd.Password)); err != nil {
@@ -160,4 +169,47 @@ func (s *AuthService) GetUserBySession(ctx context.Context, sessionID string) (*
 		return nil, nil
 	}
 	return user, nil
+}
+
+var commonPasswords = map[string]struct{}{
+	"password":        {},
+	"123456789012":    {},
+	"qwertyuiop12":    {},
+	"password1234":    {},
+	"iloveyou1234":    {},
+	"letmein12345":    {},
+	"welcome12345":    {},
+	"monkey123456":    {},
+	"dragon123456":    {},
+	"master123456":    {},
+	"qwerty123456":    {},
+	"login1234567":    {},
+	"abc123456789":    {},
+	"admin1234567":    {},
+	"passw0rd1234":    {},
+	"password12345":   {},
+	"123456789abc":    {},
+	"changeme1234":    {},
+	"trustno11234":    {},
+	"baseball1234":    {},
+	"shadow123456":    {},
+	"michael12345":    {},
+	"football1234":    {},
+	"superman1234":    {},
+	"password1":       {},
+	"password123":     {},
+	"password1234567": {},
+	"qwerty12345678":  {},
+	"aaaaaaaaaaaa":    {},
+	"123456789000":    {},
+	"111111111111":    {},
+	"000000000000":    {},
+	"123123123123":    {},
+	"abcdefghijkl":    {},
+	"qwertyuiopas":    {},
+}
+
+func isCommonPassword(password string) bool {
+	_, ok := commonPasswords[strings.ToLower(password)]
+	return ok
 }

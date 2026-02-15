@@ -2,7 +2,7 @@ package services
 
 import (
 	"context"
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/joshthewhite/poolvibes/internal/domain/repositories"
@@ -45,7 +45,7 @@ func NewDemoCleanupService(
 }
 
 func (s *DemoCleanupService) Start(ctx context.Context) {
-	log.Printf("Demo cleanup scheduler started (interval: %s)", s.interval)
+	slog.Info("Demo cleanup scheduler started", "interval", s.interval)
 	ticker := time.NewTicker(s.interval)
 	defer ticker.Stop()
 
@@ -55,7 +55,7 @@ func (s *DemoCleanupService) Start(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			log.Println("Demo cleanup scheduler stopped")
+			slog.Info("Demo cleanup scheduler stopped")
 			return
 		case <-ticker.C:
 			s.cleanup(ctx)
@@ -66,12 +66,12 @@ func (s *DemoCleanupService) Start(ctx context.Context) {
 func (s *DemoCleanupService) cleanup(ctx context.Context) {
 	users, err := s.userRepo.FindExpiredDemo(ctx, time.Now())
 	if err != nil {
-		log.Printf("Demo cleanup error finding expired users: %v", err)
+		slog.Error("Demo cleanup error finding expired users", "error", err)
 		return
 	}
 
 	for _, user := range users {
-		log.Printf("Cleaning up expired demo user: %s (%s)", user.Email, user.ID)
+		slog.Info("Cleaning up expired demo user", "email", user.Email, "userID", user.ID)
 
 		// Delete all user data explicitly (no FK CASCADE on entity tables)
 		chems, _ := s.chemRepo.FindAll(ctx, user.ID)
@@ -103,9 +103,9 @@ func (s *DemoCleanupService) cleanup(ctx context.Context) {
 
 		// Finally delete the user
 		if err := s.userRepo.Delete(ctx, user.ID); err != nil {
-			log.Printf("Demo cleanup: failed to delete user %s: %v", user.ID, err)
+			slog.Error("Demo cleanup: failed to delete user", "userID", user.ID, "error", err)
 		} else {
-			log.Printf("Demo cleanup: deleted expired demo user %s", user.Email)
+			slog.Info("Demo cleanup: deleted expired demo user", "email", user.Email)
 		}
 	}
 }

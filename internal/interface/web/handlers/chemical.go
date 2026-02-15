@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/joshthewhite/poolvibes/internal/application/command"
@@ -32,7 +33,8 @@ type adjustSignals struct {
 func (h *ChemicalHandler) List(w http.ResponseWriter, r *http.Request) {
 	chemicals, err := h.svc.List(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error listing chemicals", "error", err)
+		http.Error(w, "failed to load chemicals", http.StatusInternalServerError)
 		return
 	}
 
@@ -49,7 +51,7 @@ func (h *ChemicalHandler) NewForm(w http.ResponseWriter, r *http.Request) {
 func (h *ChemicalHandler) Create(w http.ResponseWriter, r *http.Request) {
 	signals := &chemicalSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -61,8 +63,9 @@ func (h *ChemicalHandler) Create(w http.ResponseWriter, r *http.Request) {
 		AlertThreshold: signals.AlertThreshold,
 	})
 	if err != nil {
+		slog.Error("Error creating chemical", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.ModalError(err.Error()))
+		sse.PatchElementTempl(templates.ModalError("Failed to create chemical"))
 		return
 	}
 
@@ -88,7 +91,7 @@ func (h *ChemicalHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	signals := &chemicalSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -101,8 +104,9 @@ func (h *ChemicalHandler) Update(w http.ResponseWriter, r *http.Request) {
 		AlertThreshold: signals.AlertThreshold,
 	})
 	if err != nil {
+		slog.Error("Error updating chemical", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.ModalError(err.Error()))
+		sse.PatchElementTempl(templates.ModalError("Failed to update chemical"))
 		return
 	}
 
@@ -116,7 +120,7 @@ func (h *ChemicalHandler) AdjustStock(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	signals := &adjustSignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -125,7 +129,7 @@ func (h *ChemicalHandler) AdjustStock(w http.ResponseWriter, r *http.Request) {
 		Delta: signals.Delta,
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "failed to adjust stock", http.StatusBadRequest)
 		return
 	}
 
@@ -137,7 +141,8 @@ func (h *ChemicalHandler) AdjustStock(w http.ResponseWriter, r *http.Request) {
 func (h *ChemicalHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if err := h.svc.Delete(r.Context(), id); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error deleting chemical", "error", err)
+		http.Error(w, "failed to delete chemical", http.StatusInternalServerError)
 		return
 	}
 

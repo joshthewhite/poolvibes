@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -77,7 +78,8 @@ func (h *ChemistryHandler) listAndPatch(w http.ResponseWriter, r *http.Request, 
 	query := listSignals.buildQuery()
 	result, err := h.svc.ListPaged(r.Context(), query)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error listing chemistry logs", "error", err)
+		http.Error(w, "failed to load chemistry data", http.StatusInternalServerError)
 		return
 	}
 	data := templates.ChemistryListData{
@@ -111,7 +113,7 @@ func (h *ChemistryHandler) NewForm(w http.ResponseWriter, r *http.Request) {
 func (h *ChemistryHandler) Create(w http.ResponseWriter, r *http.Request) {
 	signals := &chemistrySignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -128,8 +130,9 @@ func (h *ChemistryHandler) Create(w http.ResponseWriter, r *http.Request) {
 		TestedAt:         testedAt,
 	})
 	if err != nil {
+		slog.Error("Error creating chemistry log", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.ModalError(err.Error()))
+		sse.PatchElementTempl(templates.ModalError("Failed to save chemistry log"))
 		return
 	}
 
@@ -152,7 +155,7 @@ func (h *ChemistryHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	signals := &chemistrySignals{}
 	if err := datastar.ReadSignals(r, signals); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid request data", http.StatusBadRequest)
 		return
 	}
 
@@ -170,8 +173,9 @@ func (h *ChemistryHandler) Update(w http.ResponseWriter, r *http.Request) {
 		TestedAt:         testedAt,
 	})
 	if err != nil {
+		slog.Error("Error updating chemistry log", "error", err)
 		sse := datastar.NewSSE(w, r)
-		sse.PatchElementTempl(templates.ModalError(err.Error()))
+		sse.PatchElementTempl(templates.ModalError("Failed to update chemistry log"))
 		return
 	}
 
@@ -181,7 +185,8 @@ func (h *ChemistryHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (h *ChemistryHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if err := h.svc.Delete(r.Context(), id); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		slog.Error("Error deleting chemistry log", "error", err)
+		http.Error(w, "failed to delete chemistry log", http.StatusInternalServerError)
 		return
 	}
 
@@ -198,7 +203,7 @@ func (h *ChemistryHandler) Plan(w http.ResponseWriter, r *http.Request) {
 
 	user, err := services.UserFromContext(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 

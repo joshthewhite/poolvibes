@@ -17,21 +17,32 @@ func NewAuthHandler(svc *services.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) LoginPage(w http.ResponseWriter, r *http.Request) {
+	token := ensureCSRFToken(w, r)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "", false).Render(r.Context(), w)
+	templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "", token, false).Render(r.Context(), w)
 }
 
 func (h *AuthHandler) SignupPage(w http.ResponseWriter, r *http.Request) {
+	token := ensureCSRFToken(w, r)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "", true).Render(r.Context(), w)
+	templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "", token, true).Render(r.Context(), w)
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
+		token := ensureCSRFToken(w, r)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "Invalid form data", false).Render(r.Context(), w)
+		templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "Invalid form data", token, false).Render(r.Context(), w)
 		return
 	}
+
+	if !validateCSRF(r) {
+		token := ensureCSRFToken(w, r)
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "Invalid request, please try again", token, false).Render(r.Context(), w)
+		return
+	}
+
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
@@ -40,8 +51,9 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Password: password,
 	})
 	if err != nil {
+		token := ensureCSRFToken(w, r)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", err.Error(), false).Render(r.Context(), w)
+		templates.AuthPage("Sign In", "/login", "Sign In", "/signup", "Don't have an account? Sign up", "Invalid email or password", token, false).Render(r.Context(), w)
 		return
 	}
 
@@ -50,24 +62,35 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Value:    session.ID.String(),
 		Path:     "/",
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
 	})
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
+		token := ensureCSRFToken(w, r)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "Invalid form data", true).Render(r.Context(), w)
+		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "Invalid form data", token, true).Render(r.Context(), w)
 		return
 	}
+
+	if !validateCSRF(r) {
+		token := ensureCSRFToken(w, r)
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "Invalid request, please try again", token, true).Render(r.Context(), w)
+		return
+	}
+
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 	confirm := r.FormValue("confirm")
 
 	if password != confirm {
+		token := ensureCSRFToken(w, r)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "Passwords do not match", true).Render(r.Context(), w)
+		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", "Passwords do not match", token, true).Render(r.Context(), w)
 		return
 	}
 
@@ -76,8 +99,9 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		Password: password,
 	})
 	if err != nil {
+		token := ensureCSRFToken(w, r)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", err.Error(), true).Render(r.Context(), w)
+		templates.AuthPage("Sign Up", "/signup", "Sign Up", "/login", "Already have an account? Sign in", err.Error(), token, true).Render(r.Context(), w)
 		return
 	}
 
@@ -86,7 +110,8 @@ func (h *AuthHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		Value:    session.ID.String(),
 		Path:     "/",
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
 	})
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
@@ -97,10 +122,13 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		_ = h.svc.SignOut(r.Context(), cookie.Value)
 	}
 	http.SetCookie(w, &http.Cookie{
-		Name:   "session_id",
-		Value:  "",
-		Path:   "/",
-		MaxAge: -1,
+		Name:     "session_id",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
 	})
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

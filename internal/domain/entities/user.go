@@ -2,6 +2,7 @@ package entities
 
 import (
 	"fmt"
+	"net/mail"
 	"strings"
 	"time"
 
@@ -47,7 +48,7 @@ func (u *User) Validate() error {
 	if u.Email == "" {
 		return fmt.Errorf("email is required")
 	}
-	if !strings.Contains(u.Email, "@") {
+	if _, err := mail.ParseAddress(u.Email); err != nil {
 		return fmt.Errorf("email is invalid")
 	}
 	if u.PasswordHash == "" {

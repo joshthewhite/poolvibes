@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"io/fs"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	pgxmigrate "github.com/golang-migrate/migrate/v4/database/pgx/v5"
@@ -19,6 +20,9 @@ func Open(dsn string) (*sql.DB, error) {
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("pinging database: %w", err)
 	}
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(5)
+	db.SetConnMaxLifetime(5 * time.Minute)
 	return db, nil
 }
 
