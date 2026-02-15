@@ -486,6 +486,40 @@ templ Layout(email string, isAdmin bool) {
 						background-color: var(--pv-text-secondary);
 					}
 				}
+			/* Mobile responsive adjustments */
+				@media screen and (max-width: 768px) {
+					.section {
+						padding-left: 0.75rem;
+						padding-right: 0.75rem;
+					}
+					.button.is-small {
+						min-height: 2.25rem;
+						padding-left: 0.75rem;
+						padding-right: 0.75rem;
+					}
+				}
+
+				/* Chemistry table mobile expandable rows */
+				@media screen and (max-width: 768px) {
+					.pv-hidden-mobile {
+						display: none !important;
+					}
+					.pv-expand-btn {
+						display: inline-flex !important;
+					}
+					.pv-detail-row td {
+						padding-top: 0;
+						border-top: none;
+					}
+				}
+				@media screen and (min-width: 769px) {
+					.pv-expand-btn {
+						display: none !important;
+					}
+					.pv-detail-row {
+						display: none !important;
+					}
+				}
 			</style>
 		</head>
 		<body>

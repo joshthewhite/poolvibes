@@ -21,7 +21,7 @@ templ EquipmentList(items []entities.Equipment) {
 }
 
 templ EquipmentCard(eq entities.Equipment) {
-	<div class="column is-half">
+	<div class="column is-half-desktop is-12-mobile">
 		<div class="card">
 			<div class="card-content">
 				<!-- Header -->
@@ -126,8 +126,8 @@ templ EquipmentFormFields() {
 				</div>
 			</div>
 		</div>
-		<div class="columns">
-			<div class="column">
+		<div class="columns is-multiline">
+			<div class="column is-12-mobile">
 				<div class="field">
 					<label class="label">Manufacturer</label>
 					<div class="control">
@@ -135,7 +135,7 @@ templ EquipmentFormFields() {
 					</div>
 				</div>
 			</div>
-			<div class="column">
+			<div class="column is-12-mobile">
 				<div class="field">
 					<label class="label">Model</label>
 					<div class="control">
@@ -150,8 +150,8 @@ templ EquipmentFormFields() {
 				<input data-bind:eqSerialNumber type="text" class="input"/>
 			</div>
 		</div>
-		<div class="columns">
-			<div class="column">
+		<div class="columns is-multiline">
+			<div class="column is-12-mobile">
 				<div class="field">
 					<label class="label">Install Date</label>
 					<div class="control">
@@ -159,7 +159,7 @@ templ EquipmentFormFields() {
 					</div>
 				</div>
 			</div>
-			<div class="column">
+			<div class="column is-12-mobile">
 				<div class="field">
 					<label class="label">Warranty Expiry</label>
 					<div class="control">
@@ -246,8 +246,8 @@ templ serviceRecordNewFormContent(eqID string, today string) {
 				<textarea data-bind:srDescription rows="2" class="textarea"></textarea>
 			</div>
 		</div>
-		<div class="columns">
-			<div class="column">
+		<div class="columns is-multiline">
+			<div class="column is-12-mobile">
 				<div class="field">
 					<label class="label">Cost ($)</label>
 					<div class="control">
@@ -255,7 +255,7 @@ templ serviceRecordNewFormContent(eqID string, today string) {
 					</div>
 				</div>
 			</div>
-			<div class="column">
+			<div class="column is-12-mobile">
 				<div class="field">
 					<label class="label">Technician</label>
 					<div class="control">
