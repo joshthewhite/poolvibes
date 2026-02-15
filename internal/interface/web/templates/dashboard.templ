@@ -11,7 +11,7 @@ templ Dashboard(data DashboardData) {
 		<!-- Summary Cards -->
 		<div class="columns is-multiline">
 			<!-- Water Quality Card -->
-			<div class="column is-3-desktop is-6-tablet">
+			<div class="column is-3-desktop is-6-tablet is-12-mobile">
 				<div class="box">
 					<p class="heading">Water Quality</p>
 					if data.WaterQuality.HasData {
@@ -27,7 +27,7 @@ templ Dashboard(data DashboardData) {
 				</div>
 			</div>
 			<!-- Last Tested Card -->
-			<div class="column is-3-desktop is-6-tablet">
+			<div class="column is-3-desktop is-6-tablet is-12-mobile">
 				<div class="box">
 					<p class="heading">Last Tested</p>
 					if data.LastTested.HasData {
@@ -43,7 +43,7 @@ templ Dashboard(data DashboardData) {
 				</div>
 			</div>
 			<!-- Tasks Card -->
-			<div class="column is-3-desktop is-6-tablet">
+			<div class="column is-3-desktop is-6-tablet is-12-mobile">
 				<div class="box">
 					<p class="heading">Tasks</p>
 					if data.Tasks.HasData {
@@ -63,7 +63,7 @@ templ Dashboard(data DashboardData) {
 				</div>
 			</div>
 			<!-- Low Stock Card -->
-			<div class="column is-3-desktop is-6-tablet">
+			<div class="column is-3-desktop is-6-tablet is-12-mobile">
 				<div class="box">
 					<p class="heading">Low Stock</p>
 					if data.LowStock.HasData {
@@ -86,7 +86,7 @@ templ Dashboard(data DashboardData) {
 		<!-- Chemistry Trend Charts -->
 		if data.Chart.HasData && !data.Chart.SinglePoint {
 			<div class="columns mt-4">
-				<div class="column is-half">
+				<div class="column is-half-desktop is-12-mobile">
 					<div class="box">
 						<p class="heading mb-3">pH Trend</p>
 						<div style="position: relative; height: 200px;">
@@ -94,7 +94,7 @@ templ Dashboard(data DashboardData) {
 						</div>
 					</div>
 				</div>
-				<div class="column is-half">
+				<div class="column is-half-desktop is-12-mobile">
 					<div class="box">
 						<p class="heading mb-3">Free Chlorine Trend</p>
 						<div style="position: relative; height: 200px;">
@@ -111,9 +111,9 @@ templ Dashboard(data DashboardData) {
 			</div>
 		}
 		<!-- Quick Lists -->
-		<div class="columns mt-4">
+		<div class="columns mt-4 is-multiline">
 			<!-- Upcoming Tasks -->
-			<div class="column is-half">
+			<div class="column is-half-desktop is-12-mobile">
 				<div class="box">
 					<p class="heading mb-3">Upcoming Tasks</p>
 					if len(data.UpcomingTasks) == 0 {
@@ -126,7 +126,7 @@ templ Dashboard(data DashboardData) {
 				</div>
 			</div>
 			<!-- Low Stock Alerts -->
-			<div class="column is-half">
+			<div class="column is-half-desktop is-12-mobile">
 				<div class="box">
 					<p class="heading mb-3">Low Stock Alerts</p>
 					if len(data.LowStockChemicals) == 0 {

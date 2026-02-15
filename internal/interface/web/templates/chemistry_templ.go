@@ -708,7 +708,7 @@ func ChemistryFormFields() templ.Component {
 			templ_7745c5c3_Var40 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div class=\"columns is-multiline\"><div class=\"column is-half\"><div class=\"field\"><label class=\"label\">pH</label><div class=\"control\"><input data-bind:ph type=\"number\" step=\"0.1\" min=\"0\" max=\"14\" class=\"input\"></div></div></div><div class=\"column is-half\"><div class=\"field\"><label class=\"label\">Free Chlorine (ppm)</label><div class=\"control\"><input data-bind:freeChlorine type=\"number\" step=\"0.1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half\"><div class=\"field\"><label class=\"label\">Combined Chlorine (ppm)</label><div class=\"control\"><input data-bind:combinedChlorine type=\"number\" step=\"0.1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half\"><div class=\"field\"><label class=\"label\">Total Alkalinity (ppm)</label><div class=\"control\"><input data-bind:totalAlkalinity type=\"number\" step=\"1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half\"><div class=\"field\"><label class=\"label\">CYA (ppm)</label><div class=\"control\"><input data-bind:cya type=\"number\" step=\"1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half\"><div class=\"field\"><label class=\"label\">Calcium Hardness (ppm)</label><div class=\"control\"><input data-bind:calciumHardness type=\"number\" step=\"1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half\"><div class=\"field\"><label class=\"label\">Temperature (&deg;F)</label><div class=\"control\"><input data-bind:temperature type=\"number\" step=\"1\" class=\"input\"></div></div></div><div class=\"column is-half\"><div class=\"field\"><label class=\"label\">Tested At</label><div class=\"control\"><input data-bind:testedAt type=\"datetime-local\" class=\"input\"></div></div></div><div class=\"column is-full\"><div class=\"field\"><label class=\"label\">Notes</label><div class=\"control\"><textarea data-bind:notes rows=\"2\" class=\"textarea\"></textarea></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div class=\"columns is-multiline\"><div class=\"column is-half is-12-mobile\"><div class=\"field\"><label class=\"label\">pH</label><div class=\"control\"><input data-bind:ph type=\"number\" step=\"0.1\" min=\"0\" max=\"14\" class=\"input\"></div></div></div><div class=\"column is-half is-12-mobile\"><div class=\"field\"><label class=\"label\">Free Chlorine (ppm)</label><div class=\"control\"><input data-bind:freeChlorine type=\"number\" step=\"0.1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half is-12-mobile\"><div class=\"field\"><label class=\"label\">Combined Chlorine (ppm)</label><div class=\"control\"><input data-bind:combinedChlorine type=\"number\" step=\"0.1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half is-12-mobile\"><div class=\"field\"><label class=\"label\">Total Alkalinity (ppm)</label><div class=\"control\"><input data-bind:totalAlkalinity type=\"number\" step=\"1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half is-12-mobile\"><div class=\"field\"><label class=\"label\">CYA (ppm)</label><div class=\"control\"><input data-bind:cya type=\"number\" step=\"1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half is-12-mobile\"><div class=\"field\"><label class=\"label\">Calcium Hardness (ppm)</label><div class=\"control\"><input data-bind:calciumHardness type=\"number\" step=\"1\" min=\"0\" class=\"input\"></div></div></div><div class=\"column is-half is-12-mobile\"><div class=\"field\"><label class=\"label\">Temperature (&deg;F)</label><div class=\"control\"><input data-bind:temperature type=\"number\" step=\"1\" class=\"input\"></div></div></div><div class=\"column is-half is-12-mobile\"><div class=\"field\"><label class=\"label\">Tested At</label><div class=\"control\"><input data-bind:testedAt type=\"datetime-local\" class=\"input\"></div></div></div><div class=\"column is-full\"><div class=\"field\"><label class=\"label\">Notes</label><div class=\"control\"><textarea data-bind:notes rows=\"2\" class=\"textarea\"></textarea></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1109,7 +1109,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "</p><div class=\"columns is-multiline\"><div class=\"column is-half\"><p class=\"heading\">Chemical</p><p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "</p><div class=\"columns is-multiline\"><div class=\"column is-half is-12-mobile\"><p class=\"heading\">Chemical</p><p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -1122,7 +1122,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "</p></div><div class=\"column is-one-quarter\"><p class=\"heading\">Total Amount</p><p class=\"has-text-weight-semibold\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "</p></div><div class=\"column is-one-quarter is-half-mobile\"><p class=\"heading\">Total Amount</p><p class=\"has-text-weight-semibold\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -1135,7 +1135,7 @@ func treatmentPlanContent(plan *entities.TreatmentPlan) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "</p></div><div class=\"column is-one-quarter\"><p class=\"heading\">Max Per Dose</p><p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "</p></div><div class=\"column is-one-quarter is-half-mobile\"><p class=\"heading\">Max Per Dose</p><p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -147,7 +147,7 @@ templ chemistryRow(l entities.ChemistryLog) {
 
 templ ChemistryFormFields() {
 	<div class="columns is-multiline">
-		<div class="column is-half">
+		<div class="column is-half is-12-mobile">
 			<div class="field">
 				<label class="label">pH</label>
 				<div class="control">
@@ -155,7 +155,7 @@ templ ChemistryFormFields() {
 				</div>
 			</div>
 		</div>
-		<div class="column is-half">
+		<div class="column is-half is-12-mobile">
 			<div class="field">
 				<label class="label">Free Chlorine (ppm)</label>
 				<div class="control">
@@ -163,7 +163,7 @@ templ ChemistryFormFields() {
 				</div>
 			</div>
 		</div>
-		<div class="column is-half">
+		<div class="column is-half is-12-mobile">
 			<div class="field">
 				<label class="label">Combined Chlorine (ppm)</label>
 				<div class="control">
@@ -171,7 +171,7 @@ templ ChemistryFormFields() {
 				</div>
 			</div>
 		</div>
-		<div class="column is-half">
+		<div class="column is-half is-12-mobile">
 			<div class="field">
 				<label class="label">Total Alkalinity (ppm)</label>
 				<div class="control">
@@ -179,7 +179,7 @@ templ ChemistryFormFields() {
 				</div>
 			</div>
 		</div>
-		<div class="column is-half">
+		<div class="column is-half is-12-mobile">
 			<div class="field">
 				<label class="label">CYA (ppm)</label>
 				<div class="control">
@@ -187,7 +187,7 @@ templ ChemistryFormFields() {
 				</div>
 			</div>
 		</div>
-		<div class="column is-half">
+		<div class="column is-half is-12-mobile">
 			<div class="field">
 				<label class="label">Calcium Hardness (ppm)</label>
 				<div class="control">
@@ -195,7 +195,7 @@ templ ChemistryFormFields() {
 				</div>
 			</div>
 		</div>
-		<div class="column is-half">
+		<div class="column is-half is-12-mobile">
 			<div class="field">
 				<label class="label">Temperature (&deg;F)</label>
 				<div class="control">
@@ -203,7 +203,7 @@ templ ChemistryFormFields() {
 				</div>
 			</div>
 		</div>
-		<div class="column is-half">
+		<div class="column is-half is-12-mobile">
 			<div class="field">
 				<label class="label">Tested At</label>
 				<div class="control">
@@ -308,15 +308,15 @@ templ treatmentPlanContent(plan *entities.TreatmentPlan) {
 				</div>
 				<p class="has-text-grey mb-3">{ step.Explanation }</p>
 				<div class="columns is-multiline">
-					<div class="column is-half">
+					<div class="column is-half is-12-mobile">
 						<p class="heading">Chemical</p>
 						<p>{ step.Chemical }</p>
 					</div>
-					<div class="column is-one-quarter">
+					<div class="column is-one-quarter is-half-mobile">
 						<p class="heading">Total Amount</p>
 						<p class="has-text-weight-semibold">{ step.Amount }</p>
 					</div>
-					<div class="column is-one-quarter">
+					<div class="column is-one-quarter is-half-mobile">
 						<p class="heading">Max Per Dose</p>
 						<p>{ step.MaxDose }</p>
 					</div>

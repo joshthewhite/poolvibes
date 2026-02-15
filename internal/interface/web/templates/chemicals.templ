@@ -21,7 +21,7 @@ templ ChemicalList(chemicals []entities.Chemical) {
 }
 
 templ ChemicalCard(c entities.Chemical) {
-	<div class="column is-one-third">
+	<div class="column is-one-third-desktop is-half-tablet is-12-mobile">
 		<div
 			class={ "card", templ.KV("pv-low-stock", c.IsLowStock()) }
 		>
@@ -94,8 +94,8 @@ templ ChemicalFormFields() {
 				</div>
 			</div>
 		</div>
-		<div class="columns">
-			<div class="column">
+		<div class="columns is-multiline">
+			<div class="column is-12-mobile">
 				<div class="field">
 					<label class="label">Stock Amount</label>
 					<div class="control">
@@ -103,7 +103,7 @@ templ ChemicalFormFields() {
 					</div>
 				</div>
 			</div>
-			<div class="column">
+			<div class="column is-12-mobile">
 				<div class="field">
 					<label class="label">Unit</label>
 					<div class="control">
@@ -119,7 +119,7 @@ templ ChemicalFormFields() {
 					</div>
 				</div>
 			</div>
-			<div class="column">
+			<div class="column is-12-mobile">
 				<div class="field">
 					<label class="label">Alert At</label>
 					<div class="control">
