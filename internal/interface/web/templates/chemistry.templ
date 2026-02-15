@@ -29,17 +29,17 @@ templ ChemistryList(data ChemistryListData) {
 							@sortableHeader("Date", "tested_at", data.SortBy, data.SortDir)
 							@sortableHeader("pH", "ph", data.SortBy, data.SortDir)
 							@sortableHeader("FC", "free_chlorine", data.SortBy, data.SortDir)
-							<th>CC</th>
-							@sortableHeader("TA", "total_alkalinity", data.SortBy, data.SortDir)
-							@sortableHeader("CYA", "cya", data.SortBy, data.SortDir)
-							<th>CH</th>
-							<th>Temp</th>
+							<th class="pv-hidden-mobile">CC</th>
+							@sortableHeaderHiddenMobile("TA", "total_alkalinity", data.SortBy, data.SortDir)
+							@sortableHeaderHiddenMobile("CYA", "cya", data.SortBy, data.SortDir)
+							<th class="pv-hidden-mobile">CH</th>
+							<th class="pv-hidden-mobile">Temp</th>
 							<th class="has-text-right">Actions</th>
 						</tr>
 					</thead>
 					<tbody>
-						for _, l := range data.Result.Items {
-							@chemistryRow(l)
+						for i, l := range data.Result.Items {
+							@chemistryRow(l, i)
 						}
 					</tbody>
 				</table>
@@ -98,6 +98,12 @@ templ sortableHeader(label, col, currentSortBy, currentSortDir string) {
 	</th>
 }
 
+templ sortableHeaderHiddenMobile(label, col, currentSortBy, currentSortDir string) {
+	<th class="pv-hidden-mobile" style="cursor: pointer; user-select: none;" data-on:click={ sortAction(col, currentSortBy, currentSortDir) }>
+		{ label }{ sortIndicator(col, currentSortBy, currentSortDir) }
+	</th>
+}
+
 templ chemistryPagination(data ChemistryListData) {
 	<nav class="pagination is-small is-centered mt-4" role="navigation" aria-label="pagination">
 		if data.Result.Page > 1 {
@@ -125,21 +131,49 @@ templ chemistryPagination(data ChemistryListData) {
 	<p class="has-text-centered has-text-grey is-size-7 mt-2">{ showingRange(data.Result.Page, data.Result.PageSize, data.Result.TotalItems) }</p>
 }
 
-templ chemistryRow(l entities.ChemistryLog) {
+templ chemistryRow(l entities.ChemistryLog, idx int) {
 	<tr>
 		<td>{ l.TestedAt.Format("Jan 2, 3:04 PM") }</td>
 		<td><span class={ valueClass(l.PHInRange()) }>{ fmtFloat(l.PH, 1) }</span></td>
 		<td><span class={ valueClass(l.FreeChlorineInRange()) }>{ fmtFloat(l.FreeChlorine, 1) }</span></td>
-		<td><span class={ valueClass(l.CombinedChlorineInRange()) }>{ fmtFloat(l.CombinedChlorine, 1) }</span></td>
-		<td><span class={ valueClass(l.TotalAlkalinityInRange()) }>{ fmtFloat(l.TotalAlkalinity, 0) }</span></td>
-		<td><span class={ valueClass(l.CYAInRange()) }>{ fmtFloat(l.CYA, 0) }</span></td>
-		<td><span class={ valueClass(l.CalciumHardnessInRange()) }>{ fmtFloat(l.CalciumHardness, 0) }</span></td>
-		<td>{ fmt.Sprintf("%.0f", l.Temperature) }&deg;F</td>
+		<td class="pv-hidden-mobile"><span class={ valueClass(l.CombinedChlorineInRange()) }>{ fmtFloat(l.CombinedChlorine, 1) }</span></td>
+		<td class="pv-hidden-mobile"><span class={ valueClass(l.TotalAlkalinityInRange()) }>{ fmtFloat(l.TotalAlkalinity, 0) }</span></td>
+		<td class="pv-hidden-mobile"><span class={ valueClass(l.CYAInRange()) }>{ fmtFloat(l.CYA, 0) }</span></td>
+		<td class="pv-hidden-mobile"><span class={ valueClass(l.CalciumHardnessInRange()) }>{ fmtFloat(l.CalciumHardness, 0) }</span></td>
+		<td class="pv-hidden-mobile">{ fmt.Sprintf("%.0f", l.Temperature) }&deg;F</td>
 		<td class="has-text-right">
-			<div class="buttons is-right are-small">
+			<div class="buttons is-right are-small" style="flex-wrap: nowrap;">
+				<button
+					data-on:click={ fmt.Sprintf("$_chemExpand%d = !$_chemExpand%d", idx, idx) }
+					class="button is-small pv-expand-btn"
+				>
+					<span data-show={ fmt.Sprintf("!$_chemExpand%d", idx) }>&#9660;</span>
+					<span data-show={ fmt.Sprintf("$_chemExpand%d", idx) }>&#9650;</span>
+				</button>
 				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/plan')" } class="button is-info is-outlined is-small">Plan</button>
 				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/edit')" } class="button is-primary is-outlined is-small">Edit</button>
 				<button data-on:click={ "@delete('/chemistry/" + l.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
+			</div>
+		</td>
+	</tr>
+	<tr class="pv-detail-row" data-show={ fmt.Sprintf("$_chemExpand%d", idx) }>
+		<td colspan="4">
+			<div class="columns is-mobile is-multiline is-size-7 mb-0">
+				<div class="column is-half">
+					<strong>CC:</strong> <span class={ valueClass(l.CombinedChlorineInRange()) }>{ fmtFloat(l.CombinedChlorine, 1) }</span>
+				</div>
+				<div class="column is-half">
+					<strong>TA:</strong> <span class={ valueClass(l.TotalAlkalinityInRange()) }>{ fmtFloat(l.TotalAlkalinity, 0) }</span>
+				</div>
+				<div class="column is-half">
+					<strong>CYA:</strong> <span class={ valueClass(l.CYAInRange()) }>{ fmtFloat(l.CYA, 0) }</span>
+				</div>
+				<div class="column is-half">
+					<strong>CH:</strong> <span class={ valueClass(l.CalciumHardnessInRange()) }>{ fmtFloat(l.CalciumHardness, 0) }</span>
+				</div>
+				<div class="column is-half">
+					<strong>Temp:</strong> { fmt.Sprintf("%.0f", l.Temperature) }&deg;F
+				</div>
 			</div>
 		</td>
 	</tr>
