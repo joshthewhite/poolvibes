@@ -17,6 +17,7 @@ templ ChemistryList(data ChemistryListData) {
 		data-signals:chemDateFrom__ifmissing="''"
 		data-signals:chemDateTo__ifmissing="''"
 		data-signals:_chemExpandIdx="'none'"
+		data-signals:_chemMenuIdx="'none'"
 	>
 		@PageHeader("Water Chemistry Logs", "+ Add Test", "/chemistry/new")
 		@chemistryFilterBar(data)
@@ -134,7 +135,7 @@ templ chemistryPagination(data ChemistryListData) {
 
 templ chemistryRow(l entities.ChemistryLog, idx int) {
 	<tr>
-		<td>{ l.TestedAt.Format("Jan 2, 3:04 PM") }</td>
+		<td title={ l.TestedAt.Format("Jan 2, 2006 3:04 PM") }>{ relativeTime(l.TestedAt) }</td>
 		<td><span class={ valueClass(l.PHInRange()) }>{ fmtFloat(l.PH, 1) }</span></td>
 		<td><span class={ valueClass(l.FreeChlorineInRange()) }>{ fmtFloat(l.FreeChlorine, 1) }</span></td>
 		<td class="pv-hidden-mobile"><span class={ valueClass(l.CombinedChlorineInRange()) }>{ fmtFloat(l.CombinedChlorine, 1) }</span></td>
@@ -151,9 +152,30 @@ templ chemistryRow(l entities.ChemistryLog, idx int) {
 					<span data-class:is-hidden={ fmt.Sprintf("$_chemExpandIdx === '%d'", idx) }>&#9660;</span>
 					<span class="is-hidden" data-class:is-hidden={ fmt.Sprintf("$_chemExpandIdx !== '%d'", idx) }>&#9650;</span>
 				</button>
-				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/plan')" } class="button is-info is-outlined is-small">Plan</button>
-				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/edit')" } class="button is-primary is-outlined is-small">Edit</button>
-				<button data-on:click={ "@delete('/chemistry/" + l.ID.String() + "')" } class="button is-danger is-outlined is-small">Delete</button>
+				<!-- Mobile: kebab menu -->
+				<div class="dropdown is-right pv-kebab-menu" data-class:is-active={ fmt.Sprintf("$_chemMenuIdx === '%d'", idx) }>
+					<div class="dropdown-trigger">
+						<button
+							class="button is-small"
+							data-on:click={ fmt.Sprintf("$_chemMenuIdx = $_chemMenuIdx === '%d' ? 'none' : '%d'", idx, idx) }
+							aria-haspopup="true"
+						>
+							<span>&#8942;</span>
+						</button>
+					</div>
+					<div class="dropdown-menu" role="menu">
+						<div class="dropdown-content">
+							<a class="dropdown-item" data-on:click={ "@get('/chemistry/" + l.ID.String() + "/plan')" }>Plan</a>
+							<a class="dropdown-item" data-on:click={ "@get('/chemistry/" + l.ID.String() + "/edit')" }>Edit</a>
+							<hr class="dropdown-divider"/>
+							<a class="dropdown-item has-text-danger" data-on:click={ "@delete('/chemistry/" + l.ID.String() + "')" }>Delete</a>
+						</div>
+					</div>
+				</div>
+				<!-- Desktop: inline buttons -->
+				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/plan')" } class="button is-info is-outlined is-small pv-action-btn-desktop">Plan</button>
+				<button data-on:click={ "@get('/chemistry/" + l.ID.String() + "/edit')" } class="button is-primary is-outlined is-small pv-action-btn-desktop">Edit</button>
+				<button data-on:click={ "@delete('/chemistry/" + l.ID.String() + "')" } class="button is-danger is-outlined is-small pv-action-btn-desktop">Delete</button>
 			</div>
 		</td>
 	</tr>
