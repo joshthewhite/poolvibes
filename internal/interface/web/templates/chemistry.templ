@@ -18,6 +18,7 @@ templ ChemistryList(data ChemistryListData) {
 		data-signals:chemDateTo__ifmissing="''"
 		data-signals:_chemExpandIdx="'none'"
 		data-signals:_chemMenuIdx="'none'"
+		data-signals:_chemFiltersOpen="false"
 	>
 		@PageHeader("Water Chemistry Logs", "+ Add Test", "/chemistry/new")
 		@chemistryFilterBar(data)
@@ -53,6 +54,12 @@ templ ChemistryList(data ChemistryListData) {
 
 templ chemistryFilterBar(data ChemistryListData) {
 	<div class="box py-3 px-4 mb-4">
+		<div class="pv-filter-toggle" data-on:click="$_chemFiltersOpen = !$_chemFiltersOpen" style="cursor: pointer;">
+			<span class="is-size-7 has-text-weight-semibold">Filters</span>
+			<span class="is-size-7" data-class:is-hidden="$_chemFiltersOpen">&#9660;</span>
+			<span class="is-size-7 is-hidden" data-class:is-hidden="!$_chemFiltersOpen">&#9650;</span>
+		</div>
+		<div class="pv-filter-content" data-class:is-hidden="!$_chemFiltersOpen">
 		<div class="columns is-vcentered is-multiline is-variable is-2">
 			<div class="column is-narrow">
 				<div class="field">
@@ -90,6 +97,7 @@ templ chemistryFilterBar(data ChemistryListData) {
 					</div>
 				</div>
 			</div>
+		</div>
 		</div>
 	</div>
 }
