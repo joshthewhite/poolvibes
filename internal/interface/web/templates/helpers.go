@@ -103,6 +103,43 @@ func dueInText(dueDate time.Time) string {
 	}
 }
 
+// relativeTime returns a human-friendly relative time string for a past timestamp.
+func relativeTime(t time.Time) string {
+	return relativeTimeFrom(t, time.Now())
+}
+
+// relativeTimeFrom returns a relative time string using the given reference time.
+func relativeTimeFrom(t, now time.Time) string {
+	d := now.Sub(t)
+
+	switch {
+	case d < time.Minute:
+		return "just now"
+	case d < time.Hour:
+		return fmt.Sprintf("%dm ago", int(d.Minutes()))
+	case d < 24*time.Hour:
+		return fmt.Sprintf("%dh ago", int(d.Hours()))
+	}
+
+	// Calendar-day logic
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	tDay := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+	days := int(today.Sub(tDay).Hours() / 24)
+
+	switch {
+	case days == 1:
+		return "yesterday"
+	case days <= 6:
+		return fmt.Sprintf("%d days ago", days)
+	case days <= 13:
+		return "1 week ago"
+	case t.Year() == now.Year():
+		return t.Format("Jan 2")
+	default:
+		return t.Format("Jan 2, 2006")
+	}
+}
+
 func statusColor(status string) string {
 	switch status {
 	case "danger":
