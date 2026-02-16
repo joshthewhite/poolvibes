@@ -517,6 +517,11 @@ templ Layout(email string, isAdmin bool) {
 					.pv-action-btn-desktop {
 						display: none !important;
 					}
+					.pv-filter-toggle {
+						display: flex !important;
+						justify-content: space-between;
+						align-items: center;
+					}
 				}
 				@media screen and (min-width: 769px) {
 					.pv-expand-btn {
@@ -527,6 +532,12 @@ templ Layout(email string, isAdmin bool) {
 					}
 					.pv-kebab-menu {
 						display: none !important;
+					}
+					.pv-filter-toggle {
+						display: none !important;
+					}
+					.pv-filter-content {
+						display: block !important;
 					}
 				}
 				.pv-kebab-menu .dropdown-menu {
