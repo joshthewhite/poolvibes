@@ -511,6 +511,12 @@ templ Layout(email string, isAdmin bool) {
 						padding-top: 0;
 						border-top: none;
 					}
+					.pv-kebab-menu {
+						display: inline-flex !important;
+					}
+					.pv-action-btn-desktop {
+						display: none !important;
+					}
 				}
 				@media screen and (min-width: 769px) {
 					.pv-expand-btn {
@@ -519,6 +525,12 @@ templ Layout(email string, isAdmin bool) {
 					.pv-detail-row {
 						display: none !important;
 					}
+					.pv-kebab-menu {
+						display: none !important;
+					}
+				}
+				.pv-kebab-menu .dropdown-menu {
+					min-width: 8rem;
 				}
 			</style>
 		</head>
