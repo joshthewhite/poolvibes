@@ -26,10 +26,10 @@ func GenerateTreatmentPlan(log *ChemistryLog, poolGallons int) *TreatmentPlan {
 	scale := float64(poolGallons) / 10000.0
 
 	// High pH (>7.6) → muriatic acid (31.45% HCl)
-	// ~26 fl oz per 10k gal lowers pH by 0.1
+	// ~12 fl oz per 10k gal lowers pH by 0.2 (6 fl oz per 0.1)
 	if log.PH > 7.6 {
 		drop := log.PH - 7.4 // target 7.4
-		ozPer10k := drop / 0.1 * 26.0
+		ozPer10k := drop / 0.1 * 6.0
 		totalOz := ozPer10k * scale
 		plan.Steps = append(plan.Steps, TreatmentStep{
 			Problem:      "High pH",
@@ -42,10 +42,10 @@ func GenerateTreatmentPlan(log *ChemistryLog, poolGallons int) *TreatmentPlan {
 	}
 
 	// Low pH (<7.2) → soda ash (sodium carbonate)
-	// ~6 oz (weight) per 10k gal raises pH by 0.1
+	// ~6 oz (weight) per 10k gal raises pH by 0.2 (3 oz per 0.1)
 	if log.PH < 7.2 {
 		raise := 7.4 - log.PH // target 7.4
-		ozPer10k := raise / 0.1 * 6.0
+		ozPer10k := raise / 0.1 * 3.0
 		totalOz := ozPer10k * scale
 		plan.Steps = append(plan.Steps, TreatmentStep{
 			Problem:      "Low pH",
@@ -58,10 +58,10 @@ func GenerateTreatmentPlan(log *ChemistryLog, poolGallons int) *TreatmentPlan {
 	}
 
 	// Low free chlorine (<1.0 ppm) → calcium hypochlorite (cal-hypo 73%)
-	// ~2 oz (weight) per 10k gal raises FC by 1 ppm
+	// ~1.75 oz (weight) per 10k gal raises FC by 1 ppm
 	if log.FreeChlorine < 1.0 {
 		raise := 2.0 - log.FreeChlorine // target 2.0 ppm
-		ozPer10k := raise * 2.0
+		ozPer10k := raise * 1.75
 		totalOz := ozPer10k * scale
 		plan.Steps = append(plan.Steps, TreatmentStep{
 			Problem:      "Low free chlorine",
@@ -74,14 +74,14 @@ func GenerateTreatmentPlan(log *ChemistryLog, poolGallons int) *TreatmentPlan {
 	}
 
 	// High combined chlorine (>0.5 ppm) → breakpoint chlorination (shock)
-	// Need to raise FC to 10x the CC level. ~2 oz cal-hypo per 10k gal per 1 ppm
+	// Need to raise FC to 10x the CC level. ~1.75 oz cal-hypo 73% per 10k gal per 1 ppm
 	if log.CombinedChlorine > 0.5 {
 		targetFC := log.CombinedChlorine * 10
 		raise := targetFC - log.FreeChlorine
 		if raise < 0 {
 			raise = 0
 		}
-		ozPer10k := raise * 2.0
+		ozPer10k := raise * 1.75
 		totalOz := ozPer10k * scale
 		if totalOz > 0 {
 			plan.Steps = append(plan.Steps, TreatmentStep{
@@ -96,10 +96,10 @@ func GenerateTreatmentPlan(log *ChemistryLog, poolGallons int) *TreatmentPlan {
 	}
 
 	// Low total alkalinity (<80 ppm) → baking soda (sodium bicarbonate)
-	// ~1.5 lbs per 10k gal raises TA by 10 ppm
+	// ~1.4 lbs per 10k gal raises TA by 10 ppm
 	if log.TotalAlkalinity < 80 {
 		raise := 100 - log.TotalAlkalinity // target 100 ppm
-		lbsPer10k := raise / 10.0 * 1.5
+		lbsPer10k := raise / 10.0 * 1.4
 		totalLbs := lbsPer10k * scale
 		plan.Steps = append(plan.Steps, TreatmentStep{
 			Problem:      "Low total alkalinity",
@@ -112,10 +112,10 @@ func GenerateTreatmentPlan(log *ChemistryLog, poolGallons int) *TreatmentPlan {
 	}
 
 	// High total alkalinity (>120 ppm) → muriatic acid
-	// ~26 fl oz per 10k gal lowers TA by ~10 ppm (also lowers pH)
+	// ~25.6 fl oz per 10k gal lowers TA by ~10 ppm (also lowers pH)
 	if log.TotalAlkalinity > 120 {
 		drop := log.TotalAlkalinity - 100 // target 100 ppm
-		ozPer10k := drop / 10.0 * 26.0
+		ozPer10k := drop / 10.0 * 25.6
 		totalOz := ozPer10k * scale
 		plan.Steps = append(plan.Steps, TreatmentStep{
 			Problem:      "High total alkalinity",
@@ -143,11 +143,11 @@ func GenerateTreatmentPlan(log *ChemistryLog, poolGallons int) *TreatmentPlan {
 		})
 	}
 
-	// Low calcium hardness (<200 ppm) → calcium chloride
-	// ~1.25 lbs per 10k gal raises CH by 10 ppm
+	// Low calcium hardness (<200 ppm) → calcium chloride (77%)
+	// ~1.2 lbs per 10k gal raises CH by 10 ppm
 	if log.CalciumHardness < 200 {
 		raise := 300 - log.CalciumHardness // target 300 ppm
-		lbsPer10k := raise / 10.0 * 1.25
+		lbsPer10k := raise / 10.0 * 1.2
 		totalLbs := lbsPer10k * scale
 		plan.Steps = append(plan.Steps, TreatmentStep{
 			Problem:      "Low calcium hardness",
