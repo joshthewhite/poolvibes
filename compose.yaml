@@ -10,6 +10,7 @@ services:
       - "postgres"
       - "--db"
       - "postgres://poolvibes:poolvibes@db:5432/poolvibes?sslmode=disable"
+      - "--demo"
     depends_on:
       db:
         condition: service_healthy
