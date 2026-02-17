@@ -208,7 +208,28 @@ func (h *ChemistryHandler) Plan(w http.ResponseWriter, r *http.Request) {
 	}
 
 	plan := entities.GenerateTreatmentPlan(log, user.PoolGallons)
+	plan.LogID = id
 
 	sse := datastar.NewSSE(w, r)
 	sse.PatchElementTempl(templates.TreatmentPlanModal(plan))
+}
+
+func (h *ChemistryHandler) PlanPrint(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	log, err := h.svc.Get(r.Context(), id)
+	if err != nil || log == nil {
+		http.Error(w, "not found", http.StatusNotFound)
+		return
+	}
+
+	user, err := services.UserFromContext(r.Context())
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	plan := entities.GenerateTreatmentPlan(log, user.PoolGallons)
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	templates.TreatmentPlanPrintPage(plan, log).Render(r.Context(), w)
 }

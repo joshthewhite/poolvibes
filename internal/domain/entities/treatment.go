@@ -15,6 +15,7 @@ type TreatmentStep struct {
 }
 
 type TreatmentPlan struct {
+	LogID       string
 	Steps       []TreatmentStep
 	PoolGallons int
 }

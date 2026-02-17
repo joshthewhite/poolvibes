@@ -75,6 +75,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("GET /chemistry/{id}/edit", auth(chemHandler.EditForm))
 	s.mux.HandleFunc("PUT /chemistry/{id}", auth(chemHandler.Update))
 	s.mux.HandleFunc("GET /chemistry/{id}/plan", auth(chemHandler.Plan))
+	s.mux.HandleFunc("GET /chemistry/{id}/plan/print", auth(chemHandler.PlanPrint))
 	s.mux.HandleFunc("DELETE /chemistry/{id}", auth(chemHandler.Delete))
 
 	// Tasks (auth required)
