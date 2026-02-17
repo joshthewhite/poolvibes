@@ -38,3 +38,6 @@ e2e/bin/
 
 # Air
 tmp/
+
+# Playwright MCP
+.playwright-mcp/
