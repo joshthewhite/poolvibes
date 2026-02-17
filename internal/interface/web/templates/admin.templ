@@ -56,7 +56,7 @@ templ AdminUserList(users []entities.User) {
 }
 
 templ AdminEditUser(user *entities.User) {
-	@Modal("Edit User", "/chemistry", adminEditUserForm(user))
+	@Modal("Edit User", "/admin/users", adminEditUserForm(user))
 }
 
 templ adminEditUserForm(user *entities.User) {

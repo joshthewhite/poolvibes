@@ -62,7 +62,7 @@ func Layout(email string, isAdmin bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</ul></div></div></section><!-- Main Content --><section class=\"section\" style=\"padding-top: 1rem;\"><div class=\"container\"><div id=\"tab-content\" data-init=\"@get('/' + $tab)\"><div class=\"has-text-centered py-6 has-text-grey-light\">Loading...</div></div></div></section><!-- Modal Container --><div id=\"modal\"></div></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</ul></div></div></section><!-- Main Content --><section class=\"section\" style=\"padding-top: 1rem;\"><div class=\"container\"><div id=\"tab-content\" data-init=\"@get('/' + $tab)\"><div id=\"loading-fallback\" class=\"has-text-centered py-6 has-text-grey-light\">Loading...</div></div></div></section><!-- Modal Container --><div id=\"modal\"></div></div><script>\n\t\t\t\tsetTimeout(function() {\n\t\t\t\t\tvar el = document.getElementById('loading-fallback');\n\t\t\t\t\tif (el) {\n\t\t\t\t\t\tel.innerHTML = 'Page failed to load. <a href=\"javascript:location.reload()\">Refresh</a>';\n\t\t\t\t\t\tel.classList.remove('has-text-grey-light');\n\t\t\t\t\t\tel.classList.add('has-text-grey');\n\t\t\t\t\t}\n\t\t\t\t}, 10000);\n\t\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

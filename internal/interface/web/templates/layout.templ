@@ -625,13 +625,23 @@ templ Layout(email string, isAdmin bool) {
 				<section class="section" style="padding-top: 1rem;">
 					<div class="container">
 						<div id="tab-content" data-init="@get('/' + $tab)">
-							<div class="has-text-centered py-6 has-text-grey-light">Loading...</div>
+							<div id="loading-fallback" class="has-text-centered py-6 has-text-grey-light">Loading...</div>
 						</div>
 					</div>
 				</section>
 				<!-- Modal Container -->
 				<div id="modal"></div>
 			</div>
+			<script>
+				setTimeout(function() {
+					var el = document.getElementById('loading-fallback');
+					if (el) {
+						el.innerHTML = 'Page failed to load. <a href="javascript:location.reload()">Refresh</a>';
+						el.classList.remove('has-text-grey-light');
+						el.classList.add('has-text-grey');
+					}
+				}, 10000);
+			</script>
 		</body>
 	</html>
 }
