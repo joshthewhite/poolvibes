@@ -52,6 +52,7 @@ func (s *Server) setupRoutes() {
 
 	auth := func(h http.HandlerFunc) http.HandlerFunc { return requireAuth(s.authSvc, h) }
 	admin := func(h http.HandlerFunc) http.HandlerFunc { return requireAdmin(s.authSvc, h) }
+	maybeAuth := func(h http.HandlerFunc) http.HandlerFunc { return optionalAuth(s.authSvc, h) }
 
 	// Rate limiters for auth endpoints
 	loginLimiter := newIPLimiter(rate.Every(12*time.Second), 5)  // 5 per minute
@@ -64,8 +65,8 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("POST /signup", rateLimit(signupLimiter, authHandler.Signup))
 	s.mux.HandleFunc("POST /logout", authHandler.Logout)
 
-	// Page (auth required)
-	s.mux.HandleFunc("GET /{$}", auth(pageHandler.Index))
+	// Page (landing or dashboard depending on auth)
+	s.mux.HandleFunc("GET /{$}", maybeAuth(pageHandler.Root))
 
 	// Dashboard (auth required)
 	dashHandler := handlers.NewDashboardHandler(s.chemSvc, s.taskSvc, s.chemicSvc, s.milestoneRepo)

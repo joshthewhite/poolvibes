@@ -32,6 +32,20 @@ func requireAuth(authSvc *services.AuthService, next http.HandlerFunc) http.Hand
 	}
 }
 
+func optionalAuth(authSvc *services.AuthService, next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("session_id")
+		if err == nil && cookie.Value != "" {
+			user, err := authSvc.GetUserBySession(r.Context(), cookie.Value)
+			if err == nil && user != nil {
+				ctx := services.WithUser(r.Context(), user)
+				r = r.WithContext(ctx)
+			}
+		}
+		next.ServeHTTP(w, r)
+	}
+}
+
 func requireAdmin(authSvc *services.AuthService, next http.HandlerFunc) http.HandlerFunc {
 	return requireAuth(authSvc, func(w http.ResponseWriter, r *http.Request) {
 		user, err := services.UserFromContext(r.Context())

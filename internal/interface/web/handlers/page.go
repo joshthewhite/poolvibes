@@ -13,6 +13,16 @@ func NewPageHandler() *PageHandler {
 	return &PageHandler{}
 }
 
+func (h *PageHandler) Root(w http.ResponseWriter, r *http.Request) {
+	user, _ := services.UserFromContext(r.Context())
+	if user != nil {
+		h.Index(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	templates.LandingPage().Render(r.Context(), w)
+}
+
 func (h *PageHandler) Index(w http.ResponseWriter, r *http.Request) {
 	email := ""
 	isAdmin := false
