@@ -17,6 +17,7 @@ type DemoCleanupService struct {
 	srRepo        repositories.ServiceRecordRepository
 	chemRepo      repositories.ChemicalRepository
 	taskNotifRepo repositories.TaskNotificationRepository
+	milestoneRepo repositories.MilestoneRepository
 	interval      time.Duration
 }
 
@@ -29,6 +30,7 @@ func NewDemoCleanupService(
 	srRepo repositories.ServiceRecordRepository,
 	chemRepo repositories.ChemicalRepository,
 	taskNotifRepo repositories.TaskNotificationRepository,
+	milestoneRepo repositories.MilestoneRepository,
 	interval time.Duration,
 ) *DemoCleanupService {
 	return &DemoCleanupService{
@@ -40,6 +42,7 @@ func NewDemoCleanupService(
 		srRepo:        srRepo,
 		chemRepo:      chemRepo,
 		taskNotifRepo: taskNotifRepo,
+		milestoneRepo: milestoneRepo,
 		interval:      interval,
 	}
 }
@@ -97,6 +100,8 @@ func (s *DemoCleanupService) cleanup(ctx context.Context) {
 		for _, l := range logs {
 			_ = s.chemLogRepo.Delete(ctx, user.ID, l.ID)
 		}
+
+		_ = s.milestoneRepo.DeleteByUserID(ctx, user.ID)
 
 		// Sessions are deleted via FK CASCADE, but clean up explicitly too
 		_ = s.sessionRepo.DeleteByUserID(ctx, user.ID)

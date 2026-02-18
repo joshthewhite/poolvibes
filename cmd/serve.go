@@ -143,7 +143,7 @@ var serveCmd = &cobra.Command{
 		if demoMode {
 			cleanupSvc := services.NewDemoCleanupService(
 				userRepo, sessionRepo, chemLogRepo, taskRepo,
-				equipRepo, srRepo, chemRepo, taskNotifRepo,
+				equipRepo, srRepo, chemRepo, taskNotifRepo, milestoneRepo,
 				15*time.Minute,
 			)
 			go cleanupSvc.Start(ctx)
