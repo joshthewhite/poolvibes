@@ -20,7 +20,7 @@ PoolVibes follows Domain-Driven Design (DDD) with a layered architecture. Depend
 
 Pure business logic with no external dependencies. Contains:
 
-- **Entities** — `User`, `Session`, `ChemistryLog`, `Task`, `TaskNotification`, `Equipment`, `ServiceRecord`, `Chemical` with validation rules and business methods
+- **Entities** — `User`, `Session`, `ChemistryLog`, `Task`, `TaskNotification`, `Equipment`, `ServiceRecord`, `Chemical`, `Milestone` with validation rules and business methods
 - **Value Objects** — `Recurrence` (frequency + interval with next-due-date calculation), `Quantity` (amount + unit)
 - **Repository Interfaces** — Abstractions that infrastructure implements
 
@@ -29,7 +29,7 @@ Pure business logic with no external dependencies. Contains:
 Orchestrates domain logic through:
 
 - **Commands** — CRUD command structs (DTOs) for each feature
-- **Services** — Business logic coordination (auth, user management, auto-rescheduling tasks on completion, stock adjustment validation, notification scheduling)
+- **Services** — Business logic coordination (auth, user management, auto-rescheduling tasks on completion, stock adjustment validation, notification scheduling, gamification scoring/streaks/milestones)
 - **Context Helpers** — `WithUser`/`UserFromContext` for propagating the authenticated user
 
 ### Infrastructure
@@ -184,6 +184,13 @@ erDiagram
         TEXT sent_at
     }
 
+    user_milestones {
+        TEXT id PK
+        TEXT user_id FK
+        TEXT milestone
+        TEXT earned_at
+    }
+
     users ||--o{ sessions : "has"
     users ||--o{ task_notifications : "has"
     tasks ||--o{ task_notifications : "has"
@@ -192,6 +199,7 @@ erDiagram
     users ||--o{ equipment : "owns"
     users ||--o{ service_records : "owns"
     users ||--o{ chemicals : "owns"
+    users ||--o{ user_milestones : "earns"
     equipment ||--o{ service_records : "has"
 ```
 
@@ -204,6 +212,7 @@ erDiagram
 | Templates | templ | Type-safe HTML templates compiled to Go |
 | Charts | Chart.js 4.4.7 | CDN-hosted, used for dashboard trend charts |
 | CSS | Bulma 1.0.4 | Lightweight, CDN-hosted |
+| Icons | Font Awesome 6.5.1 Free | CDN-hosted, used for milestone badges |
 | Database | modernc.org/sqlite (default), pgx (PostgreSQL) | SQLite: pure Go, no CGO; PostgreSQL: for hosted deployments |
 | Migrations | golang-migrate | Embedded SQL files, auto-run on startup |
 | CLI | Cobra + Viper | Standard Go CLI pattern |

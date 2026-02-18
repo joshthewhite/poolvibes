@@ -10,6 +10,10 @@ Email/password authentication with cookie-based sessions. Each user's data is fu
 
 The default landing tab. Shows summary cards for water quality (readings in range), last tested date, task status (overdue/due today), and low stock chemical count. Includes pH and free chlorine trend charts (last 30 readings) with ideal range bands, plus quick-reference lists for upcoming tasks and low stock alerts.
 
+## [Gamification](gamification.md)
+
+Pool Health Score (0-100), testing and task completion streaks, and 8 achievement milestone badges to encourage consistent pool maintenance.
+
 ## [Water Chemistry](water-chemistry.md)
 
 Log water test results and track parameters over time. Out-of-range values are highlighted automatically so you can see what needs attention at a glance. Generate treatment plans with specific chemical dosages based on your pool size.
