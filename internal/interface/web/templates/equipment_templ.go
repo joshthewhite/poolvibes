@@ -92,7 +92,7 @@ func EquipmentCard(eq entities.Equipment) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"column is-half-desktop is-12-mobile\"><div class=\"card\"><div class=\"card-content\"><!-- Header --><div class=\"level is-mobile mb-3\"><div class=\"level-left\"><div class=\"level-item\"><div><p class=\"title is-5 mb-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"column is-half-desktop is-12-mobile\"><div class=\"card pv-neumorphic\"><div class=\"card-content\"><!-- Header --><div class=\"level is-mobile mb-3\"><div class=\"level-left\"><div class=\"level-item\"><div><p class=\"title is-5 mb-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

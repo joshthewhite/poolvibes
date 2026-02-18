@@ -96,7 +96,7 @@ func ChemicalCard(c entities.Chemical) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 = []any{"card", templ.KV("pv-low-stock", c.IsLowStock())}
+		var templ_7745c5c3_Var3 = []any{"card pv-neumorphic", templ.KV("pv-low-stock", c.IsLowStock())}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

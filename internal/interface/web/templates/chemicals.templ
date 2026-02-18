@@ -23,7 +23,7 @@ templ ChemicalList(chemicals []entities.Chemical) {
 templ ChemicalCard(c entities.Chemical) {
 	<div class="column is-one-third-desktop is-half-tablet is-12-mobile">
 		<div
-			class={ "card", templ.KV("pv-low-stock", c.IsLowStock()) }
+			class={ "card pv-neumorphic", templ.KV("pv-low-stock", c.IsLowStock()) }
 		>
 			<div class="card-content">
 				<!-- Header -->
