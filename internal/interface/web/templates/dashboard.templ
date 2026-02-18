@@ -7,7 +7,36 @@ import (
 
 templ Dashboard(data DashboardData) {
 	<div id="tab-content">
-		<h2 class="title is-4">Dashboard</h2>
+		<!-- Pool Health Score -->
+		<div class="box pv-neumorphic pv-health-score">
+			<p class="pv-score-number">
+				<span class={ statusColor(data.HealthScore.Status) }>
+					{ fmt.Sprintf("%d", data.HealthScore.Score) }
+				</span>
+			</p>
+			<p class="pv-score-label has-text-grey">{ data.HealthScore.Label }</p>
+		</div>
+		<!-- Streaks -->
+		if data.Streaks.TestingStreak > 1 || data.Streaks.TaskStreak > 1 {
+			<div class="pv-streaks">
+				if data.Streaks.TestingStreak > 1 {
+					<span class="pv-streak-item">
+						{ fmt.Sprintf("%d week testing streak", data.Streaks.TestingStreak) }
+					</span>
+				}
+				if data.Streaks.TaskStreak > 1 {
+					<span class="pv-streak-item">
+						{ fmt.Sprintf("%d week task streak", data.Streaks.TaskStreak) }
+					</span>
+				}
+			</div>
+		}
+		<!-- Milestones -->
+		<div class="pv-milestones mb-4">
+			for _, m := range data.Milestones {
+				@milestoneBadge(m)
+			}
+		</div>
 		<!-- Summary Cards -->
 		<div class="columns is-multiline">
 			<!-- Water Quality Card -->
@@ -299,4 +328,18 @@ templ dashboardChartScript() {
 			}
 		})();
 	</script>
+}
+
+templ milestoneBadge(m MilestoneBadge) {
+	if m.Earned {
+		<span class={ "pv-milestone-badge is-earned", templ.KV("is-new", m.IsNew) }>
+			<i class={ m.Icon }></i>
+			{ m.Name }
+		</span>
+	} else {
+		<span class="pv-milestone-badge is-locked">
+			<i class={ m.Icon }></i>
+			{ m.Name }
+		</span>
+	}
 }

@@ -10,6 +10,9 @@ type DashboardData struct {
 	Chart             ChartData
 	UpcomingTasks     []entities.Task
 	LowStockChemicals []entities.Chemical
+	HealthScore       HealthScoreSummary
+	Streaks           StreaksSummary
+	Milestones        []MilestoneBadge
 }
 
 type WaterQualitySummary struct {
@@ -36,6 +39,25 @@ type LowStockSummary struct {
 	Count   int
 	Status  string
 	HasData bool
+}
+
+type HealthScoreSummary struct {
+	Score  int
+	Status string // "good", "warning", "danger"
+	Label  string // description text
+}
+
+type StreaksSummary struct {
+	TestingStreak int
+	TaskStreak    int
+}
+
+type MilestoneBadge struct {
+	Key    string
+	Name   string
+	Icon   string // Font Awesome class
+	Earned bool
+	IsNew  bool // just earned this load
 }
 
 type ChartData struct {
