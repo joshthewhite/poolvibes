@@ -49,6 +49,7 @@ var serveCmd = &cobra.Command{
 			userRepo      repositories.UserRepository
 			sessionRepo   repositories.SessionRepository
 			taskNotifRepo repositories.TaskNotificationRepository
+			milestoneRepo repositories.MilestoneRepository
 		)
 
 		switch dbDriver {
@@ -71,6 +72,7 @@ var serveCmd = &cobra.Command{
 			userRepo = sqlite.NewUserRepo(db)
 			sessionRepo = sqlite.NewSessionRepo(db)
 			taskNotifRepo = sqlite.NewTaskNotificationRepo(db)
+			milestoneRepo = sqlite.NewMilestoneRepo(db)
 
 		case "postgres":
 			db, err = postgres.Open(dbDSN)
@@ -91,6 +93,7 @@ var serveCmd = &cobra.Command{
 			userRepo = postgres.NewUserRepo(db)
 			sessionRepo = postgres.NewSessionRepo(db)
 			taskNotifRepo = postgres.NewTaskNotificationRepo(db)
+			milestoneRepo = postgres.NewMilestoneRepo(db)
 
 		default:
 			return fmt.Errorf("unsupported database driver: %s (use 'sqlite' or 'postgres')", dbDriver)
@@ -172,7 +175,7 @@ var serveCmd = &cobra.Command{
 			go notifSvc.Start(ctx)
 		}
 
-		server := web.NewServer(authSvc, userSvc, chemSvc, taskSvc, equipSvc, chemicSvc)
+		server := web.NewServer(authSvc, userSvc, chemSvc, taskSvc, equipSvc, chemicSvc, milestoneRepo)
 		return server.Start(ctx, addr)
 	},
 }

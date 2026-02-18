@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log/slog"
 	"math"
 	"net/http"
 	"sort"
@@ -9,18 +10,20 @@ import (
 
 	"github.com/joshthewhite/poolvibes/internal/application/services"
 	"github.com/joshthewhite/poolvibes/internal/domain/entities"
+	"github.com/joshthewhite/poolvibes/internal/domain/repositories"
 	"github.com/joshthewhite/poolvibes/internal/interface/web/templates"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
 type DashboardHandler struct {
-	chemSvc   *services.ChemistryService
-	taskSvc   *services.TaskService
-	chemicSvc *services.ChemicalService
+	chemSvc       *services.ChemistryService
+	taskSvc       *services.TaskService
+	chemicSvc     *services.ChemicalService
+	milestoneRepo repositories.MilestoneRepository
 }
 
-func NewDashboardHandler(chemSvc *services.ChemistryService, taskSvc *services.TaskService, chemicSvc *services.ChemicalService) *DashboardHandler {
-	return &DashboardHandler{chemSvc: chemSvc, taskSvc: taskSvc, chemicSvc: chemicSvc}
+func NewDashboardHandler(chemSvc *services.ChemistryService, taskSvc *services.TaskService, chemicSvc *services.ChemicalService, milestoneRepo repositories.MilestoneRepository) *DashboardHandler {
+	return &DashboardHandler{chemSvc: chemSvc, taskSvc: taskSvc, chemicSvc: chemicSvc, milestoneRepo: milestoneRepo}
 }
 
 func (h *DashboardHandler) Page(w http.ResponseWriter, r *http.Request) {
@@ -29,6 +32,44 @@ func (h *DashboardHandler) Page(w http.ResponseWriter, r *http.Request) {
 	chemicals, _ := h.chemicSvc.List(r.Context())
 
 	data := buildDashboardData(logs, tasks, chemicals)
+
+	// Gamification: health score, streaks, milestones
+	now := time.Now()
+	score := services.ComputeHealthScore(logs, tasks, chemicals, now)
+	data.HealthScore = templates.HealthScoreSummary{
+		Score:  score,
+		Status: healthScoreStatus(score),
+		Label:  healthScoreLabel(score),
+	}
+	data.Streaks = templates.StreaksSummary{
+		TestingStreak: services.ComputeTestingStreak(logs, now),
+		TaskStreak:    services.ComputeTaskStreak(tasks, now),
+	}
+
+	// Milestones: check and persist newly earned
+	user, err := services.UserFromContext(r.Context())
+	if err == nil {
+		existing, _ := h.milestoneRepo.FindAll(r.Context(), user.ID)
+		earnedSet := make(map[entities.MilestoneKey]bool, len(existing))
+		for _, m := range existing {
+			earnedSet[m.Milestone] = true
+		}
+
+		newlyEarned := services.CheckMilestones(logs, tasks, chemicals, score, earnedSet)
+		for _, key := range newlyEarned {
+			m := entities.NewMilestone(user.ID, key)
+			if err := h.milestoneRepo.Create(r.Context(), m); err != nil {
+				slog.Error("Failed to persist milestone", "key", key, "error", err)
+			}
+			earnedSet[key] = true
+		}
+
+		newSet := make(map[entities.MilestoneKey]bool, len(newlyEarned))
+		for _, key := range newlyEarned {
+			newSet[key] = true
+		}
+		data.Milestones = buildMilestoneBadges(earnedSet, newSet)
+	}
 
 	sse := datastar.NewSSE(w, r)
 	sse.PatchElementTempl(templates.Dashboard(data))
@@ -207,4 +248,59 @@ func buildDashboardData(logs []entities.ChemistryLog, tasks []entities.Task, che
 	data.LowStockChemicals = lowStockChemicals
 
 	return data
+}
+
+func healthScoreStatus(score int) string {
+	switch {
+	case score >= 80:
+		return "good"
+	case score >= 50:
+		return "warning"
+	default:
+		return "danger"
+	}
+}
+
+func healthScoreLabel(score int) string {
+	switch {
+	case score >= 90:
+		return "Excellent"
+	case score >= 80:
+		return "Great"
+	case score >= 60:
+		return "Needs attention"
+	case score >= 40:
+		return "Falling behind"
+	default:
+		return "Critical"
+	}
+}
+
+var milestoneInfo = map[entities.MilestoneKey]struct {
+	Name string
+	Icon string
+}{
+	entities.MilestoneFirstDip:    {"First Dip", "fa-solid fa-droplet"},
+	entities.MilestoneBalanced:    {"Balanced", "fa-solid fa-scale-balanced"},
+	entities.MilestoneConsistent:  {"Consistent", "fa-solid fa-calendar-check"},
+	entities.MilestoneDevoted:     {"Devoted", "fa-solid fa-award"},
+	entities.MilestoneOnIt:        {"On It", "fa-solid fa-clipboard-check"},
+	entities.MilestoneStockedUp:   {"Stocked Up", "fa-solid fa-boxes-stacked"},
+	entities.MilestoneCleanRecord: {"Clean Record", "fa-solid fa-shield-halved"},
+	entities.MilestonePoolPro:     {"Pool Pro", "fa-solid fa-trophy"},
+}
+
+func buildMilestoneBadges(earned, newlyEarned map[entities.MilestoneKey]bool) []templates.MilestoneBadge {
+	var badges []templates.MilestoneBadge
+	for _, key := range entities.AllMilestones() {
+		info := milestoneInfo[key]
+		badges = append(badges, templates.MilestoneBadge{
+			Key:    string(key),
+			Name:   info.Name,
+			Icon:   info.Icon,
+			Earned: earned[key],
+			IsNew:  newlyEarned[key],
+		})
+	}
+	return badges
 }

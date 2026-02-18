@@ -9,29 +9,32 @@ import (
 	"time"
 
 	"github.com/joshthewhite/poolvibes/internal/application/services"
+	"github.com/joshthewhite/poolvibes/internal/domain/repositories"
 	"github.com/joshthewhite/poolvibes/internal/interface/web/handlers"
 	"golang.org/x/time/rate"
 )
 
 type Server struct {
-	mux       *http.ServeMux
-	authSvc   *services.AuthService
-	userSvc   *services.UserService
-	chemSvc   *services.ChemistryService
-	taskSvc   *services.TaskService
-	equipSvc  *services.EquipmentService
-	chemicSvc *services.ChemicalService
+	mux           *http.ServeMux
+	authSvc       *services.AuthService
+	userSvc       *services.UserService
+	chemSvc       *services.ChemistryService
+	taskSvc       *services.TaskService
+	equipSvc      *services.EquipmentService
+	chemicSvc     *services.ChemicalService
+	milestoneRepo repositories.MilestoneRepository
 }
 
-func NewServer(authSvc *services.AuthService, userSvc *services.UserService, chemSvc *services.ChemistryService, taskSvc *services.TaskService, equipSvc *services.EquipmentService, chemicSvc *services.ChemicalService) *Server {
+func NewServer(authSvc *services.AuthService, userSvc *services.UserService, chemSvc *services.ChemistryService, taskSvc *services.TaskService, equipSvc *services.EquipmentService, chemicSvc *services.ChemicalService, milestoneRepo repositories.MilestoneRepository) *Server {
 	s := &Server{
-		mux:       http.NewServeMux(),
-		authSvc:   authSvc,
-		userSvc:   userSvc,
-		chemSvc:   chemSvc,
-		taskSvc:   taskSvc,
-		equipSvc:  equipSvc,
-		chemicSvc: chemicSvc,
+		mux:           http.NewServeMux(),
+		authSvc:       authSvc,
+		userSvc:       userSvc,
+		chemSvc:       chemSvc,
+		taskSvc:       taskSvc,
+		equipSvc:      equipSvc,
+		chemicSvc:     chemicSvc,
+		milestoneRepo: milestoneRepo,
 	}
 	s.setupRoutes()
 	return s
@@ -65,7 +68,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("GET /{$}", auth(pageHandler.Index))
 
 	// Dashboard (auth required)
-	dashHandler := handlers.NewDashboardHandler(s.chemSvc, s.taskSvc, s.chemicSvc)
+	dashHandler := handlers.NewDashboardHandler(s.chemSvc, s.taskSvc, s.chemicSvc, s.milestoneRepo)
 	s.mux.HandleFunc("GET /dashboard", auth(dashHandler.Page))
 
 	// Chemistry (auth required)
