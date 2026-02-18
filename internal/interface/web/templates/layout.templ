@@ -11,6 +11,7 @@ templ Layout(email string, isAdmin bool) {
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap" rel="stylesheet"/>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"/>
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 			<script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js"></script>
 			<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 			<style>
@@ -309,6 +310,70 @@ templ Layout(email string, isAdmin bool) {
 					padding: 0;
 				}
 
+				/* Pool Health Score */
+				.pv-health-score {
+					text-align: center;
+					padding: 1.5rem;
+				}
+				.pv-health-score .pv-score-number {
+					font-size: 3.5rem;
+					font-weight: 800;
+					font-family: 'Inter Tight', sans-serif;
+					line-height: 1;
+				}
+				.pv-health-score .pv-score-label {
+					font-size: 0.875rem;
+					margin-top: 0.25rem;
+				}
+
+				/* Streaks */
+				.pv-streaks {
+					text-align: center;
+					font-size: 0.8rem;
+					color: var(--pv-text-secondary);
+					padding: 0.25rem 0 0.75rem;
+				}
+				.pv-streaks .pv-streak-item {
+					display: inline;
+				}
+				.pv-streaks .pv-streak-item + .pv-streak-item::before {
+					content: " · ";
+				}
+
+				/* Milestone badges */
+				.pv-milestones {
+					display: flex;
+					flex-wrap: wrap;
+					gap: 0.5rem;
+					justify-content: center;
+					padding-bottom: 1rem;
+				}
+				.pv-milestone-badge {
+					display: inline-flex;
+					align-items: center;
+					gap: 0.35rem;
+					padding: 0.35rem 0.75rem;
+					border-radius: 999px;
+					font-size: 0.75rem;
+					font-weight: 500;
+					transition: transform 0.2s ease, box-shadow 0.2s ease;
+				}
+				.pv-milestone-badge.is-earned {
+					background: var(--pv-primary-light);
+					color: var(--pv-primary);
+				}
+				.pv-milestone-badge.is-locked {
+					background: #f0eef5;
+					color: #b0adc0;
+				}
+				.pv-milestone-badge.is-new {
+					animation: pv-milestone-glow 1.5s ease-in-out;
+				}
+				@keyframes pv-milestone-glow {
+					0%, 100% { transform: scale(1); box-shadow: none; }
+					50% { transform: scale(1.08); box-shadow: 0 0 12px rgba(13, 148, 136, 0.4); }
+				}
+
 				/* Dark mode */
 				@media (prefers-color-scheme: dark) {
 					:root {
@@ -504,6 +569,16 @@ templ Layout(email string, isAdmin bool) {
 						box-shadow:
 							8px 8px 18px rgba(0, 0, 0, 0.4),
 							-8px -8px 18px rgba(40, 37, 55, 0.5);
+					}
+
+					/* Milestone badges (dark) */
+					.pv-milestone-badge.is-earned {
+						background: rgba(13, 148, 136, 0.15);
+						color: var(--pv-primary);
+					}
+					.pv-milestone-badge.is-locked {
+						background: rgba(255, 255, 255, 0.05);
+						color: #5a5770;
 					}
 
 					/* Divider */
