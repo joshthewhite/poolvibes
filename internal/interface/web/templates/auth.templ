@@ -33,18 +33,32 @@ templ AuthPage(title, action, buttonText, altURL, altText, errMsg, csrfToken str
 					color: var(--pv-text);
 				}
 				.box {
-					border: 1px solid var(--pv-border);
-					border-radius: 0.5rem;
-					box-shadow: 0 1px 3px rgba(26, 23, 38, 0.04), 0 2px 8px rgba(26, 23, 38, 0.03);
+					border: none;
+					border-radius: 0.75rem;
+					box-shadow:
+						8px 8px 16px rgba(26, 23, 38, 0.08),
+						-8px -8px 16px rgba(255, 255, 255, 0.7);
+					background: var(--pv-bg);
 				}
 				.button.is-primary {
 					background: var(--pv-primary);
 					border-color: transparent;
 					font-weight: 500;
 					border-radius: 0.375rem;
+					box-shadow:
+						3px 3px 6px rgba(26, 23, 38, 0.12),
+						-3px -3px 6px rgba(255, 255, 255, 0.5);
 				}
 				.button.is-primary:hover {
 					background: var(--pv-primary-hover);
+					box-shadow:
+						4px 4px 8px rgba(26, 23, 38, 0.15),
+						-4px -4px 8px rgba(255, 255, 255, 0.6);
+				}
+				.button.is-primary:active {
+					box-shadow:
+						inset 2px 2px 4px rgba(0, 0, 0, 0.15),
+						inset -2px -2px 4px rgba(255, 255, 255, 0.1);
 				}
 				.input {
 					border-color: var(--pv-border);
@@ -96,8 +110,9 @@ templ AuthPage(title, action, buttonText, altURL, altText, errMsg, csrfToken str
 					}
 					.box {
 						background: var(--pv-surface);
-						border-color: var(--pv-border);
-						box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.12);
+						box-shadow:
+							8px 8px 16px rgba(0, 0, 0, 0.35),
+							-8px -8px 16px rgba(40, 37, 55, 0.4);
 					}
 					.input {
 						background-color: var(--pv-surface);

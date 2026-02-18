@@ -12,7 +12,7 @@ templ Dashboard(data DashboardData) {
 		<div class="columns is-multiline">
 			<!-- Water Quality Card -->
 			<div class="column is-3-desktop is-6-tablet is-12-mobile">
-				<div class="box">
+				<div class="box pv-neumorphic">
 					<p class="heading">Water Quality</p>
 					if data.WaterQuality.HasData {
 						<p class="is-size-4 has-text-weight-bold">
@@ -28,7 +28,7 @@ templ Dashboard(data DashboardData) {
 			</div>
 			<!-- Last Tested Card -->
 			<div class="column is-3-desktop is-6-tablet is-12-mobile">
-				<div class="box">
+				<div class="box pv-neumorphic">
 					<p class="heading">Last Tested</p>
 					if data.LastTested.HasData {
 						<p class="is-size-4 has-text-weight-bold">
@@ -44,7 +44,7 @@ templ Dashboard(data DashboardData) {
 			</div>
 			<!-- Tasks Card -->
 			<div class="column is-3-desktop is-6-tablet is-12-mobile">
-				<div class="box">
+				<div class="box pv-neumorphic">
 					<p class="heading">Tasks</p>
 					if data.Tasks.HasData {
 						<p class="is-size-4 has-text-weight-bold">
@@ -64,7 +64,7 @@ templ Dashboard(data DashboardData) {
 			</div>
 			<!-- Low Stock Card -->
 			<div class="column is-3-desktop is-6-tablet is-12-mobile">
-				<div class="box">
+				<div class="box pv-neumorphic">
 					<p class="heading">Low Stock</p>
 					if data.LowStock.HasData {
 						<p class="is-size-4 has-text-weight-bold">
@@ -87,7 +87,7 @@ templ Dashboard(data DashboardData) {
 		if data.Chart.HasData && !data.Chart.SinglePoint {
 			<div class="columns mt-4">
 				<div class="column is-half-desktop is-12-mobile">
-					<div class="box">
+					<div class="box pv-neumorphic">
 						<p class="heading mb-3">pH Trend</p>
 						<div style="position: relative; height: 200px;">
 							<canvas id="ph-chart"></canvas>
@@ -95,7 +95,7 @@ templ Dashboard(data DashboardData) {
 					</div>
 				</div>
 				<div class="column is-half-desktop is-12-mobile">
-					<div class="box">
+					<div class="box pv-neumorphic">
 						<p class="heading mb-3">Free Chlorine Trend</p>
 						<div style="position: relative; height: 200px;">
 							<canvas id="fc-chart"></canvas>
@@ -114,7 +114,7 @@ templ Dashboard(data DashboardData) {
 		<div class="columns mt-4 is-multiline">
 			<!-- Upcoming Tasks -->
 			<div class="column is-half-desktop is-12-mobile">
-				<div class="box">
+				<div class="box pv-neumorphic">
 					<p class="heading mb-3">Upcoming Tasks</p>
 					if len(data.UpcomingTasks) == 0 {
 						<p class="has-text-grey-light is-size-7">No upcoming tasks</p>
@@ -127,7 +127,7 @@ templ Dashboard(data DashboardData) {
 			</div>
 			<!-- Low Stock Alerts -->
 			<div class="column is-half-desktop is-12-mobile">
-				<div class="box">
+				<div class="box pv-neumorphic">
 					<p class="heading mb-3">Low Stock Alerts</p>
 					if len(data.LowStockChemicals) == 0 {
 						<p class="has-text-grey-light is-size-7">All chemicals stocked up</p>

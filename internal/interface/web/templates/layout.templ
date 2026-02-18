@@ -219,6 +219,21 @@ templ Layout(email string, isAdmin bool) {
 					font-weight: 500;
 				}
 
+				/* Neumorphic cards */
+				.pv-neumorphic {
+					background: var(--pv-bg);
+					border: none !important;
+					box-shadow:
+						6px 6px 14px rgba(26, 23, 38, 0.07),
+						-6px -6px 14px rgba(255, 255, 255, 0.7);
+					transition: box-shadow 0.2s ease;
+				}
+				.pv-neumorphic:hover {
+					box-shadow:
+						8px 8px 18px rgba(26, 23, 38, 0.1),
+						-8px -8px 18px rgba(255, 255, 255, 0.8);
+				}
+
 				/* Empty states */
 				.has-text-grey-light {
 					opacity: 0.8;
@@ -452,6 +467,19 @@ templ Layout(email string, isAdmin bool) {
 					/* Select dropdown arrow */
 					.select:not(.is-multiple):not(.is-loading)::after {
 						border-color: var(--pv-text-secondary);
+					}
+
+					/* Neumorphic cards (dark) */
+					.pv-neumorphic {
+						background: var(--pv-surface);
+						box-shadow:
+							6px 6px 14px rgba(0, 0, 0, 0.35),
+							-6px -6px 14px rgba(40, 37, 55, 0.4);
+					}
+					.pv-neumorphic:hover {
+						box-shadow:
+							8px 8px 18px rgba(0, 0, 0, 0.4),
+							-8px -8px 18px rgba(40, 37, 55, 0.5);
 					}
 
 					/* Divider */

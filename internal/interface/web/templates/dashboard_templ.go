@@ -34,7 +34,7 @@ func Dashboard(data DashboardData) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"tab-content\"><h2 class=\"title is-4\">Dashboard</h2><!-- Summary Cards --><div class=\"columns is-multiline\"><!-- Water Quality Card --><div class=\"column is-3-desktop is-6-tablet is-12-mobile\"><div class=\"box\"><p class=\"heading\">Water Quality</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"tab-content\"><h2 class=\"title is-4\">Dashboard</h2><!-- Summary Cards --><div class=\"columns is-multiline\"><!-- Water Quality Card --><div class=\"column is-3-desktop is-6-tablet is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading\">Water Quality</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -84,7 +84,7 @@ func Dashboard(data DashboardData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div><!-- Last Tested Card --><div class=\"column is-3-desktop is-6-tablet is-12-mobile\"><div class=\"box\"><p class=\"heading\">Last Tested</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div><!-- Last Tested Card --><div class=\"column is-3-desktop is-6-tablet is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading\">Last Tested</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -134,7 +134,7 @@ func Dashboard(data DashboardData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></div><!-- Tasks Card --><div class=\"column is-3-desktop is-6-tablet is-12-mobile\"><div class=\"box\"><p class=\"heading\">Tasks</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></div><!-- Tasks Card --><div class=\"column is-3-desktop is-6-tablet is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading\">Tasks</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -195,7 +195,7 @@ func Dashboard(data DashboardData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div><!-- Low Stock Card --><div class=\"column is-3-desktop is-6-tablet is-12-mobile\"><div class=\"box\"><p class=\"heading\">Low Stock</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div><!-- Low Stock Card --><div class=\"column is-3-desktop is-6-tablet is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading\">Low Stock</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -261,7 +261,7 @@ func Dashboard(data DashboardData) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if data.Chart.HasData && !data.Chart.SinglePoint {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"columns mt-4\"><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box\"><p class=\"heading mb-3\">pH Trend</p><div style=\"position: relative; height: 200px;\"><canvas id=\"ph-chart\"></canvas></div></div></div><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box\"><p class=\"heading mb-3\">Free Chlorine Trend</p><div style=\"position: relative; height: 200px;\"><canvas id=\"fc-chart\"></canvas></div></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"columns mt-4\"><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">pH Trend</p><div style=\"position: relative; height: 200px;\"><canvas id=\"ph-chart\"></canvas></div></div></div><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">Free Chlorine Trend</p><div style=\"position: relative; height: 200px;\"><canvas id=\"fc-chart\"></canvas></div></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -283,7 +283,7 @@ func Dashboard(data DashboardData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<!-- Quick Lists --><div class=\"columns mt-4 is-multiline\"><!-- Upcoming Tasks --><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box\"><p class=\"heading mb-3\">Upcoming Tasks</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<!-- Quick Lists --><div class=\"columns mt-4 is-multiline\"><!-- Upcoming Tasks --><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">Upcoming Tasks</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -300,7 +300,7 @@ func Dashboard(data DashboardData) templ.Component {
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</div></div><!-- Low Stock Alerts --><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box\"><p class=\"heading mb-3\">Low Stock Alerts</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</div></div><!-- Low Stock Alerts --><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">Low Stock Alerts</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
