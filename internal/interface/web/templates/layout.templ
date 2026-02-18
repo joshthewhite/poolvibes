@@ -91,6 +91,25 @@ templ Layout(email string, isAdmin bool) {
 				.navbar.pv-navbar .navbar-burger {
 					color: #f1eff8;
 				}
+
+				/* Nav links */
+				.navbar.pv-navbar .pv-nav-link {
+					color: #8b869e;
+					font-size: 0.875rem;
+					font-weight: 500;
+					border-bottom: 2px solid transparent;
+					transition: color 0.15s, border-color 0.15s;
+					cursor: pointer;
+				}
+				.navbar.pv-navbar .pv-nav-link:hover {
+					color: #f1eff8;
+					background: transparent;
+				}
+				.navbar.pv-navbar .pv-nav-link.is-active {
+					color: #ffffff;
+					border-bottom-color: var(--pv-primary);
+				}
+
 				@media screen and (max-width: 1023px) {
 					.navbar.pv-navbar .navbar-menu {
 						background: var(--pv-navbar);
@@ -102,8 +121,13 @@ templ Layout(email string, isAdmin bool) {
 						background: #2a2640;
 						color: #ffffff;
 					}
-					.navbar.pv-navbar .navbar-divider {
-						background-color: #2a2640;
+					.navbar.pv-navbar .pv-nav-link {
+						border-bottom: none;
+					}
+					.navbar.pv-navbar .pv-nav-link.is-active {
+						color: #ffffff;
+						background: rgba(255, 255, 255, 0.08);
+						border-bottom: none;
 					}
 				}
 
@@ -594,17 +618,16 @@ templ Layout(email string, isAdmin bool) {
 							</a>
 						</div>
 						<div class="navbar-menu" data-class:is-active="$_menuOpen">
-							<div class="navbar-start is-hidden-desktop">
-								<a class="navbar-item" data-on:click="$tab = 'dashboard'; @get('/dashboard'); $_menuOpen = false">Dashboard</a>
-								<a class="navbar-item" data-on:click="$tab = 'chemistry'; @get('/chemistry'); $_menuOpen = false">Water Chemistry</a>
-								<a class="navbar-item" data-on:click="$tab = 'tasks'; @get('/tasks'); $_menuOpen = false">Tasks</a>
-								<a class="navbar-item" data-on:click="$tab = 'equipment'; @get('/equipment'); $_menuOpen = false">Equipment</a>
-								<a class="navbar-item" data-on:click="$tab = 'chemicals'; @get('/chemicals'); $_menuOpen = false">Chemicals</a>
-								<a class="navbar-item" data-on:click="$tab = 'settings'; @get('/settings'); $_menuOpen = false">Settings</a>
+							<div class="navbar-start">
+								<a class="navbar-item pv-nav-link" data-class:is-active="$tab === 'dashboard'" data-on:click="$tab = 'dashboard'; @get('/dashboard'); $_menuOpen = false">Dashboard</a>
+								<a class="navbar-item pv-nav-link" data-class:is-active="$tab === 'chemistry'" data-on:click="$tab = 'chemistry'; @get('/chemistry'); $_menuOpen = false">Chemistry</a>
+								<a class="navbar-item pv-nav-link" data-class:is-active="$tab === 'tasks'" data-on:click="$tab = 'tasks'; @get('/tasks'); $_menuOpen = false">Tasks</a>
+								<a class="navbar-item pv-nav-link" data-class:is-active="$tab === 'equipment'" data-on:click="$tab = 'equipment'; @get('/equipment'); $_menuOpen = false">Equipment</a>
+								<a class="navbar-item pv-nav-link" data-class:is-active="$tab === 'chemicals'" data-on:click="$tab = 'chemicals'; @get('/chemicals'); $_menuOpen = false">Chemicals</a>
+								<a class="navbar-item pv-nav-link" data-class:is-active="$tab === 'settings'" data-on:click="$tab = 'settings'; @get('/settings'); $_menuOpen = false">Settings</a>
 								if isAdmin {
-									<a class="navbar-item" data-on:click="$tab = 'admin'; @get('/admin/users'); $_menuOpen = false">Admin</a>
+									<a class="navbar-item pv-nav-link" data-class:is-active="$tab === 'admin'" data-on:click="$tab = 'admin'; @get('/admin/users'); $_menuOpen = false">Admin</a>
 								}
-								<hr class="navbar-divider"/>
 							</div>
 							<div class="navbar-end">
 								<span class="navbar-item pv-email">{ email }</span>
@@ -617,38 +640,6 @@ templ Layout(email string, isAdmin bool) {
 						</div>
 					</div>
 				</nav>
-				<!-- Tab Navigation -->
-				<section class="section is-hidden-touch" style="padding-bottom: 0;">
-					<div class="container">
-						<div class="tabs pv-tabs">
-							<ul>
-								<li data-class:is-active="$tab === 'dashboard'">
-									<a data-on:click="$tab = 'dashboard'; @get('/dashboard')">Dashboard</a>
-								</li>
-								<li data-class:is-active="$tab === 'chemistry'">
-									<a data-on:click="$tab = 'chemistry'; @get('/chemistry')">Water Chemistry</a>
-								</li>
-								<li data-class:is-active="$tab === 'tasks'">
-									<a data-on:click="$tab = 'tasks'; @get('/tasks')">Tasks</a>
-								</li>
-								<li data-class:is-active="$tab === 'equipment'">
-									<a data-on:click="$tab = 'equipment'; @get('/equipment')">Equipment</a>
-								</li>
-								<li data-class:is-active="$tab === 'chemicals'">
-									<a data-on:click="$tab = 'chemicals'; @get('/chemicals')">Chemicals</a>
-								</li>
-								<li data-class:is-active="$tab === 'settings'">
-									<a data-on:click="$tab = 'settings'; @get('/settings')">Settings</a>
-								</li>
-								if isAdmin {
-									<li data-class:is-active="$tab === 'admin'">
-										<a data-on:click="$tab = 'admin'; @get('/admin/users')">Admin</a>
-									</li>
-								}
-							</ul>
-						</div>
-					</div>
-				</section>
 				<!-- Main Content -->
 				<section class="section" style="padding-top: 1rem;">
 					<div class="container">
