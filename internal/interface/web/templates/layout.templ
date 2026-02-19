@@ -321,25 +321,29 @@ templ Layout(email string, isAdmin bool) {
 				}
 				.pv-health-card-score {
 					display: flex;
+					flex-direction: column;
+					align-items: center;
+					gap: 0.25rem;
+				}
+				.pv-health-score-row {
+					display: flex;
 					align-items: baseline;
-					gap: 0.5rem;
+					gap: 0.4rem;
 				}
 				.pv-health-number {
-					font-size: 2rem;
+					font-size: 2.5rem;
 					font-weight: 800;
 					line-height: 1;
 				}
-				.pv-health-score-meta {
-					display: flex;
-					flex-direction: column;
-					gap: 0.1rem;
-				}
-				.pv-health-score-word {
-					font-size: 0.7rem;
-					font-weight: 600;
-					text-transform: uppercase;
-					letter-spacing: 0.05em;
+				.pv-health-info {
+					font-size: 0.75rem;
 					color: var(--pv-text-secondary);
+					cursor: help;
+					opacity: 0.5;
+					transition: opacity 0.15s;
+				}
+				.pv-health-info:hover {
+					opacity: 0.8;
 				}
 				.pv-health-label {
 					font-size: 0.8rem;
@@ -354,6 +358,7 @@ templ Layout(email string, isAdmin bool) {
 					display: flex;
 					flex-wrap: wrap;
 					align-items: center;
+					justify-content: center;
 					gap: 0.5rem;
 				}
 				.pv-health-streaks {
@@ -375,6 +380,7 @@ templ Layout(email string, isAdmin bool) {
 				.pv-health-milestones {
 					display: flex;
 					flex-wrap: wrap;
+					justify-content: center;
 					gap: 0.35rem;
 				}
 				.pv-milestone-badge {
