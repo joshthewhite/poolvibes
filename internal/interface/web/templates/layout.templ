@@ -316,30 +316,45 @@ templ Layout(email string, isAdmin bool) {
 				}
 				.pv-health-card-inner {
 					display: flex;
-					align-items: center;
-					gap: 1.5rem;
+					flex-direction: column;
+					gap: 0.75rem;
 				}
 				.pv-health-card-score {
 					display: flex;
 					align-items: baseline;
 					gap: 0.5rem;
-					flex-shrink: 0;
 				}
 				.pv-health-number {
 					font-size: 2rem;
 					font-weight: 800;
 					line-height: 1;
 				}
+				.pv-health-score-meta {
+					display: flex;
+					flex-direction: column;
+					gap: 0.1rem;
+				}
+				.pv-health-score-word {
+					font-size: 0.7rem;
+					font-weight: 600;
+					text-transform: uppercase;
+					letter-spacing: 0.05em;
+					color: var(--pv-text-secondary);
+				}
 				.pv-health-label {
 					font-size: 0.8rem;
+				}
+				.pv-health-divider {
+					margin: 0;
+					height: 1px;
+					background: var(--pv-border);
+					border: none;
 				}
 				.pv-health-card-details {
 					display: flex;
 					flex-wrap: wrap;
 					align-items: center;
-					gap: 0.75rem;
-					flex: 1;
-					min-width: 0;
+					gap: 0.5rem;
 				}
 				.pv-health-streaks {
 					display: flex;
@@ -385,13 +400,6 @@ templ Layout(email string, isAdmin bool) {
 				@keyframes pv-milestone-glow {
 					0%, 100% { transform: scale(1); box-shadow: none; }
 					50% { transform: scale(1.05); box-shadow: 0 0 8px rgba(13, 148, 136, 0.3); }
-				}
-				@media screen and (max-width: 768px) {
-					.pv-health-card-inner {
-						flex-direction: column;
-						align-items: flex-start;
-						gap: 0.75rem;
-					}
 				}
 
 				/* Dark mode */
