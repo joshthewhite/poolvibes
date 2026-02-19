@@ -46,8 +46,13 @@ func (h *DashboardHandler) Page(w http.ResponseWriter, r *http.Request) {
 		TaskStreak:    services.ComputeTaskStreak(tasks, now),
 	}
 
-	// Milestones: check and persist newly earned
+	// User info for greeting
 	user, err := services.UserFromContext(r.Context())
+	if err == nil {
+		data.Email = user.Email
+	}
+
+	// Milestones: check and persist newly earned
 	if err == nil {
 		existing, _ := h.milestoneRepo.FindAll(r.Context(), user.ID)
 		earnedSet := make(map[entities.MilestoneKey]bool, len(existing))

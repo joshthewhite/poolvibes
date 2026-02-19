@@ -7,6 +7,10 @@ import (
 
 templ Dashboard(data DashboardData) {
 	<div id="tab-content">
+		<!-- Page Heading -->
+		<h2 class="title is-4" style="margin-bottom: 1.25rem;">
+			Welcome back, <span class="has-text-weight-bold">{ data.Email }</span>
+		</h2>
 		<!-- Summary Cards -->
 		<div class="columns is-multiline">
 			<!-- Water Quality Card -->

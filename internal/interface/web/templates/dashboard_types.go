@@ -3,6 +3,7 @@ package templates
 import "github.com/joshthewhite/poolvibes/internal/domain/entities"
 
 type DashboardData struct {
+	Email             string
 	WaterQuality      WaterQualitySummary
 	LastTested        LastTestedSummary
 	Tasks             TaskSummary

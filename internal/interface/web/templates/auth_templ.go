@@ -153,7 +153,7 @@ func AuthPage(title, action, buttonText, altURL, altText, errMsg, csrfToken stri
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</a></p></div></div></div></div></section></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</a></p></div></div></div></div></section><footer style=\"text-align: center; padding: 1.5rem; position: fixed; bottom: 0; left: 0; right: 0;\"><p style=\"font-size: 0.85rem; color: var(--pv-text-secondary, #6e6a80);\">PoolVibes &middot; Free &amp; open source</p></footer></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
