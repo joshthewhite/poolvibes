@@ -256,7 +256,7 @@ func Dashboard(data DashboardData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div></div><!-- Pool Health Card --><div class=\"column is-12\"><div class=\"box pv-neumorphic pv-health-card\"><div class=\"pv-health-card-inner\"><div class=\"pv-health-card-score\" title=\"Pool Health Score (0-100): based on testing consistency, water quality, task completion, and chemical stock levels\"><p class=\"heading\">Pool Health</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div></div><!-- Pool Health Card --><div class=\"column is-12\"><div class=\"box pv-neumorphic pv-health-card\"><div class=\"pv-health-card-inner\"><div class=\"pv-health-card-score\" title=\"Pool Health Score (0-100): based on testing consistency, water quality, task completion, and chemical stock levels\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -285,99 +285,109 @@ func Dashboard(data DashboardData) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.HealthScore.Score))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 91, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 90, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</span> <span class=\"pv-health-label has-text-grey\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</span><div class=\"pv-health-score-meta\"><span class=\"pv-health-score-word\">Score</span> <span class=\"pv-health-label has-text-grey\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(data.HealthScore.Label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 93, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 94, Col: 76}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</span></div><div class=\"pv-health-card-details\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</span></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if data.Streaks.TestingStreak > 1 || data.Streaks.TaskStreak > 1 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div class=\"pv-health-streaks\">")
+		if data.Streaks.TestingStreak > 1 || data.Streaks.TaskStreak > 1 || len(data.Milestones) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<hr class=\"pv-health-divider\"><div class=\"pv-health-card-details\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if data.Streaks.TestingStreak > 1 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<span class=\"pv-streak-pill\"><i class=\"fa-solid fa-flask fa-xs\"></i> ")
+			if data.Streaks.TestingStreak > 1 || data.Streaks.TaskStreak > 1 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<div class=\"pv-health-streaks\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var17 string
-				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%dw testing", data.Streaks.TestingStreak))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 101, Col: 67}
+				if data.Streaks.TestingStreak > 1 {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<span class=\"pv-streak-pill\"><i class=\"fa-solid fa-flask fa-xs\"></i> ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var17 string
+					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%dw testing", data.Streaks.TestingStreak))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 105, Col: 68}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</span> ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
+				if data.Streaks.TaskStreak > 1 {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<span class=\"pv-streak-pill\"><i class=\"fa-solid fa-check fa-xs\"></i> ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var18 string
+					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%dw tasks", data.Streaks.TaskStreak))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 111, Col: 63}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</span>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</span> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			if data.Streaks.TaskStreak > 1 {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span class=\"pv-streak-pill\"><i class=\"fa-solid fa-check fa-xs\"></i> ")
+			if len(data.Milestones) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<div class=\"pv-health-milestones\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var18 string
-				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%dw tasks", data.Streaks.TaskStreak))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 107, Col: 62}
+				for _, m := range data.Milestones {
+					templ_7745c5c3_Err = milestoneBadge(m).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		if len(data.Milestones) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<div class=\"pv-health-milestones\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, m := range data.Milestones {
-				templ_7745c5c3_Err = milestoneBadge(m).Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</div></div></div></div></div><!-- Chemistry Trend Charts -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</div></div></div></div><!-- Chemistry Trend Charts -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if data.Chart.HasData && !data.Chart.SinglePoint {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<div class=\"columns mt-4\"><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">pH Trend</p><div style=\"position: relative; height: 200px;\"><canvas id=\"ph-chart\"></canvas></div></div></div><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">Free Chlorine Trend</p><div style=\"position: relative; height: 200px;\"><canvas id=\"fc-chart\"></canvas></div></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"columns mt-4\"><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">pH Trend</p><div style=\"position: relative; height: 200px;\"><canvas id=\"ph-chart\"></canvas></div></div></div><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">Free Chlorine Trend</p><div style=\"position: relative; height: 200px;\"><canvas id=\"fc-chart\"></canvas></div></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -385,7 +395,7 @@ func Dashboard(data DashboardData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -394,17 +404,17 @@ func Dashboard(data DashboardData) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Chart.HasData && data.Chart.SinglePoint {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"notification is-info is-light mt-4\">Add more water tests to see chemistry trend charts.</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<div class=\"notification is-info is-light mt-4\">Add more water tests to see chemistry trend charts.</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<!-- Quick Lists --><div class=\"columns mt-4 is-multiline\"><!-- Upcoming Tasks --><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">Upcoming Tasks</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<!-- Quick Lists --><div class=\"columns mt-4 is-multiline\"><!-- Upcoming Tasks --><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">Upcoming Tasks</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(data.UpcomingTasks) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<p class=\"has-text-grey-light is-size-7\">No upcoming tasks</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<p class=\"has-text-grey-light is-size-7\">No upcoming tasks</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -416,12 +426,12 @@ func Dashboard(data DashboardData) templ.Component {
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</div></div><!-- Low Stock Alerts --><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">Low Stock Alerts</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div></div><!-- Low Stock Alerts --><div class=\"column is-half-desktop is-12-mobile\"><div class=\"box pv-neumorphic\"><p class=\"heading mb-3\">Low Stock Alerts</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(data.LowStockChemicals) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<p class=\"has-text-grey-light is-size-7\">All chemicals stocked up</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<p class=\"has-text-grey-light is-size-7\">All chemicals stocked up</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -433,7 +443,7 @@ func Dashboard(data DashboardData) templ.Component {
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -462,20 +472,20 @@ func dashboardTaskRow(t entities.Task) templ.Component {
 			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<div class=\"level is-mobile mb-2\" style=\"border-bottom: 1px solid var(--pv-border); padding-bottom: 0.5rem;\"><div class=\"level-left\"><div class=\"level-item\"><span class=\"has-text-weight-medium is-size-7\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<div class=\"level is-mobile mb-2\" style=\"border-bottom: 1px solid var(--pv-border); padding-bottom: 0.5rem;\"><div class=\"level-left\"><div class=\"level-item\"><span class=\"has-text-weight-medium is-size-7\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(t.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 187, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 192, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</span></div></div><div class=\"level-right\"><div class=\"level-item\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</span></div></div><div class=\"level-right\"><div class=\"level-item\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -484,7 +494,7 @@ func dashboardTaskRow(t entities.Task) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -497,20 +507,20 @@ func dashboardTaskRow(t entities.Task) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(dueInText(t.DueDate))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 192, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 197, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</span></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</span></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -539,33 +549,33 @@ func dashboardChemicalRow(c entities.Chemical) templ.Component {
 			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<div class=\"level is-mobile mb-2\" style=\"border-bottom: 1px solid var(--pv-border); padding-bottom: 0.5rem;\"><div class=\"level-left\"><div class=\"level-item\"><span class=\"has-text-weight-medium is-size-7\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<div class=\"level is-mobile mb-2\" style=\"border-bottom: 1px solid var(--pv-border); padding-bottom: 0.5rem;\"><div class=\"level-left\"><div class=\"level-item\"><span class=\"has-text-weight-medium is-size-7\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(c.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 202, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 207, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</span></div></div><div class=\"level-right\"><div class=\"level-item\"><span class=\"tag is-danger is-light is-size-7\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</span></div></div><div class=\"level-right\"><div class=\"level-item\"><span class=\"tag is-danger is-light is-size-7\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var26 string
 		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%g %s", c.Stock.Amount, string(c.Stock.Unit)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 208, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 213, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</span></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "</span></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -594,7 +604,7 @@ func dashboardChartScript() templ.Component {
 			templ_7745c5c3_Var27 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<script>\n\t\t(function() {\n\t\t\t// Destroy existing chart instances to prevent duplicates on tab re-entry\n\t\t\tif (window._pvPhChart) { window._pvPhChart.destroy(); window._pvPhChart = null; }\n\t\t\tif (window._pvFcChart) { window._pvFcChart.destroy(); window._pvFcChart = null; }\n\n\t\t\tvar el = document.getElementById('dashboard-chart-data');\n\t\t\tif (!el) return;\n\t\t\tvar data = JSON.parse(el.textContent);\n\t\t\tif (!data.hasData) return;\n\n\t\t\t// Read CSS variables for dark mode support\n\t\t\tvar style = getComputedStyle(document.documentElement);\n\t\t\tvar textColor = style.getPropertyValue('--pv-text-secondary').trim() || '#6e6a80';\n\t\t\tvar borderColor = style.getPropertyValue('--pv-border').trim() || '#e0dce8';\n\t\t\tvar successColor = style.getPropertyValue('--pv-success').trim() || '#10b981';\n\t\t\tvar primaryColor = style.getPropertyValue('--pv-primary').trim() || '#0d9488';\n\n\t\t\tvar commonOptions = {\n\t\t\t\tresponsive: true,\n\t\t\t\tmaintainAspectRatio: false,\n\t\t\t\tplugins: {\n\t\t\t\t\tlegend: { display: false },\n\t\t\t\t\ttooltip: { mode: 'index', intersect: false }\n\t\t\t\t},\n\t\t\t\tscales: {\n\t\t\t\t\tx: {\n\t\t\t\t\t\tticks: { color: textColor, font: { size: 11 } },\n\t\t\t\t\t\tgrid: { color: borderColor }\n\t\t\t\t\t},\n\t\t\t\t\ty: {\n\t\t\t\t\t\tticks: { color: textColor, font: { size: 11 } },\n\t\t\t\t\t\tgrid: { color: borderColor }\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t};\n\n\t\t\t// pH Chart\n\t\t\tvar phCtx = document.getElementById('ph-chart');\n\t\t\tif (phCtx) {\n\t\t\t\twindow._pvPhChart = new Chart(phCtx, {\n\t\t\t\t\ttype: 'line',\n\t\t\t\t\tdata: {\n\t\t\t\t\t\tlabels: data.labels,\n\t\t\t\t\t\tdatasets: [\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'pH',\n\t\t\t\t\t\t\t\tdata: data.ph,\n\t\t\t\t\t\t\t\tborderColor: primaryColor,\n\t\t\t\t\t\t\t\tbackgroundColor: primaryColor + '33',\n\t\t\t\t\t\t\t\tborderWidth: 2,\n\t\t\t\t\t\t\t\ttension: 0.3,\n\t\t\t\t\t\t\t\tpointRadius: 3,\n\t\t\t\t\t\t\t\tfill: false\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Ideal Max',\n\t\t\t\t\t\t\t\tdata: data.labels.map(function() { return data.phMax; }),\n\t\t\t\t\t\t\t\tborderColor: successColor + '44',\n\t\t\t\t\t\t\t\tbackgroundColor: successColor + '11',\n\t\t\t\t\t\t\t\tborderWidth: 1,\n\t\t\t\t\t\t\t\tborderDash: [4, 4],\n\t\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\t\tfill: '+1'\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Ideal Min',\n\t\t\t\t\t\t\t\tdata: data.labels.map(function() { return data.phMin; }),\n\t\t\t\t\t\t\t\tborderColor: successColor + '44',\n\t\t\t\t\t\t\t\tborderWidth: 1,\n\t\t\t\t\t\t\t\tborderDash: [4, 4],\n\t\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\t\tfill: false\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t]\n\t\t\t\t\t},\n\t\t\t\t\toptions: commonOptions\n\t\t\t\t});\n\t\t\t}\n\n\t\t\t// Free Chlorine Chart\n\t\t\tvar fcCtx = document.getElementById('fc-chart');\n\t\t\tif (fcCtx) {\n\t\t\t\twindow._pvFcChart = new Chart(fcCtx, {\n\t\t\t\t\ttype: 'line',\n\t\t\t\t\tdata: {\n\t\t\t\t\t\tlabels: data.labels,\n\t\t\t\t\t\tdatasets: [\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Free Chlorine',\n\t\t\t\t\t\t\t\tdata: data.fc,\n\t\t\t\t\t\t\t\tborderColor: primaryColor,\n\t\t\t\t\t\t\t\tbackgroundColor: primaryColor + '33',\n\t\t\t\t\t\t\t\tborderWidth: 2,\n\t\t\t\t\t\t\t\ttension: 0.3,\n\t\t\t\t\t\t\t\tpointRadius: 3,\n\t\t\t\t\t\t\t\tfill: false\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Ideal Max',\n\t\t\t\t\t\t\t\tdata: data.labels.map(function() { return data.fcMax; }),\n\t\t\t\t\t\t\t\tborderColor: successColor + '44',\n\t\t\t\t\t\t\t\tbackgroundColor: successColor + '11',\n\t\t\t\t\t\t\t\tborderWidth: 1,\n\t\t\t\t\t\t\t\tborderDash: [4, 4],\n\t\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\t\tfill: '+1'\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Ideal Min',\n\t\t\t\t\t\t\t\tdata: data.labels.map(function() { return data.fcMin; }),\n\t\t\t\t\t\t\t\tborderColor: successColor + '44',\n\t\t\t\t\t\t\t\tborderWidth: 1,\n\t\t\t\t\t\t\t\tborderDash: [4, 4],\n\t\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\t\tfill: false\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t]\n\t\t\t\t\t},\n\t\t\t\t\toptions: commonOptions\n\t\t\t\t});\n\t\t\t}\n\t\t})();\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "<script>\n\t\t(function() {\n\t\t\t// Destroy existing chart instances to prevent duplicates on tab re-entry\n\t\t\tif (window._pvPhChart) { window._pvPhChart.destroy(); window._pvPhChart = null; }\n\t\t\tif (window._pvFcChart) { window._pvFcChart.destroy(); window._pvFcChart = null; }\n\n\t\t\tvar el = document.getElementById('dashboard-chart-data');\n\t\t\tif (!el) return;\n\t\t\tvar data = JSON.parse(el.textContent);\n\t\t\tif (!data.hasData) return;\n\n\t\t\t// Read CSS variables for dark mode support\n\t\t\tvar style = getComputedStyle(document.documentElement);\n\t\t\tvar textColor = style.getPropertyValue('--pv-text-secondary').trim() || '#6e6a80';\n\t\t\tvar borderColor = style.getPropertyValue('--pv-border').trim() || '#e0dce8';\n\t\t\tvar successColor = style.getPropertyValue('--pv-success').trim() || '#10b981';\n\t\t\tvar primaryColor = style.getPropertyValue('--pv-primary').trim() || '#0d9488';\n\n\t\t\tvar commonOptions = {\n\t\t\t\tresponsive: true,\n\t\t\t\tmaintainAspectRatio: false,\n\t\t\t\tplugins: {\n\t\t\t\t\tlegend: { display: false },\n\t\t\t\t\ttooltip: { mode: 'index', intersect: false }\n\t\t\t\t},\n\t\t\t\tscales: {\n\t\t\t\t\tx: {\n\t\t\t\t\t\tticks: { color: textColor, font: { size: 11 } },\n\t\t\t\t\t\tgrid: { color: borderColor }\n\t\t\t\t\t},\n\t\t\t\t\ty: {\n\t\t\t\t\t\tticks: { color: textColor, font: { size: 11 } },\n\t\t\t\t\t\tgrid: { color: borderColor }\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t};\n\n\t\t\t// pH Chart\n\t\t\tvar phCtx = document.getElementById('ph-chart');\n\t\t\tif (phCtx) {\n\t\t\t\twindow._pvPhChart = new Chart(phCtx, {\n\t\t\t\t\ttype: 'line',\n\t\t\t\t\tdata: {\n\t\t\t\t\t\tlabels: data.labels,\n\t\t\t\t\t\tdatasets: [\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'pH',\n\t\t\t\t\t\t\t\tdata: data.ph,\n\t\t\t\t\t\t\t\tborderColor: primaryColor,\n\t\t\t\t\t\t\t\tbackgroundColor: primaryColor + '33',\n\t\t\t\t\t\t\t\tborderWidth: 2,\n\t\t\t\t\t\t\t\ttension: 0.3,\n\t\t\t\t\t\t\t\tpointRadius: 3,\n\t\t\t\t\t\t\t\tfill: false\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Ideal Max',\n\t\t\t\t\t\t\t\tdata: data.labels.map(function() { return data.phMax; }),\n\t\t\t\t\t\t\t\tborderColor: successColor + '44',\n\t\t\t\t\t\t\t\tbackgroundColor: successColor + '11',\n\t\t\t\t\t\t\t\tborderWidth: 1,\n\t\t\t\t\t\t\t\tborderDash: [4, 4],\n\t\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\t\tfill: '+1'\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Ideal Min',\n\t\t\t\t\t\t\t\tdata: data.labels.map(function() { return data.phMin; }),\n\t\t\t\t\t\t\t\tborderColor: successColor + '44',\n\t\t\t\t\t\t\t\tborderWidth: 1,\n\t\t\t\t\t\t\t\tborderDash: [4, 4],\n\t\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\t\tfill: false\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t]\n\t\t\t\t\t},\n\t\t\t\t\toptions: commonOptions\n\t\t\t\t});\n\t\t\t}\n\n\t\t\t// Free Chlorine Chart\n\t\t\tvar fcCtx = document.getElementById('fc-chart');\n\t\t\tif (fcCtx) {\n\t\t\t\twindow._pvFcChart = new Chart(fcCtx, {\n\t\t\t\t\ttype: 'line',\n\t\t\t\t\tdata: {\n\t\t\t\t\t\tlabels: data.labels,\n\t\t\t\t\t\tdatasets: [\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Free Chlorine',\n\t\t\t\t\t\t\t\tdata: data.fc,\n\t\t\t\t\t\t\t\tborderColor: primaryColor,\n\t\t\t\t\t\t\t\tbackgroundColor: primaryColor + '33',\n\t\t\t\t\t\t\t\tborderWidth: 2,\n\t\t\t\t\t\t\t\ttension: 0.3,\n\t\t\t\t\t\t\t\tpointRadius: 3,\n\t\t\t\t\t\t\t\tfill: false\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Ideal Max',\n\t\t\t\t\t\t\t\tdata: data.labels.map(function() { return data.fcMax; }),\n\t\t\t\t\t\t\t\tborderColor: successColor + '44',\n\t\t\t\t\t\t\t\tbackgroundColor: successColor + '11',\n\t\t\t\t\t\t\t\tborderWidth: 1,\n\t\t\t\t\t\t\t\tborderDash: [4, 4],\n\t\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\t\tfill: '+1'\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\tlabel: 'Ideal Min',\n\t\t\t\t\t\t\t\tdata: data.labels.map(function() { return data.fcMin; }),\n\t\t\t\t\t\t\t\tborderColor: successColor + '44',\n\t\t\t\t\t\t\t\tborderWidth: 1,\n\t\t\t\t\t\t\t\tborderDash: [4, 4],\n\t\t\t\t\t\t\t\tpointRadius: 0,\n\t\t\t\t\t\t\t\tfill: false\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t]\n\t\t\t\t\t},\n\t\t\t\t\toptions: commonOptions\n\t\t\t\t});\n\t\t\t}\n\t\t})();\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -629,7 +639,7 @@ func milestoneBadge(m MilestoneBadge) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<span class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "<span class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -642,7 +652,7 @@ func milestoneBadge(m MilestoneBadge) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -651,7 +661,7 @@ func milestoneBadge(m MilestoneBadge) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "<i class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "<i class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -664,25 +674,25 @@ func milestoneBadge(m MilestoneBadge) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "\"></i> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "\"></i> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var33 string
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(m.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 346, Col: 11}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 351, Col: 11}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<span class=\"pv-milestone-badge is-locked\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<span class=\"pv-milestone-badge is-locked\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -691,7 +701,7 @@ func milestoneBadge(m MilestoneBadge) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "<i class=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "<i class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -704,20 +714,20 @@ func milestoneBadge(m MilestoneBadge) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "\"></i> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "\"></i> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var36 string
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(m.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 351, Col: 11}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/dashboard.templ`, Line: 356, Col: 11}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
