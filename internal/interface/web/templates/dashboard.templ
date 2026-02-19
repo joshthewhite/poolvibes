@@ -85,7 +85,8 @@ templ Dashboard(data DashboardData) {
 			<div class="column is-12">
 				<div class="box pv-neumorphic pv-health-card">
 					<div class="pv-health-card-inner">
-						<div class="pv-health-card-score">
+						<div class="pv-health-card-score" title="Pool Health Score (0-100): based on testing consistency, water quality, task completion, and chemical stock levels">
+							<p class="heading">Pool Health</p>
 							<span class={ "pv-health-number", statusColor(data.HealthScore.Status) }>
 								{ fmt.Sprintf("%d", data.HealthScore.Score) }
 							</span>
