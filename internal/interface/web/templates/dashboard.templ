@@ -7,36 +7,6 @@ import (
 
 templ Dashboard(data DashboardData) {
 	<div id="tab-content">
-		<!-- Pool Health Score -->
-		<div class="box pv-neumorphic pv-health-score">
-			<p class="pv-score-number">
-				<span class={ statusColor(data.HealthScore.Status) }>
-					{ fmt.Sprintf("%d", data.HealthScore.Score) }
-				</span>
-			</p>
-			<p class="pv-score-label has-text-grey">{ data.HealthScore.Label }</p>
-		</div>
-		<!-- Streaks -->
-		if data.Streaks.TestingStreak > 1 || data.Streaks.TaskStreak > 1 {
-			<div class="pv-streaks">
-				if data.Streaks.TestingStreak > 1 {
-					<span class="pv-streak-item">
-						{ fmt.Sprintf("%d week testing streak", data.Streaks.TestingStreak) }
-					</span>
-				}
-				if data.Streaks.TaskStreak > 1 {
-					<span class="pv-streak-item">
-						{ fmt.Sprintf("%d week task streak", data.Streaks.TaskStreak) }
-					</span>
-				}
-			</div>
-		}
-		<!-- Milestones -->
-		<div class="pv-milestones mb-4">
-			for _, m := range data.Milestones {
-				@milestoneBadge(m)
-			}
-		</div>
 		<!-- Summary Cards -->
 		<div class="columns is-multiline">
 			<!-- Water Quality Card -->
@@ -109,6 +79,44 @@ templ Dashboard(data DashboardData) {
 					} else {
 						<p class="has-text-grey-light is-size-7">No chemicals tracked</p>
 					}
+				</div>
+			</div>
+			<!-- Pool Health Card -->
+			<div class="column is-12">
+				<div class="box pv-neumorphic pv-health-card">
+					<div class="pv-health-card-inner">
+						<div class="pv-health-card-score">
+							<span class={ "pv-health-number", statusColor(data.HealthScore.Status) }>
+								{ fmt.Sprintf("%d", data.HealthScore.Score) }
+							</span>
+							<span class="pv-health-label has-text-grey">{ data.HealthScore.Label }</span>
+						</div>
+						<div class="pv-health-card-details">
+							if data.Streaks.TestingStreak > 1 || data.Streaks.TaskStreak > 1 {
+								<div class="pv-health-streaks">
+									if data.Streaks.TestingStreak > 1 {
+										<span class="pv-streak-pill">
+											<i class="fa-solid fa-flask fa-xs"></i>
+											{ fmt.Sprintf("%dw testing", data.Streaks.TestingStreak) }
+										</span>
+									}
+									if data.Streaks.TaskStreak > 1 {
+										<span class="pv-streak-pill">
+											<i class="fa-solid fa-check fa-xs"></i>
+											{ fmt.Sprintf("%dw tasks", data.Streaks.TaskStreak) }
+										</span>
+									}
+								</div>
+							}
+							if len(data.Milestones) > 0 {
+								<div class="pv-health-milestones">
+									for _, m := range data.Milestones {
+										@milestoneBadge(m)
+									}
+								</div>
+							}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -310,53 +310,66 @@ templ Layout(email string, isAdmin bool) {
 					padding: 0;
 				}
 
-				/* Pool Health Score */
-				.pv-health-score {
-					text-align: center;
-					padding: 1.5rem;
+				/* Pool Health Card */
+				.pv-health-card {
+					padding: 1rem 1.25rem;
 				}
-				.pv-health-score .pv-score-number {
-					font-size: 3.5rem;
+				.pv-health-card-inner {
+					display: flex;
+					align-items: center;
+					gap: 1.5rem;
+				}
+				.pv-health-card-score {
+					display: flex;
+					align-items: baseline;
+					gap: 0.5rem;
+					flex-shrink: 0;
+				}
+				.pv-health-number {
+					font-size: 2rem;
 					font-weight: 800;
-					font-family: 'Inter Tight', sans-serif;
 					line-height: 1;
 				}
-				.pv-health-score .pv-score-label {
-					font-size: 0.875rem;
-					margin-top: 0.25rem;
-				}
-
-				/* Streaks */
-				.pv-streaks {
-					text-align: center;
+				.pv-health-label {
 					font-size: 0.8rem;
-					color: var(--pv-text-secondary);
-					padding: 0.25rem 0 0.75rem;
 				}
-				.pv-streaks .pv-streak-item {
-					display: inline;
-				}
-				.pv-streaks .pv-streak-item + .pv-streak-item::before {
-					content: " · ";
-				}
-
-				/* Milestone badges */
-				.pv-milestones {
+				.pv-health-card-details {
 					display: flex;
 					flex-wrap: wrap;
-					gap: 0.5rem;
-					justify-content: center;
-					padding-bottom: 1rem;
+					align-items: center;
+					gap: 0.75rem;
+					flex: 1;
+					min-width: 0;
+				}
+				.pv-health-streaks {
+					display: flex;
+					gap: 0.4rem;
+					flex-shrink: 0;
+				}
+				.pv-streak-pill {
+					display: inline-flex;
+					align-items: center;
+					gap: 0.25rem;
+					padding: 0.2rem 0.5rem;
+					border-radius: 999px;
+					font-size: 0.7rem;
+					font-weight: 500;
+					background: var(--pv-primary-light);
+					color: var(--pv-primary);
+				}
+				.pv-health-milestones {
+					display: flex;
+					flex-wrap: wrap;
+					gap: 0.35rem;
 				}
 				.pv-milestone-badge {
 					display: inline-flex;
 					align-items: center;
-					gap: 0.35rem;
-					padding: 0.35rem 0.75rem;
+					gap: 0.25rem;
+					padding: 0.2rem 0.5rem;
 					border-radius: 999px;
-					font-size: 0.75rem;
+					font-size: 0.65rem;
 					font-weight: 500;
-					transition: transform 0.2s ease, box-shadow 0.2s ease;
 				}
 				.pv-milestone-badge.is-earned {
 					background: var(--pv-primary-light);
@@ -364,14 +377,21 @@ templ Layout(email string, isAdmin bool) {
 				}
 				.pv-milestone-badge.is-locked {
 					background: #f0eef5;
-					color: #b0adc0;
+					color: #c0bdd0;
 				}
 				.pv-milestone-badge.is-new {
 					animation: pv-milestone-glow 1.5s ease-in-out;
 				}
 				@keyframes pv-milestone-glow {
 					0%, 100% { transform: scale(1); box-shadow: none; }
-					50% { transform: scale(1.08); box-shadow: 0 0 12px rgba(13, 148, 136, 0.4); }
+					50% { transform: scale(1.05); box-shadow: 0 0 8px rgba(13, 148, 136, 0.3); }
+				}
+				@media screen and (max-width: 768px) {
+					.pv-health-card-inner {
+						flex-direction: column;
+						align-items: flex-start;
+						gap: 0.75rem;
+					}
 				}
 
 				/* Dark mode */
@@ -571,8 +591,9 @@ templ Layout(email string, isAdmin bool) {
 							-8px -8px 18px rgba(40, 37, 55, 0.5);
 					}
 
-					/* Milestone badges (dark) */
-					.pv-milestone-badge.is-earned {
+					/* Gamification (dark) */
+					.pv-milestone-badge.is-earned,
+					.pv-streak-pill {
 						background: rgba(13, 148, 136, 0.15);
 						color: var(--pv-primary);
 					}
