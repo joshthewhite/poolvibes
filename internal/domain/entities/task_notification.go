@@ -25,3 +25,15 @@ func NewTaskNotification(taskID, userID uuid.UUID, notifType string, dueDate tim
 		SentAt:  time.Now(),
 	}
 }
+
+// NewBatchNotification creates a notification record for a batched daily digest.
+// TaskID is left as zero since the notification covers all tasks for the day.
+func NewBatchNotification(userID uuid.UUID, notifType string, dueDate time.Time) *TaskNotification {
+	return &TaskNotification{
+		ID:      uuid.Must(uuid.NewV7()),
+		UserID:  userID,
+		Type:    notifType,
+		DueDate: dueDate,
+		SentAt:  time.Now(),
+	}
+}

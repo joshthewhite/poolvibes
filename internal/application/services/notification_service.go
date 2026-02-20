@@ -85,55 +85,71 @@ func (s *NotificationService) checkAndNotify(ctx context.Context) {
 			continue
 		}
 
-		for _, task := range userTasks {
-			s.notifyForTask(ctx, user, &task, today)
-		}
+		s.notifyBatch(ctx, user, userTasks, today)
 	}
 }
 
-func (s *NotificationService) notifyForTask(ctx context.Context, user *entities.User, task *entities.Task, today time.Time) {
+// notifyBatch sends at most one notification per user per channel per day,
+// batching all due tasks into a single message.
+func (s *NotificationService) notifyBatch(ctx context.Context, user *entities.User, tasks []entities.Task, today time.Time) {
 	dueDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, time.UTC)
-	subject := fmt.Sprintf("PoolVibes: Task due today — %s", task.Name)
-	body := fmt.Sprintf("Your pool maintenance task \"%s\" is due today (%s).", task.Name, task.DueDate.Format("Jan 2, 2006"))
-	if task.Description != "" {
-		body += fmt.Sprintf("\n\nDetails: %s", task.Description)
-	}
 
-	// Email notification — claim first, send only if we won the claim
+	subject := fmt.Sprintf("PoolVibes: %d task(s) due today", len(tasks))
+	body := formatBatchBody(tasks)
+
+	// Email notification — claim once per user per day
 	if s.emailNotifier != nil && user.NotifyEmail && user.Email != "" {
-		notif := entities.NewTaskNotification(task.ID, user.ID, "email", dueDate)
+		notif := entities.NewBatchNotification(user.ID, "email", dueDate)
 		claimed, err := s.notifRepo.Claim(ctx, notif)
 		if err != nil {
-			slog.Error("Email claim error", "taskID", task.ID, "error", err)
+			slog.Error("Email claim error", "userID", user.ID, "error", err)
 		} else if claimed {
 			if err := s.emailNotifier.Send(ctx, user.Email, subject, body); err != nil {
-				slog.Error("Email send error", "taskID", task.ID, "email", user.Email, "error", err)
-				// Release claim so another tick can retry
+				slog.Error("Email send error", "userID", user.ID, "email", user.Email, "error", err)
 				if delErr := s.notifRepo.Delete(ctx, notif.ID); delErr != nil {
 					slog.Error("Error releasing email claim", "error", delErr)
 				}
 			} else {
-				slog.Info("Email notification sent", "task", task.Name, "email", user.Email)
+				slog.Info("Email notification sent", "tasks", len(tasks), "email", user.Email)
 			}
 		}
 	}
 
-	// SMS notification — claim first, send only if we won the claim
+	// SMS notification — claim once per user per day
 	if s.smsNotifier != nil && user.NotifySMS && user.Phone != "" {
-		notif := entities.NewTaskNotification(task.ID, user.ID, "sms", dueDate)
+		notif := entities.NewBatchNotification(user.ID, "sms", dueDate)
 		claimed, err := s.notifRepo.Claim(ctx, notif)
 		if err != nil {
-			slog.Error("SMS claim error", "taskID", task.ID, "error", err)
+			slog.Error("SMS claim error", "userID", user.ID, "error", err)
 		} else if claimed {
 			if err := s.smsNotifier.Send(ctx, user.Phone, subject, body); err != nil {
-				slog.Error("SMS send error", "taskID", task.ID, "phone", user.Phone, "error", err)
-				// Release claim so another tick can retry
+				slog.Error("SMS send error", "userID", user.ID, "phone", user.Phone, "error", err)
 				if delErr := s.notifRepo.Delete(ctx, notif.ID); delErr != nil {
 					slog.Error("Error releasing SMS claim", "error", delErr)
 				}
 			} else {
-				slog.Info("SMS notification sent", "task", task.Name, "phone", user.Phone)
+				slog.Info("SMS notification sent", "tasks", len(tasks), "phone", user.Phone)
 			}
 		}
 	}
+}
+
+func formatBatchBody(tasks []entities.Task) string {
+	if len(tasks) == 1 {
+		t := tasks[0]
+		body := fmt.Sprintf("Your pool maintenance task \"%s\" is due today (%s).", t.Name, t.DueDate.Format("Jan 2, 2006"))
+		if t.Description != "" {
+			body += fmt.Sprintf("\n\nDetails: %s", t.Description)
+		}
+		return body
+	}
+
+	body := fmt.Sprintf("You have %d pool maintenance tasks due today:\n", len(tasks))
+	for i, t := range tasks {
+		body += fmt.Sprintf("\n%d. %s", i+1, t.Name)
+		if t.Description != "" {
+			body += fmt.Sprintf(" — %s", t.Description)
+		}
+	}
+	return body
 }
