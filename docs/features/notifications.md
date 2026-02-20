@@ -4,7 +4,7 @@ PoolVibes can send email and SMS notifications to alert you when maintenance tas
 
 ## How It Works
 
-A background scheduler runs on a configurable interval (default: 1 hour) and checks for pending tasks due today. For each due task, it sends notifications based on user preferences — at most once per task per day per channel (email/SMS).
+A background scheduler runs on a configurable interval (default: 1 hour) and checks for pending tasks due today. All due tasks for a user are batched into a single notification per channel (email/SMS), sent at most once per day. If you have multiple tasks due, you'll receive one message listing all of them.
 
 ## Channels
 
@@ -24,6 +24,6 @@ Each user can configure their notification preferences from the **Settings** tab
 - **Email Notifications** — Toggle email alerts on/off (enabled by default)
 - **SMS Notifications** — Toggle SMS alerts on/off (disabled by default)
 
-## Duplicate Prevention
+## Batching & Duplicate Prevention
 
-A `task_notifications` table tracks every notification sent. Before sending, the scheduler checks whether a notification has already been sent for the same task, channel, and due date. This prevents duplicate notifications even if the scheduler runs multiple times per day.
+Notifications are batched so that each user receives at most **one notification per channel per day**. A `task_notifications` table tracks sent batches by user, channel, and date. If the scheduler runs multiple times per day, duplicate notifications are prevented by this uniqueness constraint.

@@ -19,10 +19,14 @@ func NewTaskNotificationRepo(db *sql.DB) *TaskNotificationRepo {
 }
 
 func (r *TaskNotificationRepo) Claim(ctx context.Context, notif *entities.TaskNotification) (bool, error) {
+	var taskID string
+	if notif.TaskID != uuid.Nil {
+		taskID = notif.TaskID.String()
+	}
 	res, err := r.db.ExecContext(ctx, `
 		INSERT OR IGNORE INTO task_notifications (id, task_id, user_id, type, due_date, sent_at)
 		VALUES (?, ?, ?, ?, ?, ?)`,
-		notif.ID.String(), notif.TaskID.String(), notif.UserID.String(),
+		notif.ID.String(), taskID, notif.UserID.String(),
 		notif.Type, notif.DueDate.Format("2006-01-02"), notif.SentAt.Format(time.RFC3339))
 	if err != nil {
 		return false, fmt.Errorf("claiming task notification: %w", err)
