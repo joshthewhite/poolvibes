@@ -92,6 +92,7 @@ func (s *UserService) UpdatePreferences(ctx context.Context, cmd command.UpdateN
 	user.Phone = cmd.Phone
 	user.NotifyEmail = cmd.NotifyEmail
 	user.NotifySMS = cmd.NotifySMS
+	user.NotifyPush = cmd.NotifyPush
 	user.PoolGallons = cmd.PoolGallons
 	if err := s.repo.Update(ctx, user); err != nil {
 		return nil, err

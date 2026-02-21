@@ -22,6 +22,7 @@ type settingsSignals struct {
 	Phone       string `json:"settingsPhone"`
 	NotifyEmail bool   `json:"settingsNotifyEmail"`
 	NotifySMS   bool   `json:"settingsNotifySms"`
+	NotifyPush  bool   `json:"settingsNotifyPush"`
 	PoolGallons int    `json:"settingsPoolGallons"`
 }
 
@@ -33,7 +34,7 @@ func (h *SettingsHandler) Page(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sse := datastar.NewSSE(w, r)
-	sse.PatchElementTempl(templates.SettingsPage(user.Phone, user.NotifyEmail, user.NotifySMS, user.PoolGallons))
+	sse.PatchElementTempl(templates.SettingsPage(user.Phone, user.NotifyEmail, user.NotifySMS, user.NotifyPush, user.PoolGallons))
 }
 
 func (h *SettingsHandler) Update(w http.ResponseWriter, r *http.Request) {
@@ -47,6 +48,7 @@ func (h *SettingsHandler) Update(w http.ResponseWriter, r *http.Request) {
 		Phone:       signals.Phone,
 		NotifyEmail: signals.NotifyEmail,
 		NotifySMS:   signals.NotifySMS,
+		NotifyPush:  signals.NotifyPush,
 		PoolGallons: signals.PoolGallons,
 	})
 	if err != nil {

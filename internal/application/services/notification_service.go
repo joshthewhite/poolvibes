@@ -16,6 +16,7 @@ type NotificationService struct {
 	notifRepo     repositories.TaskNotificationRepository
 	emailNotifier Notifier
 	smsNotifier   Notifier
+	pushNotifier  PushNotifier
 	interval      time.Duration
 }
 
@@ -25,6 +26,7 @@ func NewNotificationService(
 	notifRepo repositories.TaskNotificationRepository,
 	emailNotifier Notifier,
 	smsNotifier Notifier,
+	pushNotifier PushNotifier,
 	interval time.Duration,
 ) *NotificationService {
 	return &NotificationService{
@@ -33,6 +35,7 @@ func NewNotificationService(
 		notifRepo:     notifRepo,
 		emailNotifier: emailNotifier,
 		smsNotifier:   smsNotifier,
+		pushNotifier:  pushNotifier,
 		interval:      interval,
 	}
 }
@@ -129,6 +132,24 @@ func (s *NotificationService) notifyBatch(ctx context.Context, user *entities.Us
 				}
 			} else {
 				slog.Info("SMS notification sent", "tasks", len(tasks), "phone", user.Phone)
+			}
+		}
+	}
+
+	// Push notification — claim once per user per day
+	if s.pushNotifier != nil && user.NotifyPush {
+		notif := entities.NewBatchNotification(user.ID, "push", dueDate)
+		claimed, err := s.notifRepo.Claim(ctx, notif)
+		if err != nil {
+			slog.Error("Push claim error", "userID", user.ID, "error", err)
+		} else if claimed {
+			if err := s.pushNotifier.SendToUser(ctx, user.ID, subject, body); err != nil {
+				slog.Error("Push send error", "userID", user.ID, "error", err)
+				if delErr := s.notifRepo.Delete(ctx, notif.ID); delErr != nil {
+					slog.Error("Error releasing push claim", "error", delErr)
+				}
+			} else {
+				slog.Info("Push notification sent", "tasks", len(tasks), "userID", user.ID)
 			}
 		}
 	}

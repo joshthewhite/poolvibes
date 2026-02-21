@@ -22,7 +22,7 @@ func (r *UserRepo) FindAll(ctx context.Context) ([]entities.User, error) {
 	rows, err := r.db.QueryContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
 			is_demo, demo_expires_at,
-			phone, notify_email, notify_sms, pool_gallons,
+			phone, notify_email, notify_sms, notify_push, pool_gallons,
 			created_at, updated_at
 		FROM users
 		ORDER BY created_at DESC`)
@@ -46,7 +46,7 @@ func (r *UserRepo) FindByID(ctx context.Context, id uuid.UUID) (*entities.User, 
 	row := r.db.QueryRowContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
 			is_demo, demo_expires_at,
-			phone, notify_email, notify_sms, pool_gallons,
+			phone, notify_email, notify_sms, notify_push, pool_gallons,
 			created_at, updated_at
 		FROM users
 		WHERE id = $1`, id)
@@ -64,7 +64,7 @@ func (r *UserRepo) FindByEmail(ctx context.Context, email string) (*entities.Use
 	row := r.db.QueryRowContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
 			is_demo, demo_expires_at,
-			phone, notify_email, notify_sms, pool_gallons,
+			phone, notify_email, notify_sms, notify_push, pool_gallons,
 			created_at, updated_at
 		FROM users
 		WHERE email = $1`, email)
@@ -82,12 +82,12 @@ func (r *UserRepo) Create(ctx context.Context, u *entities.User) error {
 	_, err := r.db.ExecContext(ctx, `
 		INSERT INTO users (id, email, password_hash, is_admin,
 			is_disabled, is_demo, demo_expires_at,
-			phone, notify_email, notify_sms, pool_gallons,
+			phone, notify_email, notify_sms, notify_push, pool_gallons,
 			created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
 		u.ID, u.Email, u.PasswordHash, u.IsAdmin, u.IsDisabled,
 		u.IsDemo, u.DemoExpiresAt,
-		u.Phone, u.NotifyEmail, u.NotifySMS, u.PoolGallons,
+		u.Phone, u.NotifyEmail, u.NotifySMS, u.NotifyPush, u.PoolGallons,
 		u.CreatedAt, u.UpdatedAt)
 	if err != nil {
 		return fmt.Errorf("inserting user: %w", err)
@@ -102,12 +102,12 @@ func (r *UserRepo) Update(ctx context.Context, u *entities.User) error {
 		SET email = $1, password_hash = $2,
 			is_admin = $3, is_disabled = $4,
 			is_demo = $5, demo_expires_at = $6,
-			phone = $7, notify_email = $8, notify_sms = $9,
-			pool_gallons = $10, updated_at = $11
-		WHERE id = $12`,
+			phone = $7, notify_email = $8, notify_sms = $9, notify_push = $10,
+			pool_gallons = $11, updated_at = $12
+		WHERE id = $13`,
 		u.Email, u.PasswordHash, u.IsAdmin, u.IsDisabled,
 		u.IsDemo, u.DemoExpiresAt,
-		u.Phone, u.NotifyEmail, u.NotifySMS,
+		u.Phone, u.NotifyEmail, u.NotifySMS, u.NotifyPush,
 		u.PoolGallons, u.UpdatedAt, u.ID)
 	if err != nil {
 		return fmt.Errorf("updating user: %w", err)
@@ -149,7 +149,7 @@ func (r *UserRepo) FindExpiredDemo(ctx context.Context, now time.Time) ([]entiti
 	rows, err := r.db.QueryContext(ctx, `
 		SELECT id, email, password_hash, is_admin, is_disabled,
 			is_demo, demo_expires_at,
-			phone, notify_email, notify_sms, pool_gallons,
+			phone, notify_email, notify_sms, notify_push, pool_gallons,
 			created_at, updated_at
 		FROM users
 		WHERE is_demo = TRUE AND demo_expires_at < $1`, now)
@@ -173,7 +173,7 @@ func scanUserFromRow(s scanner) (*entities.User, error) {
 	var u entities.User
 	if err := s.Scan(&u.ID, &u.Email, &u.PasswordHash, &u.IsAdmin, &u.IsDisabled,
 		&u.IsDemo, &u.DemoExpiresAt,
-		&u.Phone, &u.NotifyEmail, &u.NotifySMS, &u.PoolGallons,
+		&u.Phone, &u.NotifyEmail, &u.NotifySMS, &u.NotifyPush, &u.PoolGallons,
 		&u.CreatedAt, &u.UpdatedAt); err != nil {
 		return nil, err
 	}

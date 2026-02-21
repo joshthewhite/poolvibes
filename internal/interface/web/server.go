@@ -2,8 +2,10 @@ package web
 
 import (
 	"context"
+	"embed"
 	"errors"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"time"
@@ -14,6 +16,9 @@ import (
 	"golang.org/x/time/rate"
 )
 
+//go:embed static
+var staticFS embed.FS
+
 type Server struct {
 	mux           *http.ServeMux
 	authSvc       *services.AuthService
@@ -23,9 +28,11 @@ type Server struct {
 	equipSvc      *services.EquipmentService
 	chemicSvc     *services.ChemicalService
 	milestoneRepo repositories.MilestoneRepository
+	pushRepo      repositories.PushSubscriptionRepository
+	vapidPub      string
 }
 
-func NewServer(authSvc *services.AuthService, userSvc *services.UserService, chemSvc *services.ChemistryService, taskSvc *services.TaskService, equipSvc *services.EquipmentService, chemicSvc *services.ChemicalService, milestoneRepo repositories.MilestoneRepository) *Server {
+func NewServer(authSvc *services.AuthService, userSvc *services.UserService, chemSvc *services.ChemistryService, taskSvc *services.TaskService, equipSvc *services.EquipmentService, chemicSvc *services.ChemicalService, milestoneRepo repositories.MilestoneRepository, pushRepo repositories.PushSubscriptionRepository, vapidPub string) *Server {
 	s := &Server{
 		mux:           http.NewServeMux(),
 		authSvc:       authSvc,
@@ -35,6 +42,8 @@ func NewServer(authSvc *services.AuthService, userSvc *services.UserService, che
 		equipSvc:      equipSvc,
 		chemicSvc:     chemicSvc,
 		milestoneRepo: milestoneRepo,
+		pushRepo:      pushRepo,
+		vapidPub:      vapidPub,
 	}
 	s.setupRoutes()
 	return s
@@ -119,6 +128,26 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("GET /admin/users", admin(adminHandler.ListUsers))
 	s.mux.HandleFunc("GET /admin/users/{id}/edit", admin(adminHandler.EditUser))
 	s.mux.HandleFunc("PUT /admin/users/{id}", admin(adminHandler.UpdateUser))
+
+	// Static files (PWA manifest, icons, etc.)
+	staticContent, _ := fs.Sub(staticFS, "static")
+	s.mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticContent))))
+
+	// Service worker must be served from root for proper scope
+	s.mux.HandleFunc("GET /sw.js", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/javascript")
+		w.Header().Set("Service-Worker-Allowed", "/")
+		data, _ := staticFS.ReadFile("static/sw.js")
+		w.Write(data)
+	})
+
+	// Push notification API routes (auth required)
+	if s.pushRepo != nil && s.vapidPub != "" {
+		pushHandler := handlers.NewPushHandler(s.pushRepo, s.vapidPub)
+		s.mux.HandleFunc("GET /api/push/vapid-key", auth(pushHandler.VAPIDPublicKey))
+		s.mux.HandleFunc("POST /api/push/subscribe", auth(pushHandler.Subscribe))
+		s.mux.HandleFunc("POST /api/push/unsubscribe", auth(pushHandler.Unsubscribe))
+	}
 }
 
 func (s *Server) Start(ctx context.Context, addr string) error {
@@ -165,6 +194,7 @@ func securityHeaders(next http.Handler) http.Handler {
 				"font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; "+
 				"img-src 'self' data:; "+
 				"connect-src 'self'; "+
+				"worker-src 'self'; "+
 				"frame-ancestors 'none'")
 		w.Header().Set("X-Frame-Options", "DENY")
 		w.Header().Set("X-Content-Type-Options", "nosniff")

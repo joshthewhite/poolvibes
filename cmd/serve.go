@@ -50,6 +50,7 @@ var serveCmd = &cobra.Command{
 			sessionRepo   repositories.SessionRepository
 			taskNotifRepo repositories.TaskNotificationRepository
 			milestoneRepo repositories.MilestoneRepository
+			pushSubRepo   repositories.PushSubscriptionRepository
 		)
 
 		switch dbDriver {
@@ -73,6 +74,7 @@ var serveCmd = &cobra.Command{
 			sessionRepo = sqlite.NewSessionRepo(db)
 			taskNotifRepo = sqlite.NewTaskNotificationRepo(db)
 			milestoneRepo = sqlite.NewMilestoneRepo(db)
+			pushSubRepo = sqlite.NewPushSubscriptionRepo(db)
 
 		case "postgres":
 			db, err = postgres.Open(dbDSN)
@@ -94,6 +96,7 @@ var serveCmd = &cobra.Command{
 			sessionRepo = postgres.NewSessionRepo(db)
 			taskNotifRepo = postgres.NewTaskNotificationRepo(db)
 			milestoneRepo = postgres.NewMilestoneRepo(db)
+			pushSubRepo = postgres.NewPushSubscriptionRepo(db)
 
 		default:
 			return fmt.Errorf("unsupported database driver: %s (use 'sqlite' or 'postgres')", dbDriver)
@@ -137,6 +140,19 @@ var serveCmd = &cobra.Command{
 			}
 		}
 
+		// Set up Web Push notification service
+		var pushNotifier services.PushNotifier
+		vapidPub := viper.GetString("vapid_public_key")
+		vapidPriv := viper.GetString("vapid_private_key")
+		vapidEmail := viper.GetString("vapid_email")
+		if vapidPub != "" && vapidPriv != "" {
+			if vapidEmail == "" {
+				vapidEmail = "mailto:notifications@poolvibes.app"
+			}
+			pushNotifier = notify.NewWebPushNotifier(pushSubRepo, vapidPub, vapidPriv, vapidEmail)
+			slog.Info("Push notifications enabled")
+		}
+
 		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 		defer stop()
 
@@ -165,17 +181,17 @@ var serveCmd = &cobra.Command{
 			}
 		}()
 
-		if emailNotifier != nil || smsNotifier != nil {
+		if emailNotifier != nil || smsNotifier != nil || pushNotifier != nil {
 			intervalStr := viper.GetString("notify-check-interval")
 			interval, err := time.ParseDuration(intervalStr)
 			if err != nil {
 				interval = 1 * time.Hour
 			}
-			notifSvc := services.NewNotificationService(taskRepo, userRepo, taskNotifRepo, emailNotifier, smsNotifier, interval)
+			notifSvc := services.NewNotificationService(taskRepo, userRepo, taskNotifRepo, emailNotifier, smsNotifier, pushNotifier, interval)
 			go notifSvc.Start(ctx)
 		}
 
-		server := web.NewServer(authSvc, userSvc, chemSvc, taskSvc, equipSvc, chemicSvc, milestoneRepo)
+		server := web.NewServer(authSvc, userSvc, chemSvc, taskSvc, equipSvc, chemicSvc, milestoneRepo, pushSubRepo, vapidPub)
 		return server.Start(ctx, addr)
 	},
 }

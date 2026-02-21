@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "fmt"
 
-func SettingsPage(phone string, notifyEmail, notifySMS bool, poolGallons int) templ.Component {
+func SettingsPage(phone string, notifyEmail, notifySMS, notifyPush bool, poolGallons int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -70,20 +70,33 @@ func SettingsPage(phone string, notifyEmail, notifySMS bool, poolGallons int) te
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" data-signals:settingsPoolGallons=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" data-signals:settingsNotifyPush=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", poolGallons))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(boolStr(notifyPush))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/settings.templ`, Line: 11, Col: 68}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/settings.templ`, Line: 11, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\"><div class=\"level\"><div class=\"level-left\"><h2 class=\"title is-4\">Settings</h2></div></div><div id=\"settings-message\"></div><h3 class=\"title is-5\">Pool Details</h3><div class=\"box pv-neumorphic\" style=\"max-width: 500px;\"><div class=\"field\"><label class=\"label\">Pool Volume (gallons)</label><div class=\"control\"><input data-bind:settingsPoolGallons type=\"number\" step=\"100\" min=\"0\" class=\"input\" placeholder=\"e.g. 15000\"></div><p class=\"help\">Used to calculate chemical dosages in treatment plans.</p></div></div><h3 class=\"title is-5 mt-5\">Notification Settings</h3><div class=\"box pv-neumorphic\" style=\"max-width: 500px;\"><div class=\"field\"><label class=\"label\">Phone Number</label><div class=\"control\"><input data-bind:settingsPhone type=\"tel\" class=\"input\" placeholder=\"+15551234567\"></div><p class=\"help\">Required for SMS notifications. Include country code.</p></div><div class=\"field\"><label class=\"checkbox\"><input data-bind:settingsNotifyEmail type=\"checkbox\"> Email notifications</label><p class=\"help\">Receive email alerts when tasks are due.</p></div><div class=\"field\"><label class=\"checkbox\"><input data-bind:settingsNotifySms type=\"checkbox\"> SMS notifications</label><p class=\"help\">Receive text message alerts when tasks are due.</p></div></div><div class=\"field mt-4\"><div class=\"control\"><button class=\"button is-primary\" data-on:click=\"@put('/settings')\">Save Settings</button></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" data-signals:settingsPoolGallons=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", poolGallons))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/interface/web/templates/settings.templ`, Line: 12, Col: 68}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"><div class=\"level\"><div class=\"level-left\"><h2 class=\"title is-4\">Settings</h2></div></div><div id=\"settings-message\"></div><h3 class=\"title is-5\">Pool Details</h3><div class=\"box pv-neumorphic\" style=\"max-width: 500px;\"><div class=\"field\"><label class=\"label\">Pool Volume (gallons)</label><div class=\"control\"><input data-bind:settingsPoolGallons type=\"number\" step=\"100\" min=\"0\" class=\"input\" placeholder=\"e.g. 15000\"></div><p class=\"help\">Used to calculate chemical dosages in treatment plans.</p></div></div><h3 class=\"title is-5 mt-5\">Notification Settings</h3><div class=\"box pv-neumorphic\" style=\"max-width: 500px;\"><div class=\"field\"><label class=\"label\">Phone Number</label><div class=\"control\"><input data-bind:settingsPhone type=\"tel\" class=\"input\" placeholder=\"+15551234567\"></div><p class=\"help\">Required for SMS notifications. Include country code.</p></div><div class=\"field\"><label class=\"checkbox\"><input data-bind:settingsNotifyEmail type=\"checkbox\"> Email notifications</label><p class=\"help\">Receive email alerts when tasks are due.</p></div><div class=\"field\"><label class=\"checkbox\"><input data-bind:settingsNotifySms type=\"checkbox\"> SMS notifications</label><p class=\"help\">Receive text message alerts when tasks are due.</p></div><div class=\"field\" id=\"push-notification-field\"><label class=\"checkbox\"><input data-bind:settingsNotifyPush type=\"checkbox\" id=\"push-toggle\"> Push notifications</label><p class=\"help\">Receive instant push notifications on this device. Requires browser permission.</p><p class=\"help has-text-grey-light\" id=\"push-status-text\"></p></div></div><div class=\"field mt-4\"><div class=\"control\"><button class=\"button is-primary\" data-on:click=\"@put('/settings')\">Save Settings</button></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

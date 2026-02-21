@@ -7,6 +7,11 @@ templ Layout(email string, isAdmin bool) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>PoolVibes - Pool Maintenance</title>
+			<link rel="manifest" href="/static/manifest.json"/>
+			<meta name="theme-color" content="#0d9488"/>
+			<meta name="apple-mobile-web-app-capable" content="yes"/>
+			<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+			<link rel="apple-touch-icon" href="/static/icons/icon-192.svg"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap" rel="stylesheet"/>
@@ -774,6 +779,86 @@ templ Layout(email string, isAdmin bool) {
 						el.classList.add('has-text-grey');
 					}
 				}, 10000);
+			</script>
+			<script>
+				// Service Worker + Push Notification registration
+				if ('serviceWorker' in navigator) {
+					navigator.serviceWorker.register('/sw.js').then(function(reg) {
+						console.log('SW registered, scope:', reg.scope);
+					}).catch(function(err) {
+						console.warn('SW registration failed:', err);
+					});
+				}
+
+				// Push subscription helper — called when user toggles push on in settings
+				window.pvSubscribePush = function() {
+					if (!('PushManager' in window)) {
+						alert('Push notifications are not supported in this browser.');
+						return Promise.resolve(false);
+					}
+					return navigator.serviceWorker.ready.then(function(reg) {
+						return fetch('/api/push/vapid-key').then(function(r) { return r.json(); }).then(function(data) {
+							var rawKey = atob(data.publicKey.replace(/-/g, '+').replace(/_/g, '/'));
+							var keyArray = new Uint8Array(rawKey.length);
+							for (var i = 0; i < rawKey.length; i++) keyArray[i] = rawKey.charCodeAt(i);
+							return reg.pushManager.subscribe({
+								userVisibleOnly: true,
+								applicationServerKey: keyArray
+							});
+						});
+					}).then(function(sub) {
+						var subJSON = sub.toJSON();
+						return fetch('/api/push/subscribe', {
+							method: 'POST',
+							headers: {'Content-Type': 'application/json'},
+							body: JSON.stringify({
+								endpoint: subJSON.endpoint,
+								keys: { p256dh: subJSON.keys.p256dh, auth: subJSON.keys.auth }
+							})
+						});
+					}).then(function(resp) {
+						return resp.ok;
+					}).catch(function(err) {
+						console.error('Push subscribe error:', err);
+						return false;
+					});
+				};
+
+				window.pvUnsubscribePush = function() {
+					return navigator.serviceWorker.ready.then(function(reg) {
+						return reg.pushManager.getSubscription();
+					}).then(function(sub) {
+						if (!sub) return true;
+						var endpoint = sub.endpoint;
+						return sub.unsubscribe().then(function() {
+							return fetch('/api/push/unsubscribe', {
+								method: 'POST',
+								headers: {'Content-Type': 'application/json'},
+								body: JSON.stringify({ endpoint: endpoint })
+							});
+						});
+					}).then(function() { return true; }).catch(function(err) {
+						console.error('Push unsubscribe error:', err);
+						return false;
+					});
+				};
+
+				// Auto-subscribe/unsubscribe when push toggle changes on settings page
+				document.addEventListener('change', function(e) {
+					if (e.target && e.target.id === 'push-toggle') {
+						if (e.target.checked) {
+							Notification.requestPermission().then(function(perm) {
+								if (perm === 'granted') {
+									pvSubscribePush();
+								} else {
+									e.target.checked = false;
+								}
+							});
+						} else {
+							pvUnsubscribePush();
+						}
+					}
+				});
 			</script>
 		</body>
 	</html>

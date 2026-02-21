@@ -2,12 +2,13 @@ package templates
 
 import "fmt"
 
-templ SettingsPage(phone string, notifyEmail, notifySMS bool, poolGallons int) {
+templ SettingsPage(phone string, notifyEmail, notifySMS, notifyPush bool, poolGallons int) {
 	<div id="tab-content">
 		<div
 			data-signals:settingsPhone={ "'" + escapeJS(phone) + "'" }
 			data-signals:settingsNotifyEmail={ boolStr(notifyEmail) }
 			data-signals:settingsNotifySms={ boolStr(notifySMS) }
+			data-signals:settingsNotifyPush={ boolStr(notifyPush) }
 			data-signals:settingsPoolGallons={ fmt.Sprintf("%d", poolGallons) }
 		>
 			<div class="level">
@@ -46,6 +47,13 @@ templ SettingsPage(phone string, notifyEmail, notifySMS bool, poolGallons int) {
 						<input data-bind:settingsNotifySms type="checkbox"/> SMS notifications
 					</label>
 					<p class="help">Receive text message alerts when tasks are due.</p>
+				</div>
+				<div class="field" id="push-notification-field">
+					<label class="checkbox">
+						<input data-bind:settingsNotifyPush type="checkbox" id="push-toggle"/> Push notifications
+					</label>
+					<p class="help">Receive instant push notifications on this device. Requires browser permission.</p>
+					<p class="help has-text-grey-light" id="push-status-text"></p>
 				</div>
 			</div>
 			<div class="field mt-4">
