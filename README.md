@@ -11,7 +11,8 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 - **Task Scheduling** — Create recurring maintenance tasks (daily, weekly, monthly). Completing a task auto-generates the next occurrence.
 - **Equipment Tracking** — Track pool equipment with categories, manufacturer info, warranty status, and service history.
 - **Chemical Inventory** — Monitor chemical stock levels with low-stock alerts and quick-adjust buttons.
-- **Notifications** — Email (Resend) and SMS (Twilio) alerts when tasks are due. Per-user preferences via Settings tab.
+- **Notifications** — Email (Resend), SMS (Twilio), and Web Push alerts when tasks are due. Per-user preferences via Settings tab.
+- **Progressive Web App** — Installable on mobile and desktop with offline support via service worker. Web Push notifications for instant task alerts.
 - **Demo Mode** — Enable `--demo` to let potential customers sign up and see the app pre-populated with a year of realistic data. Demo users auto-expire after 24 hours. Admins can convert demo users to regular accounts.
 
 ## Tech Stack
@@ -22,7 +23,8 @@ A pool maintenance management app built with Go, following Domain-Driven Design 
 - **SQLite** via [modernc.org/sqlite](https://pkg.go.dev/modernc.org/sqlite) (pure Go, no CGO) — default
 - **PostgreSQL** via [pgx](https://github.com/jackc/pgx) — optional, for hosted deployments
 - **Bulma** CSS from CDN
-- **Resend** for email notifications, **Twilio** for SMS notifications
+- **Resend** for email notifications, **Twilio** for SMS, **Web Push** (VAPID) for push notifications
+- **PWA** — Web app manifest, service worker, installable on mobile/desktop
 - **DDD architecture** — domain entities, repository interfaces, application services, infrastructure implementations
 
 ## Getting Started
@@ -69,6 +71,47 @@ twilio_from_number: "+15551234567"
 
 Or via environment variables (`RESEND_API_KEY`, `TWILIO_ACCOUNT_SID`, etc.). Notifications are only sent when the corresponding keys are configured. Users can toggle email/SMS preferences from the Settings tab.
 
+#### Push Notifications (VAPID)
+
+Push notifications use the [Web Push protocol](https://web.dev/push-notifications-overview/) with VAPID (Voluntary Application Server Identification) keys. To enable them:
+
+1. **Generate a VAPID key pair** — use one of these methods:
+
+   Using Go (one-time script):
+   ```go
+   package main
+
+   import (
+       "fmt"
+       webpush "github.com/SherClockHolmes/webpush-go"
+   )
+
+   func main() {
+       priv, pub, _ := webpush.GenerateVAPIDKeys()
+       fmt.Println("Public key: ", pub)
+       fmt.Println("Private key:", priv)
+   }
+   ```
+
+   Or using the `web-push` npm CLI:
+   ```sh
+   npx web-push generate-vapid-keys
+   ```
+
+2. **Configure the keys** in `~/.poolvibes.yaml`:
+
+   ```yaml
+   vapid_public_key: "BPe1o..."
+   vapid_private_key: "dGhpc..."
+   vapid_email: "mailto:admin@yourdomain.com"
+   ```
+
+   Or via environment variables: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_EMAIL`.
+
+3. Users can enable push notifications from the **Settings** tab. The browser will prompt for notification permission.
+
+**Important:** Generate the VAPID keys once and keep them consistent. Changing keys will invalidate all existing push subscriptions.
+
 ## Deployment (Railway)
 
 PoolVibes can be deployed to [Railway](https://railway.com) with PostgreSQL:
@@ -105,7 +148,7 @@ poolvibes/
     │   ├── db/
     │   │   ├── sqlite/              # SQLite repos + connection
     │   │   └── postgres/            # PostgreSQL repos + connection
-    │   └── notify/                  # Email (Resend) and SMS (Twilio) notifiers
+    │   └── notify/                  # Email (Resend), SMS (Twilio), and Web Push notifiers
     └── interface/
         └── web/
             ├── server.go            # HTTP server + routes
