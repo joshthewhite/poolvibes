@@ -20,7 +20,7 @@ PoolVibes follows Domain-Driven Design (DDD) with a layered architecture. Depend
 
 Pure business logic with no external dependencies. Contains:
 
-- **Entities** — `User`, `Session`, `ChemistryLog`, `Task`, `TaskNotification`, `Equipment`, `ServiceRecord`, `Chemical`, `Milestone` with validation rules and business methods
+- **Entities** — `User`, `Session`, `ChemistryLog`, `Task`, `TaskNotification`, `Equipment`, `ServiceRecord`, `Chemical`, `Milestone`, `PushSubscription` with validation rules and business methods
 - **Value Objects** — `Recurrence` (frequency + interval with next-due-date calculation), `Quantity` (amount + unit)
 - **Repository Interfaces** — Abstractions that infrastructure implements
 
@@ -39,7 +39,7 @@ External concerns:
 - **Database Repositories** — SQLite and PostgreSQL implementations of domain repository interfaces
 - **Connection** — Database connection management, migration runner (per driver)
 - **Migrations** — SQL files embedded in the binary via Go's `embed` package, with separate migration sets for SQLite and PostgreSQL
-- **Notifiers** — Resend (email) and Twilio (SMS) implementations of the `Notifier` interface
+- **Notifiers** — Resend (email), Twilio (SMS), and Web Push (VAPID) implementations of the `Notifier`/`PushNotifier` interfaces
 
 ### Interface
 
@@ -73,7 +73,7 @@ poolvibes/
     │   ├── db/
     │   │   ├── sqlite/              # SQLite repos + connection
     │   │   └── postgres/            # PostgreSQL repos + connection
-    │   └── notify/                  # Email (Resend) and SMS (Twilio) notifiers
+    │   └── notify/                  # Email (Resend), SMS (Twilio), and Web Push notifiers
     └── interface/
         └── web/
             ├── server.go            # HTTP server + routes
@@ -94,6 +94,7 @@ erDiagram
         TEXT phone
         INTEGER notify_email
         INTEGER notify_sms
+        INTEGER notify_push
         INTEGER pool_gallons
         TEXT created_at
         TEXT updated_at
@@ -191,7 +192,17 @@ erDiagram
         TEXT earned_at
     }
 
+    push_subscriptions {
+        TEXT id PK
+        TEXT user_id FK
+        TEXT endpoint
+        TEXT p256dh
+        TEXT auth
+        TEXT created_at
+    }
+
     users ||--o{ sessions : "has"
+    users ||--o{ push_subscriptions : "has"
     users ||--o{ task_notifications : "has"
     tasks ||--o{ task_notifications : "has"
     users ||--o{ chemistry_logs : "owns"

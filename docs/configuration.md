@@ -103,7 +103,50 @@ export TWILIO_AUTH_TOKEN="..."
 export TWILIO_FROM_NUMBER="+15551234567"
 ```
 
-Notifications are only enabled when the corresponding API keys are configured. Users can toggle email/SMS preferences and set their phone number from the Settings tab in the app.
+### Push Notifications (VAPID)
+
+| Config Key | Env Var | Description |
+|------------|---------|-------------|
+| `vapid_public_key` | `VAPID_PUBLIC_KEY` | VAPID public key (Base64 URL-encoded) |
+| `vapid_private_key` | `VAPID_PRIVATE_KEY` | VAPID private key (Base64 URL-encoded) |
+| `vapid_email` | `VAPID_EMAIL` | Contact email for VAPID (default: `mailto:notifications@poolvibes.app`) |
+
+#### Generating VAPID Keys
+
+Generate a VAPID key pair using one of these methods:
+
+Using Go (one-time script):
+```go
+package main
+
+import (
+    "fmt"
+    webpush "github.com/SherClockHolmes/webpush-go"
+)
+
+func main() {
+    priv, pub, _ := webpush.GenerateVAPIDKeys()
+    fmt.Println("Public key: ", pub)
+    fmt.Println("Private key:", priv)
+}
+```
+
+Or using the `web-push` npm CLI:
+```sh
+npx web-push generate-vapid-keys
+```
+
+Generate the keys once and keep them consistent — changing keys will invalidate all existing push subscriptions.
+
+### Example Config (with Push)
+
+```yaml
+vapid_public_key: "BPe1o..."
+vapid_private_key: "dGhpc..."
+vapid_email: "mailto:admin@yourdomain.com"
+```
+
+Notifications are only enabled when the corresponding API keys are configured. Users can toggle email/SMS/push preferences and set their phone number from the Settings tab in the app.
 
 ## Database
 

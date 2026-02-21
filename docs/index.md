@@ -8,6 +8,8 @@ Pool maintenance management app built with Go, following Domain-Driven Design pa
 - **[Task Scheduling](features/tasks.md)** — Create recurring maintenance tasks that auto-generate the next occurrence on completion.
 - **[Equipment Tracking](features/equipment.md)** — Track pool equipment with warranty status and service history.
 - **[Chemical Inventory](features/chemicals.md)** — Monitor chemical stock levels with low-stock alerts and quick-adjust buttons.
+- **[Notifications](features/notifications.md)** — Email, SMS, and Web Push alerts when tasks are due.
+- **Progressive Web App** — Installable on mobile and desktop with service worker and Web Push support.
 
 ## Quick Start
 

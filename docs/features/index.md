@@ -32,4 +32,8 @@ Monitor your chemical inventory with stock levels, units, and low-stock alerts. 
 
 ## [Notifications](notifications.md)
 
-Get email and SMS alerts when maintenance tasks are due. Configure notification preferences per user from the Settings tab.
+Get email, SMS, and push notification alerts when maintenance tasks are due. Configure notification preferences per user from the Settings tab. Push notifications provide instant browser/device alerts without a native app.
+
+## Progressive Web App
+
+PoolVibes is a PWA — it can be installed on mobile and desktop devices directly from the browser. The app includes a web manifest, service worker, and home screen icons for a native app-like experience.
